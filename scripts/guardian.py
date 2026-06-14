@@ -32,7 +32,7 @@ MAX_LOG_BYTES = 10 * 1024 * 1024  # 10MB
 def log(msg):
     ts = datetime.now().strftime("%H:%M:%S")
     line = f"[{ts}] ⚡ {msg}"
-    print(line)
+    logger.info(line)
     LOG.parent.mkdir(parents=True, exist_ok=True)
     # 日志轮转
     if LOG.exists() and LOG.stat().st_size > MAX_LOG_BYTES:
@@ -402,7 +402,7 @@ def print_status_report():
 ║  最后清洗: {last_clean or '无'!s:22s} ║
 ╚══════════════════════════════════════╝
 """
-        print(report)
+        logger.info(report)
         return report
     except Exception as e:
         return f"状态报告失败: {e}"
@@ -525,7 +525,7 @@ def main():
 
     if action == "status":
         report = print_status_report()
-        print(report)
+        logger.info(report)
     elif action == "heal":
         self_heal()
         print_status_report()

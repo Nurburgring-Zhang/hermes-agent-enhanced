@@ -6,8 +6,11 @@
 监督AI是真正的独立子进程，不是同一个实例的自言自语。
 """
 import json
+import logging
 import sys
 from pathlib import Path
+
+logger = logging.getLogger(__name__)
 
 sys.path.insert(0, str(Path.home() / ".hermes" / "hermes-agent"))
 

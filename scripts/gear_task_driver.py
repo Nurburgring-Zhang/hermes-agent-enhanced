@@ -396,60 +396,60 @@ if __name__ == "__main__":
         steps = int(sys.argv[4]) if len(sys.argv) > 4 else 10
         req = sys.argv[5] if len(sys.argv) > 5 else ""
         r = register_task(task_id, desc, steps, requirements=req)
-        print(f"✅ 任务 {task_id} 已注册到棘轮队列")
-        print(f"   起点: {r['current_ratchet_step']} → 目标: {r['next_ratchet']}")
+        logger.info(f"✅ 任务 {task_id} 已注册到棘轮队列")
+        logger.info(f"   起点: {r['current_ratchet_step']} → 目标: {r['next_ratchet']}")
     elif cmd == "advance":
         task_id = sys.argv[2] if len(sys.argv) > 2 else ""
         target = sys.argv[3] if len(sys.argv) > 3 else ""
         note = " ".join(sys.argv[4:]) if len(sys.argv) > 4 else "手动推动"
         r = advance_ratchet(task_id, target, note)
         if r["success"]:
-            print(f"✅ 棘轮推动: {r['old_step']} → {r['new_step']}  (下一步: {r['next']})")
+            logger.info(f"✅ 棘轮推动: {r['old_step']} → {r['new_step']}  (下一步: {r['next']})")
         else:
-            print(f"❌ {r.get('error', '未知错误')}")
+            logger.error(f"❌ {r.get('error', '未知错误')}")
             if r.get("locked"):
-                print(f"   当前位置: {r.get('old_step', '?')}")
+                logger.info(f"   当前位置: {r.get('old_step', '?')}")
     elif cmd == "recover":
         recovered = auto_recover()
         if recovered:
             for r in recovered:
-                print(f"🔄 已恢复: {r['task_id']} → {r['advanced']['new_step']}")
+                logger.info(f"🔄 已恢复: {r['task_id']} → {r['advanced']['new_step']}")
         else:
-            print("✅ 无中断任务需要恢复")
+            logger.info("✅ 无中断任务需要恢复")
     elif cmd == "interrupt":
         task_id = sys.argv[2] if len(sys.argv) > 2 else ""
         reason = " ".join(sys.argv[3:]) if len(sys.argv) > 3 else "手动标记中断"
         r = mark_interrupted(task_id, reason)
-        print(f"🔴 {r['task_id']} 已标记中断")
+        logger.warning(f"🔴 {r['task_id']} 已标记中断")
     elif cmd == "status":
         s = status()
-        print("=== 棘轮队列状态 ===")
-        print(f"总任务: {s['total_tasks']} | 活跃: {s['active']} | 完成: {s['completed']} | 失败: {s['failed']}")
-        print(f"需恢复: {s['needs_recovery']} | 总推动: {s['total_pushes']} | 总棘轮: {s['total_ratchets']}")
+        logger.info("=== 棘轮队列状态 ===")
+        logger.info(f"总任务: {s['total_tasks']} | 活跃: {s['active']} | 完成: {s['completed']} | 失败: {s['failed']}")
+        logger.info(f"需恢复: {s['needs_recovery']} | 总推动: {s['total_pushes']} | 总棘轮: {s['total_ratchets']}")
         if s["interrupted_tasks"]:
-            print("\n🔴 中断任务:")
+            logger.warning("\n🔴 中断任务:")
             for t in s["interrupted_tasks"]:
-                print(f"  {t['task_id']}: 停在{t['current_step']} 已空闲{t['minutes_idle']}分钟")
+                logger.warning(f"  {t['task_id']}: 停在{t['current_step']} 已空闲{t['minutes_idle']}分钟")
         if s["step_distribution"]:
-            print("\n棘轮分布:")
+            logger.info("\n棘轮分布:")
             for step, count in sorted(s["step_distribution"].items()):
                 label = RATCHET_LABELS.get(step, step)
                 bar = "█" * min(count, 20)
-                print(f"  {label}: {bar} {count}")
+                logger.info(f"  {label}: {bar} {count}")
     elif cmd == "cron":
         # 每1分钟cron模式 — 自动恢复+推动
         auto_recover()
         s = status()
-        print(f"[DRIVER-CRON] {now().isoformat()}")
-        print(f"[DRIVER-CRON] 活跃:{s['active']} 完成:{s['completed']} 需恢复:{s['needs_recovery']}")
+        logger.info(f"[DRIVER-CRON] {now().isoformat()}")
+        logger.info(f"[DRIVER-CRON] 活跃:{s['active']} 完成:{s['completed']} 需恢复:{s['needs_recovery']}")
         if s["needs_recovery"] > 0:
             alert = HERMES / "reports" / "DRIVER_RECOVERY_NEEDED.json"
             alert.write_text(json.dumps(s, ensure_ascii=False, indent=2))
     else:
-        print(f"用法: {sys.argv[0]} [register|advance|recover|interrupt|status|cron] [args]")
-        print("  register <id> <desc> [steps]  - 注册任务到棘轮队列")
-        print("  advance <id> <step> [note]     - 推动棘轮一步")
-        print("  recover                        - 自动恢复所有中断任务")
-        print("  interrupt <id> [reason]        - 标记任务中断")
-        print("  status                         - 队列状态")
-        print("  cron                           - cron模式(自动恢复)")
+        logger.info(f"用法: {sys.argv[0]} [register|advance|recover|interrupt|status|cron] [args]")
+        logger.info("  register <id> <desc> [steps]  - 注册任务到棘轮队列")
+        logger.info("  advance <id> <step> [note]     - 推动棘轮一步")
+        logger.info("  recover                        - 自动恢复所有中断任务")
+        logger.info("  interrupt <id> [reason]        - 标记任务中断")
+        logger.info("  status                         - 队列状态")
+        logger.info("  cron                           - cron模式(自动恢复)")

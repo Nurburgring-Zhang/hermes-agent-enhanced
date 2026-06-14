@@ -459,30 +459,30 @@ def post_conversation_hook(task: str, response: str) -> None:
 # 独立测试
 # ════════════════════════════════════════════════════════════
 if __name__ == "__main__":
-    print("=" * 72)
-    print("Hermes 规则强制执行引擎 v1.0 — 自检")
-    print("=" * 72)
-    print()
+    logger.info("=" * 72)
+    logger.info("Hermes 规则强制执行引擎 v1.0 — 自检")
+    logger.info("=" * 72)
+    logger.info()
 
     # R1 测试
-    print("[R1] 反幻觉测试:")
+    logger.info("[R1] 反幻觉测试:")
     r = AntiHallucination.check_tool_output("read_file", {}, "这个文件应该存在，可能是版本3.2.1")
-    print(f"  推测性输出 → {r['verdict']}")
+    logger.info(f"  推测性输出 → {r['verdict']}")
     r = AntiHallucination.check_tool_output("search_files", {}, "/home/user/config.json")
-    print(f"  无来源声明 → {r['verdict']}")
+    logger.info(f"  无来源声明 → {r['verdict']}")
     r = AntiHallucination.check_response("我已完成了所有采集工作，获取了约50条数据", [{"name": "chat", "args": {}}])
-    print(f"  声称无证据 → {r['verdict']}")
-    print()
+    logger.info(f"  声称无证据 → {r['verdict']}")
+    logger.info()
 
     # R2 测试
-    print("[R2] 前置三查测试:")
+    logger.info("[R2] 前置三查测试:")
     r = PreCheck.execute("测试数据库配置修改")
-    print(f"  session_search: {'✅' if r['checks']['session_search'] else '❌'} | memory: {'✅' if r['checks']['fact_store'] else '❌'} | skill: {'✅' if r['checks']['skill_load'] else '❌'}")
-    print(f"  摘要: {r['summary']}")
-    print()
+    logger.info(f"  session_search: {'✅' if r['checks']['session_search'] else '❌'} | memory: {'✅' if r['checks']['fact_store'] else '❌'} | skill: {'✅' if r['checks']['skill_load'] else '❌'}")
+    logger.info(f"  摘要: {r['summary']}")
+    logger.info()
 
     # R3 测试
-    print("[R3] 改前备份测试:")
+    logger.info("[R3] 改前备份测试:")
     from tempfile import NamedTemporaryFile
     tf = NamedTemporaryFile(delete=False, suffix=".py")
     tf.write(b"test")
@@ -490,38 +490,38 @@ if __name__ == "__main__":
     test_path = tf.name.replace("/tmp/", str(HERMES / "hermes-agent" / ""))
     # 不在保护目录中，预期pass
     r = BackupGuard.pre_tool("write_file", {"path": "/tmp/test.py"})
-    print(f"  /tmp路径 → {r['action']} (预期pass)")
-    print()
+    logger.info(f"  /tmp路径 → {r['action']} (预期pass)")
+    logger.info()
 
     # R4 测试
-    print("[R4] 交付铁律测试:")
+    logger.info("[R4] 交付铁律测试:")
     r = DeliveryEnforcer.check_output("已成功完成所有功能，全部验证通过", [])
-    print(f"  无证据声明 → {r['verdict']}")
+    logger.info(f"  无证据声明 → {r['verdict']}")
     r = DeliveryEnforcer.check_output("接口返回HTTP 200，数据验证通过，返回了137条记录", [{"name": "curl", "args": {"url": "http://test"}}])
-    print(f"  有证据声明 → {r['verdict']}")
-    print()
+    logger.info(f"  有证据声明 → {r['verdict']}")
+    logger.info()
 
     # R5 测试
-    print("[R5] 深度审核测试:")
+    logger.info("[R5] 深度审核测试:")
     r = DeepAuditEnforcer.check_audit_output("audit", {"file": "test.py"}, "代码逻辑有三处问题...")
-    print(f"  仅有代码审查 → {r.get('action', 'pass')}")
+    logger.info(f"  仅有代码审查 → {r.get('action', 'pass')}")
     r = DeepAuditEnforcer.check_audit_output("audit", {"file": "test.py"}, "运行pytest后发现了3个失败...")
-    print(f"  含运行测试 → {r.get('action', 'pass')}")
-    print()
+    logger.info(f"  含运行测试 → {r.get('action', 'pass')}")
+    logger.info()
 
     # 统一入口测试
-    print("[统一拦截] 测试:")
+    logger.info("[统一拦截] 测试:")
     r1 = pre_tool_intercept("write_file", {"path": str(HERMES / "hermes-agent" / "test.py")})
-    print(f"  pre_tool(write_file) → {r1.get('action')}")
+    logger.info(f"  pre_tool(write_file) → {r1.get('action')}")
     r2 = post_tool_intercept("read_file", {}, "可能是版本2.0", "")
-    print(f"  post_tool(read_file) → {r2.get('action')} ({r2.get('rule','none')})")
+    logger.info(f"  post_tool(read_file) → {r2.get('action')} ({r2.get('rule','none')})")
     r3 = post_response_intercept("全部完成，一切正常", [])
-    print(f"  post_response → {r3.get('action')}")
-    print()
+    logger.info(f"  post_response → {r3.get('action')}")
+    logger.info()
 
-    print("=" * 72)
-    print(get_report())
-    print("=" * 72)
+    logger.info("=" * 72)
+    logger.info(get_report())
+    logger.info("=" * 72)
 
 
 # ════════════════════════════════════════════════════════════

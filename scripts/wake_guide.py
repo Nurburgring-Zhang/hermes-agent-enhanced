@@ -231,27 +231,27 @@ if __name__ == "__main__":
     guide = build_wake_guide()
     actions = guide.get("actions_required", [])
 
-    print("🌅 醒来指南")
-    print("=" * 50)
+    logger.info("🌅 醒来指南")
+    logger.info("=" * 50)
     if guide["interrupted_task"]:
         t = guide["interrupted_task"]
-        print(f"🔴 中断任务: {t['task_id']}")
-        print(f"   下一步: {t['next_action']}")
-        print(f"   详情: {t['detail']}")
+        logger.info(f"🔴 中断任务: {t['task_id']}")
+        logger.info(f"   下一步: {t['next_action']}")
+        logger.info(f"   详情: {t['detail']}")
     else:
-        print("✅ 无中断任务")
+        logger.info("✅ 无中断任务")
 
-    print(f"\nAI评分: {guide['ai_scoring_total_today']}条今日采集, {guide['ai_scoring_today']}条已评分")
+    logger.info(f"\nAI评分: {guide['ai_scoring_total_today']}条今日采集, {guide['ai_scoring_today']}条已评分")
     if guide["ai_scoring_pending"] > guide["ai_scoring_total_today"]:
-        print(f"       全库待评分: {guide['ai_scoring_pending']}条(主要为历史数据)")
+        logger.info(f"       全库待评分: {guide['ai_scoring_pending']}条(主要为历史数据)")
 
-    print(f"推送: 今日{guide['push_today']}条 失败{guide['push_fail_today']}条")
-    print(f"Omni循环: {guide['omni_loop_status']}")
-    print(f"齿轮心跳: {guide['gear_heartbeat_minutes']}分钟前")
+    logger.info(f"推送: 今日{guide['push_today']}条 失败{guide['push_fail_today']}条")
+    logger.info(f"Omni循环: {guide['omni_loop_status']}")
+    logger.info(f"齿轮心跳: {guide['gear_heartbeat_minutes']}分钟前")
 
     if actions:
-        print(f"\n📋 待处理: {len(actions)}项")
+        logger.info(f"\n📋 待处理: {len(actions)}项")
         for a in actions:
-            print(f"  {a}")
+            logger.info(f"  {a}")
     else:
-        print("\n✅ 无待处理事项")
+        logger.info("\n✅ 无待处理事项")

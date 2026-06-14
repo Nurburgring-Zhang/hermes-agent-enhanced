@@ -428,19 +428,19 @@ if __name__ == "__main__":
         try:
             cb.call(lambda: (_ for _ in ()).throw(ValueError("fail")))
         except CircuitBreakerOpenError:
-            print(f"  熔断正确开启 (第{i+1}次)")
+            logger.info(f"  熔断正确开启 (第{i+1}次)")
             break
         except ValueError:
-            print(f"  预期失败 #{i+1}")
-    print(f"  状态: {cb.state.value}")
+            logger.info(f"  预期失败 #{i+1}")
+    logger.info(f"  状态: {cb.state.value}")
     mc = MetricsCollector("test")
     mc.record(True, 50); mc.record(True, 150); mc.record(False, 200)
     s = mc.snapshot()
-    print(f"  成功率: {s.success_rate}% 延迟: {s.avg_latency_ms}ms")
+    logger.info(f"  成功率: {s.success_rate}% 延迟: {s.avg_latency_ms}ms")
     engine = UnifiedRuleEnforcer("demo")
     engine.register_rule("allow", lambda d: {"allowed": True})
     engine.rate_limiter_cfg = RateLimiterConfig(max_requests=500, window_seconds=60)
     engine.circuit_breaker = CircuitBreaker("api", CircuitBreakerConfig(fail_max=5))
     r = engine.execute("allow", {"user": "admin"})
-    print(f"  引擎执行: {r}")
-    print("✅ resilience_patterns.py 自检通过")
+    logger.info(f"  引擎执行: {r}")
+    logger.info("✅ resilience_patterns.py 自检通过")

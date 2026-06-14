@@ -264,9 +264,9 @@ if __name__ == "__main__":
         steps = int(sys.argv[4]) if len(sys.argv) > 4 else 1
         req = sys.argv[5] if len(sys.argv) > 5 else ""
         result = register_task(task_id, desc, steps, req)
-        print(f"✅ Task {task_id} registered")
-        print(f"   凭证: {result['signature']}")
-        print(f"   步骤数: {steps}")
+        logger.info(f"✅ Task {task_id} registered")
+        logger.info(f"   凭证: {result['signature']}")
+        logger.info(f"   步骤数: {steps}")
     elif cmd == "sign":
         gear = sys.argv[2]
         task_id = sys.argv[3]
@@ -278,35 +278,35 @@ if __name__ == "__main__":
             claim = {"action": claim_str, "detail": " ".join(sys.argv[5:]) if len(sys.argv) > 5 else ""}
         result = gear_sign(gear, task_id, claim)
         if "error" in result:
-            print(f"❌ {result['error']}")
+            logger.error(f"❌ {result['error']}")
         else:
-            print(f"⚙️ {gear} 签署任务 {task_id}")
-            print(f"   签名: {result['signature']}")
-            print(f"   前齿轮验证: {'✅' if result.get('prev_verified') else '❌'} {result.get('prev_msg','')}")
+            logger.info(f"⚙️ {gear} 签署任务 {task_id}")
+            logger.info(f"   签名: {result['signature']}")
+            logger.info(f"   前齿轮验证: {'✅' if result.get('prev_verified') else '❌'} {result.get('prev_msg','')}")
             if result.get("warning"):
-                print(f"   ⚠️ {result['warning']}")
+                logger.warning(f"   ⚠️ {result['warning']}")
     elif cmd == "health":
         h = chain_health()
-        print("=== 齿轮链健康报告 ===")
-        print(f"总任务数: {h['total_tasks']}")
-        print(f"链断裂: {'🔴' if h['chain_broken'] else '✅'}")
+        logger.info("=== 齿轮链健康报告 ===")
+        logger.info(f"总任务数: {h['total_tasks']}")
+        logger.info(f"链断裂: {'🔴' if h['chain_broken'] else '✅'}")
         if h["broken_chains"]:
             for b in h["broken_chains"]:
-                print(f"  ❌ {b}")
-        print("\n齿轮运行统计:")
+                logger.error(f"  ❌ {b}")
+        logger.info("\n齿轮运行统计:")
         for g, info in sorted(h["gear_health"].items()):
             v = "✅" if info["verified_by_next"] else "⬜"
-            print(f"  {g}: 运行{info['runs']}次, 上次{info['last_run'] or '从未'}, 被后续验证:{v}")
+            logger.info(f"  {g}: 运行{info['runs']}次, 上次{info['last_run'] or '从未'}, 被后续验证:{v}")
     elif cmd == "status":
         s = status()
-        print(json.dumps(s, ensure_ascii=False, indent=2))
+        logger.info(json.dumps(s, ensure_ascii=False, indent=2))
     elif cmd == "list":
         registry = load_registry()
-        print(f"=== 注册中心 ({len(registry['tasks'])}任务) ===")
+        logger.info(f"=== 注册中心 ({len(registry['tasks'])}任务) ===")
         for tid, task in sorted(registry["tasks"].items()):
-            print(f"  {tid}: {task['status']} ({task['completed_steps']}/{task['total_steps']}步)")
+            logger.info(f"  {tid}: {task['status']} ({task['completed_steps']}/{task['total_steps']}步)")
             gears = list(task.get("gear_chain", {}).keys())
             if gears:
-                print(f"    齿轮签署: {', '.join(gears)}")
+                logger.info(f"    齿轮签署: {', '.join(gears)}")
     else:
-        print(f"用法: {sys.argv[0]} [register|sign|health|status|list] [args...]")
+        logger.info(f"用法: {sys.argv[0]} [register|sign|health|status|list] [args...]")

@@ -129,7 +129,7 @@ def log(msg: str):
     ENHANCE_LOG.parent.mkdir(exist_ok=True)
     with open(ENHANCE_LOG, "a", encoding="utf-8") as f:
         f.write(entry + "\n")
-    print(entry)
+    logger.info(entry)
 
 
 def run_script(script: str, args: list = None, timeout: int = 30) -> dict:
@@ -954,4 +954,4 @@ if __name__ == "__main__":
     # 输出简要状态到stdout供gear_master读取
     ok_count = sum(1 for p in result["phases"].values() if isinstance(p, dict) and p.get("ok", False))
     total = sum(1 for p in result["phases"].values() if isinstance(p, dict))
-    print(f"[ENFORCER v2.0] {result['status']} phases={ok_count}/{total}")
+    logger.info(f"[ENFORCER v2.0] {result['status']} phases={ok_count}/{total}")

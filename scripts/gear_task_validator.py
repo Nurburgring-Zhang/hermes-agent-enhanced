@@ -469,37 +469,37 @@ if __name__ == "__main__":
     if cmd == "validate":
         task_id = sys.argv[2] if len(sys.argv) > 2 else None
         result = run_full_validation(task_id)
-        print(json.dumps(result, ensure_ascii=False, indent=2))
+        logger.info(json.dumps(result, ensure_ascii=False, indent=2))
     elif cmd == "verify":
         task_id = sys.argv[2] if len(sys.argv) > 2 else ""
         if task_id:
-            print(json.dumps(verify_gear_chain(task_id), ensure_ascii=False, indent=2))
+            logger.info(json.dumps(verify_gear_chain(task_id), ensure_ascii=False, indent=2))
         else:
-            print("❌ 需要task_id")
+            logger.error("❌ 需要task_id")
     elif cmd == "inspect":
         i1 = inspect_checkpoint_files()
         i2 = inspect_cron_health()
-        print(json.dumps({"files": i1, "cron": i2, "g5": _verify_g5_guardian()},
+        logger.info(json.dumps({"files": i1, "cron": i2, "g5": _verify_g5_guardian()},
                         ensure_ascii=False, indent=2))
     elif cmd == "test":
-        print(json.dumps(test_gear_scripts(), ensure_ascii=False, indent=2))
+        logger.info(json.dumps(test_gear_scripts(), ensure_ascii=False, indent=2))
     elif cmd == "accept":
         task_id = sys.argv[2] if len(sys.argv) > 2 else ""
         checklist = json.loads(sys.argv[3]) if len(sys.argv) > 3 else {}
         if task_id:
-            print(json.dumps(accept_task(task_id, checklist), ensure_ascii=False, indent=2))
+            logger.info(json.dumps(accept_task(task_id, checklist), ensure_ascii=False, indent=2))
     elif cmd == "deliver":
         task_id = sys.argv[2] if len(sys.argv) > 2 else ""
         paths = sys.argv[3].split(",") if len(sys.argv) > 3 else []
         notes = sys.argv[4] if len(sys.argv) > 4 else ""
-        print(json.dumps(deliver_task(task_id, paths, notes), ensure_ascii=False, indent=2))
+        logger.info(json.dumps(deliver_task(task_id, paths, notes), ensure_ascii=False, indent=2))
     elif cmd == "cron":
         # cron模式 — 定期验证所有活跃任务
         result = run_full_validation()
         summary = result["summary"]
-        print(f"[G6-CRON] {now().isoformat()}")
-        print(f"[G6-CRON] Tasks: {summary['total_tasks']} | Chains: {'✅' if summary['all_chains_complete'] else '❌'}")
-        print(f"[G6-CRON] Scripts: {'✅' if summary['all_scripts_pass'] else '❌'} | G5: {'✅' if summary['g5_check'].get('verified') else '❌'}")
+        logger.info(f"[G6-CRON] {now().isoformat()}")
+        logger.info(f"[G6-CRON] Tasks: {summary['total_tasks']} | Chains: {'✅' if summary['all_chains_complete'] else '❌'}")
+        logger.info(f"[G6-CRON] Scripts: {'✅' if summary['all_scripts_pass'] else '❌'} | G5: {'✅' if summary['g5_check'].get('verified') else '❌'}")
         # 如果有失败的，写告警
         if not summary["all_chains_complete"] or not summary["all_scripts_pass"] or not summary["g5_check"].get("verified"):
             import json as _j
@@ -512,11 +512,11 @@ if __name__ == "__main__":
                 "g5_pass": summary["g5_check"].get("verified"),
                 "details": summary
             }, ensure_ascii=False, indent=2))
-            print(f"[G6-CRON] ⚠️ 告警已写入 {alert}")
+            logger.warning(f"[G6-CRON] ⚠️ 告警已写入 {alert}")
         else:
-            print("[G6-CRON] ✅ 全部通过")
+            logger.info("[G6-CRON] ✅ 全部通过")
     else:
-        print(f"""用法: {sys.argv[0]} [validate|verify|inspect|test|accept|deliver|cron] [args]
+        logger.info(f"""用法: {sys.argv[0]} [validate|verify|inspect|test|accept|deliver|cron] [args]
   validate [task_id]  - 完整验证流水线
   verify <task_id>   - 齿轮链审核
   inspect            - 文件+cron检验
