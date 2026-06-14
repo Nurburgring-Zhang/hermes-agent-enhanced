@@ -1,0 +1,15 @@
+cases:
+- id: case_expert_390_1
+  year: 2024
+  title: AI辅助决策系统落地
+  problem: 在哲学与人文领域遇到AI辅助决策系统落地的挑战
+  action: 作为科技史专家，运用专业知识制定方案并执行
+  result: 将AI辅助决策系统应用于管理层，决策准确率提升30%
+  transferable: 在哲学与人文领域的科技史专家经验可迁移至类似场景
+- id: case_expert_390_2
+  year: 2023
+  title: AI客服机器人设计与优化
+  problem: 在哲学与人文领域遇到AI客服机器人设计与优化的挑战
+  action: 作为科技史专家，运用专业知识制定方案并执行
+  result: 设计并训练AI客服机器人，解决率超过85%
+  transferable: 在哲学与人文领域的科技史专家经验可迁移至类似场景

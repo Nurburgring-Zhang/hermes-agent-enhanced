@@ -1,0 +1,15 @@
+cases:
+- id: case_expert_252_1
+  year: 2024
+  title: AIGC在行业的落地应用
+  problem: 在内容与创意领域遇到AIGC在某行业的落地应用的挑战
+  action: 作为科普创作专家，运用专业知识制定方案并执行
+  result: 将AIGC技术应用于电商场景，商品图生成效率提升10倍
+  transferable: 在内容与创意领域的科普创作专家经验可迁移至类似场景
+- id: case_expert_252_2
+  year: 2023
+  title: 企业级AI提示工程最佳实践
+  problem: 在内容与创意领域遇到企业级AI提示工程最佳实践的挑战
+  action: 作为科普创作专家，运用专业知识制定方案并执行
+  result: 建立企业级提示工程框架，将AI内容质量提升60%
+  transferable: 在内容与创意领域的科普创作专家经验可迁移至类似场景

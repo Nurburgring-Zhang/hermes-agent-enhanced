@@ -1,0 +1,26 @@
+skills:
+  - name: "深度学习理论"
+    proficiency: 9
+    last_used: "2026-04"
+    description: "谢瑞阳在深度学习理论领域有30年专业经验"
+
+  - name: "模型架构设计"
+    proficiency: 9
+    last_used: "2026-04"
+    description: "谢瑞阳在模型架构设计领域有30年专业经验"
+
+  - name: "实验设计与分析"
+    proficiency: 9
+    last_used: "2026-04"
+    description: "谢瑞阳在实验设计与分析领域有30年专业经验"
+
+  - name: "PyTorch/JAX框架"
+    proficiency: 9
+    last_used: "2026-04"
+    description: "谢瑞阳在PyTorch/JAX框架领域有30年专业经验"
+
+  - name: "分布式训练"
+    proficiency: 9
+    last_used: "2026-04"
+    description: "谢瑞阳在分布式训练领域有30年专业经验"
+

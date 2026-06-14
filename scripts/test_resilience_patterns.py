@@ -111,7 +111,8 @@ check("metrics 含统计字段", all(k in m for k in ("total","success","failure
 cb4 = CircuitBreaker("cb4-stats", CircuitBreakerConfig(fail_max=5))
 cb4.call(always_ok)
 try: cb4.call(always_fail)
-except: pass
+except Exception as e:
+    logger.warning(f"Unexpected error in test_resilience_patterns.py: {e}")
 s = cb4.stats
 check("stats total=2", s["total"] == 2)
 check("stats success=1", s["success"] == 1)
@@ -124,7 +125,8 @@ def my_listener(name, new_state):
     listener_events.append((name, new_state))
 cb5._listeners.append(my_listener)
 try: cb5.call(always_fail)
-except: pass
+except Exception as e:
+    logger.warning(f"Unexpected error in test_resilience_patterns.py: {e}")
 check("listener 收到 OPEN 事件", len(listener_events) >= 1 and listener_events[-1][1] == "OPEN")
 
 # ═══════════════════════════════════════════════════════════════
@@ -273,6 +275,9 @@ engine.register_rule("deny_rule", lambda d: {"allowed": False})
 
 # 正常执行
 from resilience_patterns import RateLimiterConfig
+import logging
+logger = logging.getLogger(__name__)
+
 
 engine.rate_limiter_cfg = RateLimiterConfig(max_requests=100, window_seconds=60)
 engine.circuit_breaker = CircuitBreaker("engine-cb", CircuitBreakerConfig(fail_max=5))
@@ -295,7 +300,8 @@ engine3.register_rule("failing", lambda d: (_ for _ in ()).throw(ValueError("nop
 engine3.circuit_breaker = CircuitBreaker("cb", CircuitBreakerConfig(fail_max=2, reset_timeout=999))
 for i in range(2):
     try: engine3.execute("failing", {})
-    except: pass
+    except Exception as e:
+        logger.warning(f"Unexpected error in test_resilience_patterns.py: {e}")
 try:
     engine3.execute("failing", {})
     check("熔断后应被拒绝", False, "未抛出异常")

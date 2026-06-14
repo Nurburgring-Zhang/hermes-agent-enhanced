@@ -19,6 +19,9 @@ import json
 import sys
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
+import logging
+logger = logging.getLogger(__name__)
+
 
 HERMES = Path.home() / ".hermes"
 TZ = timezone(timedelta(hours=8))
@@ -179,7 +182,8 @@ def load_registry() -> dict:
         return {"ts": now().isoformat(), "tasks": {}, "updated_at": now().isoformat()}
     try:
         return json.loads(REGISTRY_FILE.read_text())
-    except:
+    except Exception as e:
+        logger.warning(f"Unexpected error in gear_vault.py: {e}")
         return {"ts": now().isoformat(), "tasks": {}, "updated_at": now().isoformat()}
 
 def save_registry(registry: dict):
@@ -269,7 +273,8 @@ if __name__ == "__main__":
         claim_str = sys.argv[4] if len(sys.argv) > 4 else "{}"
         try:
             claim = json.loads(claim_str)
-        except:
+        except Exception as e:
+            logger.warning(f"Unexpected error in gear_vault.py: {e}")
             claim = {"action": claim_str, "detail": " ".join(sys.argv[5:]) if len(sys.argv) > 5 else ""}
         result = gear_sign(gear, task_id, claim)
         if "error" in result:

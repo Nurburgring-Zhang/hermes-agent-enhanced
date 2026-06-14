@@ -1,0 +1,15 @@
+cases:
+- id: case_expert_143_1
+  year: 2024
+  title: 亿级用户平台架构升级
+  problem: 在DevOps与SRE领域遇到亿级用户平台架构升级的挑战
+  action: 作为GitOps专家，运用专业知识制定方案并执行
+  result: 主导某社交平台从单体到微服务的架构升级，支撑10亿用户
+  transferable: 在DevOps与SRE领域的GitOps专家经验可迁移至类似场景
+- id: case_expert_143_2
+  year: 2023
+  title: 高可用系统架构设计
+  problem: 在DevOps与SRE领域遇到高可用系统架构设计的挑战
+  action: 作为GitOps专家，运用专业知识制定方案并执行
+  result: 设计99.99%可用性架构，全年故障时间不超过52分钟
+  transferable: 在DevOps与SRE领域的GitOps专家经验可迁移至类似场景

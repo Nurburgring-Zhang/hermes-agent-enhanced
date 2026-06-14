@@ -1,0 +1,26 @@
+skills:
+  - name: "模型压缩"
+    proficiency: 9
+    last_used: "2026-04"
+    description: "白烨磊在模型压缩领域有26年专业经验"
+
+  - name: "量化/剪枝/蒸馏"
+    proficiency: 9
+    last_used: "2026-04"
+    description: "白烨磊在量化/剪枝/蒸馏领域有26年专业经验"
+
+  - name: "知识蒸馏"
+    proficiency: 9
+    last_used: "2026-04"
+    description: "白烨磊在知识蒸馏领域有26年专业经验"
+
+  - name: "低比特推理"
+    proficiency: 9
+    last_used: "2026-04"
+    description: "白烨磊在低比特推理领域有26年专业经验"
+
+  - name: "模型加速"
+    proficiency: 9
+    last_used: "2026-04"
+    description: "白烨磊在模型加速领域有26年专业经验"
+

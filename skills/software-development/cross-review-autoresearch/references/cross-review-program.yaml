@@ -1,0 +1,80 @@
+# 交叉审核宪法 (program.md)
+# 版本: 1.0.0
+# 此为交叉审核全过程的权限边界和行为规范
+
+version: 1.0.0
+
+scope:
+  allowed_directories:
+    - outputs/cross-review/    # 审核工作区
+    - src/                     # 源代码（如需修改）
+    - tests/                   # 测试代码（如需修改）
+  forbidden_directories:
+    - /etc/
+    - /proc/
+    - /sys/
+    - ~/.ssh/
+    - ~/.config/important-secrets/
+    - /var/log/
+
+actions:
+  allowed:
+    - read_file               # 读取源文件
+    - write_file              # 创建/修改代码
+    - run_tests               # 运行测试套件
+    - git_commit              # 提交代码
+    - install_dependencies    # 安装依赖
+  forbidden:
+    - modify_ci_config        # 修改CI配置
+    - modify_deployment       # 修改部署配置
+    - access_secrets          # 访问密钥
+    - network_egress          # 网络外发（除依赖下载）
+    - modify_program_md       # 修改宪法自身
+
+reviewer_privileges:
+  - read_only                 # 审核者仅读取权限
+  - cannot_modify_code        # 审核者不能修改代码
+  - can_output_report         # 审核者只能输出审核报告
+
+quality:
+  minimum_test_coverage: 0.7          # 最低测试覆盖率
+  maximum_function_length: 60         # 最大函数行数
+  maximum_file_length: 500            # 最大文件行数
+  require_type_annotations: true      # 需要类型注解（Python）
+  require_docstrings: true            # 需要文档字符串
+  require_error_handling: true        # 需要错误处理
+
+  naming_conventions:
+    classes: PascalCase
+    functions: snake_case
+    constants: UPPER_SNAKE_CASE
+    private_methods: _leading_underscore
+
+  commit_conventions:
+    format: "type(scope): description"
+    allowed_types:
+      - feat
+      - fix
+      - refactor
+      - test
+      - docs
+      - chore
+
+testing:
+  framework: pytest
+  required_for:
+    - all_public_functions
+    - error_handling
+    - edge_cases
+  forbidden:
+    - print_based_testing    # 禁止基于print的测试
+    - sleep_based_testing    # 禁止基于sleep的时序测试
+    - skipped_tests          # 禁止跳过的测试（除非注释说明）
+
+  organization:
+    - tests/unit/          # 单元测试
+    - tests/integration/   # 集成测试（如需要）
+
+  naming:
+    test_files: "test_<module>.py"
+    test_functions: "test_<function>_<scenario>"

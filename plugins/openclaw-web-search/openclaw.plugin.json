@@ -1,0 +1,10 @@
+{
+  "id": "openclaw-web-search",
+  "name": "Ollama Web Search",
+  "description": "Web search via ollama",
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {}
+  }
+}

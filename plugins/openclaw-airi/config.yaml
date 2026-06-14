@@ -1,0 +1,63 @@
+# AirI Digital Human Plugin Configuration
+
+# Live2D Model
+model_path: ./assets/haru/haru_greeter_t03.model3.json
+model_scale: 0.5
+model_position_x: 0
+model_position_y: 0
+
+# Server Settings
+web_port: 8080
+websocket_port: 8081
+host: 127.0.0.1
+auto_start_web: true
+
+# Performance
+target_fps: 60
+motion_fps: 30
+expression_fps: 30
+
+# Lip Sync Settings
+lip_sync_enabled: true
+lip_sync_sensitivity: 1.0
+lip_sync_smoothing: 0.5
+audio_sample_rate: 16000
+audio_chunk_size: 1024
+
+# Expression/Emotion Settings
+emotion_mapping:
+  happy: f01
+  sad: f02
+  angry: f03
+  neutral: f00
+  shy: f04
+default_expression: neutral
+expression_transition_time: 0.5
+
+# Motion Settings
+default_pose: Idle_01
+idle_breathing_enabled: true
+breathing_amplitude: 0.02
+breathing_speed: 1.0
+
+# Eye Tracking
+eye_tracking_enabled: true
+eye_tracking_factor: 0.15
+eye_tracking_smoothing: 0.3
+
+# Physics
+physics_enabled: true
+physics_mutation: 1.0
+
+# User Interaction
+auto_blink: true
+blink_interval_min: 2.0
+blink_interval_max: 6.0
+look_at_enabled: true
+random_motion: true
+random_motion_interval: 3.0
+
+# Logging
+log_level: INFO
+debug_physics: false
+log_ws_messages: false

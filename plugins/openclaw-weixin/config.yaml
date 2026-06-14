@@ -1,0 +1,33 @@
+# Weixin Plugin Configuration
+
+# Account management
+accounts_file: accounts.json
+
+# Backend selection (itchat, wxauto, or both)
+backends:
+  - itchat
+
+# QR code login
+qr_timeout: 300
+qr_callback: null  # Optional callback URL for QR delivery
+
+# Message handling
+auto_reply: false
+auto_reply_prefix: "@Bot"
+group_enabled: true
+
+# Filtering
+message_filter: ""  # Regex pattern to filter messages
+
+# File handling
+file_cache_dir: ./file_cache
+max_file_size: 10485760  # 10MB
+
+# Logging
+log_level: INFO
+log_contact_activity: false
+
+# Advanced
+blocked_users: []
+blocked_groups: []
+trusted_users: []

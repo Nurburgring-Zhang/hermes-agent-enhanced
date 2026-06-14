@@ -21,6 +21,9 @@ import json
 import sys
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
+import logging
+logger = logging.getLogger(__name__)
+
 
 HERMES = Path.home() / ".hermes"
 TZ = timezone(timedelta(hours=8))
@@ -78,7 +81,8 @@ def load_queue() -> dict:
         }
     try:
         return json.loads(QUEUE_FILE.read_text())
-    except:
+    except Exception as e:
+        logger.warning(f"Unexpected error in gear_task_driver.py: {e}")
         return {
             "ts": now().isoformat(),
             "tasks": {},
@@ -267,8 +271,8 @@ def check_interrupted(age_minutes: int = 3) -> list:
                         "minutes_idle": round(minutes, 1),
                         "description": task["description"][:80]
                     })
-            except:
-                pass
+            except Exception as e:
+                logger.warning(f"Unexpected error in gear_task_driver.py: {e}")
 
     return interrupted
 

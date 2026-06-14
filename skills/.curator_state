@@ -1,0 +1,9 @@
+{
+  "last_report_path": "/home/administrator/.hermes/logs/curator/20260609-080758",
+  "last_run_at": "2026-06-09T08:07:58.896335+00:00",
+  "last_run_duration_seconds": 399.030014,
+  "last_run_summary": "auto: no changes; llm: ## Curator Summary\n\n### Clusters Processed\n\n**1. Apple/Mac Builtins (5 skills archived)** — `apple-notes`, `apple-reminders`, `findmy`, `imessage`, `macos-computer-use`. All macOS-only bundled built-ins, completely unsupported on this Linux…\narchived 13 skill(s):\n  • codebase-inspection → deep-code-architecture-analysis\n  • kanban-codex-lane → kanban-worker\n  • plan → writing-plans\n  • apple-notes — pruned (stale)\n  • apple-reminders — pruned (stale)\n  • findmy — pruned (stale)\n  • gif-search — pruned (stale)\n  • heartmula — pruned (stale)\n  • imessage — pruned (stale)\n  • macos-computer-use — pruned (stale)\n  … and 3 more\nfull report: hermes curator status\nkeep an umbrella stable: hermes curator pin deep-code-architecture-analysis",
+  "last_run_summary_shown_at": "2026-06-01T18:19:38.399159+00:00",
+  "paused": false,
+  "run_count": 3
+}

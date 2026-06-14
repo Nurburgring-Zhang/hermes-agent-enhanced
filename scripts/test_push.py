@@ -1,16 +1,11 @@
 #!/usr/bin/env python3
 """Tests for hermes_v12_push.py — push engine, no real HTTP requests."""
-import json
-import sqlite3
 import time
 from datetime import datetime, timedelta
-from pathlib import Path
-from unittest.mock import patch, MagicMock
-
-import pytest
+from unittest.mock import MagicMock, patch
 
 import hermes_v12_push as push
-
+import pytest
 
 # ========== Fixtures ==========
 
@@ -164,21 +159,21 @@ class TestScoreQuality:
         """Item with no tags and no keyword matches gets 0."""
         item = {"title": "无关内容", "content": "", "ai_score_total": 0,
                 "personal_match_score": 0, "tags": "", "published_at": ""}
-        monkeypatch.setattr(push, "load_user_keywords", lambda: [])
+        monkeypatch.setattr(push, "load_user_keywords", list)
         score, count = push.score_quality(item)
         assert score == 0.0
 
     def test_ai_score_boosts(self, monkeypatch):
         item = {"title": "AI news", "content": "", "ai_score_total": 80,
                 "personal_match_score": 0, "tags": "AI", "published_at": datetime.now().isoformat()}
-        monkeypatch.setattr(push, "load_user_keywords", lambda: [])
+        monkeypatch.setattr(push, "load_user_keywords", list)
         score, count = push.score_quality(item)
         assert score > 0
 
     def test_p0_tag_bonus(self, monkeypatch):
         item = {"title": "AI breakthrough", "content": "", "ai_score_total": 50,
                 "personal_match_score": 0, "tags": "AI", "published_at": datetime.now().isoformat()}
-        monkeypatch.setattr(push, "load_user_keywords", lambda: [])
+        monkeypatch.setattr(push, "load_user_keywords", list)
         score, count = push.score_quality(item)
         assert score > 0
 
@@ -186,7 +181,7 @@ class TestScoreQuality:
         old_date = (datetime.now() - timedelta(days=30)).strftime("%Y-%m-%d %H:%M:%S")
         item = {"title": "AI", "content": "", "ai_score_total": 50,
                 "personal_match_score": 0, "tags": "AI", "published_at": old_date}
-        monkeypatch.setattr(push, "load_user_keywords", lambda: [])
+        monkeypatch.setattr(push, "load_user_keywords", list)
         score, count = push.score_quality(item)
         # Should have decay factor < 1
         assert score > 0  # still has some score
@@ -194,7 +189,7 @@ class TestScoreQuality:
     def test_no_published_time_decay(self, monkeypatch):
         item = {"title": "AI", "content": "", "ai_score_total": 50,
                 "personal_match_score": 0, "tags": "AI", "published_at": ""}
-        monkeypatch.setattr(push, "load_user_keywords", lambda: [])
+        monkeypatch.setattr(push, "load_user_keywords", list)
         score, count = push.score_quality(item)
         assert score >= 0
 
@@ -230,7 +225,7 @@ class TestIsChinese:
 
 class TestBuildHtmlMessage:
     def test_returns_string(self, monkeypatch):
-        monkeypatch.setattr(push, "load_user_keywords", lambda: [])
+        monkeypatch.setattr(push, "load_user_keywords", list)
         items = [{"title": "Test", "url": "https://ex.com", "platform": "github",
                   "ai_score_total": 75, "tags": "AI"}]
         html = push.build_html_message(items, "14:00")
@@ -240,7 +235,7 @@ class TestBuildHtmlMessage:
         assert "github" in html
 
     def test_contains_platform_stats(self, monkeypatch):
-        monkeypatch.setattr(push, "load_user_keywords", lambda: [])
+        monkeypatch.setattr(push, "load_user_keywords", list)
         items = [
             {"title": "T1", "url": "https://ex.com/1", "platform": "ithome", "ai_score_total": 70, "tags": "AI"},
             {"title": "T2", "url": "https://ex.com/2", "platform": "github", "ai_score_total": 65, "tags": "Dev"},
@@ -250,7 +245,7 @@ class TestBuildHtmlMessage:
         assert "github" in html
 
     def test_title_truncated(self, monkeypatch):
-        monkeypatch.setattr(push, "load_user_keywords", lambda: [])
+        monkeypatch.setattr(push, "load_user_keywords", list)
         long_title = "A" * 100
         items = [{"title": long_title, "url": "https://ex.com", "platform": "test",
                   "ai_score_total": 50, "tags": ""}]
@@ -260,13 +255,13 @@ class TestBuildHtmlMessage:
         assert "A" * 65 in html or "A" * 62 + "..." in html
 
     def test_no_url_uses_span(self, monkeypatch):
-        monkeypatch.setattr(push, "load_user_keywords", lambda: [])
+        monkeypatch.setattr(push, "load_user_keywords", list)
         items = [{"title": "No URL", "url": "", "platform": "test", "ai_score_total": 50, "tags": ""}]
         html = push.build_html_message(items, "14:00")
         assert "<span" in html
 
     def test_marker_for_p0_tag(self, monkeypatch):
-        monkeypatch.setattr(push, "load_user_keywords", lambda: [])
+        monkeypatch.setattr(push, "load_user_keywords", list)
         items = [{"title": "AI News", "url": "https://ex.com", "platform": "test",
                   "ai_score_total": 80, "tags": "AI"}]
         html = push.build_html_message(items, "14:00")
@@ -274,7 +269,7 @@ class TestBuildHtmlMessage:
         assert "🔥" in html or "🎯" in html
 
     def test_html_structure(self, monkeypatch):
-        monkeypatch.setattr(push, "load_user_keywords", lambda: [])
+        monkeypatch.setattr(push, "load_user_keywords", list)
         items = [{"title": "T", "url": "https://ex.com", "platform": "test",
                   "ai_score_total": 50, "tags": ""}]
         html = push.build_html_message(items, "14:00")

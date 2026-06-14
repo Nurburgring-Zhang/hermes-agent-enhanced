@@ -1,0 +1,29 @@
+{
+  "name": "openclaw-superintelligence",
+  "version": "1.0.0",
+  "description": "Advanced reasoning enhancement with multi-model collaboration, self-optimization, and performance monitoring",
+  "author": "OpenClaw Team",
+  "entry_point": "__init__.py",
+  "dependencies": [
+    "aiohttp>=3.8.0",
+    "numpy>=1.24.0",
+    "scikit-learn>=1.3.0"
+  ],
+  "capabilities": ["ai", "reasoning", "optimization", "monitoring"],
+  "hooks": ["ai.before_generate", "ai.after_generate", "ai.tool_use"],
+  "config_schema": {
+    "models": {"type": "array", "description": "Configured models", "default": []},
+    "strategy": {"type": "string", "description": "Collaboration strategy: consensus, voting, cascade", "default": "voting"},
+    "max_iterations": {"type": "integer", "description": "Max self-correction iterations", "default": 3},
+    "auto_optimize": {"type": "boolean", "description": "Enable automatic optimization", "default": true},
+    "optimization_window": {"type": "integer", "description": "Performance history window size", "default": 100},
+    "fallback_model": {"type": "string", "description": "Fallback model ID", "default": "default"},
+    "cache_responses": {"type": "boolean", "description": "Cache model responses", "default": true},
+    "cache_ttl": {"type": "integer", "description": "Cache TTL in seconds", "default": 3600},
+    "concurrency_limit": {"type": "integer", "description": "Max concurrent model calls", "default": 4},
+    "timeout": {"type": "integer", "description": "Model call timeout (seconds)", "default": 30},
+    "min_confidence_threshold": {"type": "number", "description": "Minimum confidence for final output", "default": 0.7},
+    "enable_self_critique": {"type": "boolean", "description": "Enable self-critique loop", "default": true},
+    "log_requests": {"type": "boolean", "description": "Log all model requests", "default": false}
+  }
+}

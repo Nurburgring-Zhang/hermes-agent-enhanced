@@ -25,6 +25,9 @@ import subprocess
 import sys
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
+import logging
+logger = logging.getLogger(__name__)
+
 
 HERMES = Path.home() / ".hermes"
 TZ = timezone(timedelta(hours=8))
@@ -186,8 +189,8 @@ def inspect_checkpoint_files() -> dict:
                     hours = (now() - ts).total_seconds() / 3600
                     if hours > result["oldest_file_hours"]:
                         result["oldest_file_hours"] = round(hours, 1)
-            except:
-                pass
+            except Exception as e:
+                logger.warning(f"Unexpected error in gear_task_validator.py: {e}")
         else:
             result["missing"].append(name)
 
@@ -199,7 +202,8 @@ def inspect_checkpoint_files() -> dict:
             result["consistency"] = "consistent"
         else:
             result["consistency"] = f"mismatch: tc={tc.get('task_id')} vs gc={gc.get('task_id')}"
-    except:
+    except Exception as e:
+        logger.warning(f"Unexpected error in gear_task_validator.py: {e}")
         result["consistency"] = "check_error"
 
     return result

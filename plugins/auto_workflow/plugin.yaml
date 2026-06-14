@@ -1,0 +1,6 @@
+name: auto-workflow
+version: 1.0.0
+description: 自动将用户消息写入workflow待处理队列
+author: Hermes
+hooks:
+  - post_llm_call

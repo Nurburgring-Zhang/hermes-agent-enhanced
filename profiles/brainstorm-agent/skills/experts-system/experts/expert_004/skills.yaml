@@ -1,0 +1,26 @@
+skills:
+  - name: "强化学习"
+    proficiency: 9
+    last_used: "2026-04"
+    description: "苏雨晴在强化学习领域有25年专业经验"
+
+  - name: "RLHF/PPO/DPO"
+    proficiency: 9
+    last_used: "2026-04"
+    description: "苏雨晴在RLHF/PPO/DPO领域有25年专业经验"
+
+  - name: "多智能体系统"
+    proficiency: 9
+    last_used: "2026-04"
+    description: "苏雨晴在多智能体系统领域有25年专业经验"
+
+  - name: "模仿学习"
+    proficiency: 9
+    last_used: "2026-04"
+    description: "苏雨晴在模仿学习领域有25年专业经验"
+
+  - name: "决策Transformer"
+    proficiency: 9
+    last_used: "2026-04"
+    description: "苏雨晴在决策Transformer领域有25年专业经验"
+

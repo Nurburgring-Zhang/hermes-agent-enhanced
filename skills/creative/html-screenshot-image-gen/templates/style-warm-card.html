@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  width: 1080px;
+  background: #f5f0e8;
+  padding: 60px;
+  font-family: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+}
+.card {
+  background: #fffdf8;
+  border-radius: 20px;
+  padding: 50px;
+  box-shadow: 0 4px 30px rgba(0,0,0,0.06);
+}
+h1 {
+  font-size: 36px;
+  color: #3d2b1a;
+  margin-bottom: 40px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+.step-list { list-style: none; }
+.step-item {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 28px;
+  gap: 20px;
+}
+.num {
+  background: #8b6f47;
+  color: white;
+  border-radius: 50%;
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.step-content {
+  flex: 1;
+  padding-top: 8px;
+}
+.step-title {
+  font-size: 22px;
+  color: #3d2b1a;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+.step-desc {
+  font-size: 16px;
+  color: #6b5a46;
+  line-height: 1.6;
+}
+.tag {
+  display: inline-block;
+  background: #f0e8d8;
+  color: #8b6f47;
+  padding: 4px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  margin-top: 10px;
+}
+.footer {
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid #e8ddd0;
+  font-size: 14px;
+  color: #a09080;
+  text-align: center;
+}
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>{{TITLE}}</h1>
+  <ul class="step-list">
+    {{STEPS}}
+  </ul>
+  <div class="footer">{{FOOTER}}</div>
+</div>
+</body>
+</html>

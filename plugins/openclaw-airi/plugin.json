@@ -1,0 +1,28 @@
+{
+  "name": "openclaw-airi",
+  "version": "1.0.0",
+  "description": "AirI digital human plugin with Live2D integration, lip-sync, and emotion control",
+  "author": "OpenClaw Team",
+  "entry_point": "__init__.py",
+  "dependencies": [
+    "websockets>=11.0.0",
+    "aiohttp>=3.8.0",
+    "numpy>=1.24.0",
+    "librosa>=0.10.0"
+  ],
+  "capabilities": ["digital_human", "live2d", "lip_sync", "emotion"],
+  "hooks": [],
+  "config_schema": {
+    "model_path": {"type": "string", "description": "Path to Live2D model", "default": "./assets/haru/haru_greeter_t03.model3.json"},
+    "web_port": {"type": "integer", "description": "Web server port", "default": 8080},
+    "websocket_port": {"type": "integer", "description": "WebSocket port", "default": 8081},
+    "auto_start_web": {"type": "boolean", "description": "Start web server automatically", "default": true},
+    "lip_sync_enabled": {"type": "boolean", "description": "Enable lip-sync", "default": true},
+    "emotion_mapping": {"type": "object", "description": "Emotion to expression mapping", "default": {"happy": "f01", "sad": "f02", "angry": "f03", "neutral": "f00"}},
+    "default_expression": {"type": "string", "description": "Default expression", "default": "neutral"},
+    "default_pose": {"type": "string", "description": "Default pose", "default": "Idle_01"},
+    "animation_speed": {"type": "number", "description": "Animation speed multiplier", "default": 1.0},
+    "breathing_enabled": {"type": "boolean", "description": "Enable breathing animation", "default": true},
+    "eye_tracking_enabled": {"type": "boolean", "description": "Enable eye tracking towards cursor", "default": true}
+  }
+}

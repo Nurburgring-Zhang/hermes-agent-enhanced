@@ -1,0 +1,23 @@
+# Web Search Plugin Configuration
+
+# API Keys (set these to use respective services)
+brave_api_key: ""
+tavily_api_key: ""
+perplexity_api_key: ""
+
+# Feature toggles
+duckduckgo_enabled: true
+cache_enabled: true
+
+# Settings
+cache_ttl: 3600
+max_results_per_source: 10
+deduplicate: true
+summarize: true
+
+# Request settings
+request_timeout: 30
+max_retries: 3
+
+# User agent for requests
+user_agent: "Hermes/1.0 (WebSearch Plugin)"

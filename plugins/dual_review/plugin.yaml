@@ -1,0 +1,6 @@
+name: dual-review
+version: 1.0.0
+description: 双AI互审插件 — 每个delegate_task调用前自动触发监督审查
+author: Hermes
+hooks:
+  - pre_tool_call

@@ -1,0 +1,21 @@
+tools:
+  - name: "PyTorch/JAX/HuggingFace"
+    type: "深度学习框架"
+    description: "核心深度学习框架生态，支持模型开发和训练"
+    access: read_write
+  - name: "Weights & Biases / MLflow"
+    type: "实验跟踪"
+    description: "实验管理和模型版本追踪"
+    access: read_write
+  - name: "Slurm/Kubernetes集群"
+    type: "计算资源"
+    description: "分布式训练和模型部署集群"
+    access: read_write
+  - name: "arXiv / PapersWithCode"
+    type: "学术资源"
+    description: "最新研究论文和开源实现检索"
+    access: read
+  - name: "特定领域工具集"
+    type: "专业工具"
+    description: "数据标注专家所需的领域专用工具链"
+    access: read_write

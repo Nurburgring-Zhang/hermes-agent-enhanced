@@ -1,0 +1,15 @@
+cases:
+- id: case_expert_138_1
+  year: 2024
+  title: 高性能分布式数据库内核开发
+  problem: 在移动与IoT领域遇到高性能分布式数据库内核开发的挑战
+  action: 作为工业物联网专家，运用专业知识制定方案并执行
+  result: 核心开发分布式数据库存储引擎，性能达到行业领先水平
+  transferable: 在移动与IoT领域的工业物联网专家经验可迁移至类似场景
+- id: case_expert_138_2
+  year: 2023
+  title: 开源项目核心贡献者
+  problem: 在移动与IoT领域遇到开源项目核心贡献者的挑战
+  action: 作为工业物联网专家，运用专业知识制定方案并执行
+  result: 某知名开源项目的核心维护者，项目star数5万+
+  transferable: 在移动与IoT领域的工业物联网专家经验可迁移至类似场景

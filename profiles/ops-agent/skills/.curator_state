@@ -1,0 +1,9 @@
+{
+  "last_report_path": "/home/administrator/.hermes/logs/curator/20260601-181938",
+  "last_run_at": "2026-06-01T18:19:38.399159+00:00",
+  "last_run_duration_seconds": 193.536457,
+  "last_run_summary": "auto: no changes; llm: ## Consolidation Summary\n\n**11 skills archived into 7 umbrellas. Starting with 27 agent-created skills → ending with 16 remaining.**\n\n### Clusters processed:\n\n**1. Racing Game / Three.js (5→1)**\n- Umbrella: `threejs-game-development` (gamin…\narchived 12 skill(s):\n  • api-batch-data-processing → massive-prompt-generation\n  • comfyui-custom-node → comfyui-node-development\n  • context-index-resolve → infinite-dialogue-context-management\n  • cron-audit-and-cleanup → system-code-consolidation\n  • extreme-code-audit-triple-agent → deep-code-architecture-analysis\n  • hermes-system-self-audit → hermes-agent-operations\n  • open-source-racing-game-migration → threejs-game-development\n  • racing-game-physics-migration → threejs-game-development\n  • racing-game-threejs-build → threejs-game-development\n  • story-sense-framework → prompt-library-node\n  … and 2 more\nfull report: hermes curator status\nkeep an umbrella stable: hermes curator pin comfyui-node-development",
+  "last_run_summary_shown_at": "2026-06-01T18:19:38.399159+00:00",
+  "paused": false,
+  "run_count": 2
+}

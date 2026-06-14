@@ -1,0 +1,173 @@
+# Agent Company 12部门 → MCP工具映射表
+# 自动生成时间: 2026-05-08
+# 基于 /home/administrator/.hermes/agents_company/employees/ 下 130 位员工配置
+
+dept_mcp_mapping:
+  01_marketing:
+    dept_name: 市场营销部
+    display: 市场
+    count: 5
+    base_tools: [web_search, data_analysis, text_processing, planning]
+    enhance_tools: [creative, skills]
+    tool_weights:
+      web_search: 1.2
+      data_analysis: 1.3
+      text_processing: 1.1
+      planning: 1.2
+      creative: 0.8
+    roles:
+      market_director:  # 市场总监 — 傅浩轩
+        tool_weights:
+          data_analysis: 1.5
+          planning: 1.3
+        tool_scope_enhance: [browser]
+      brand_manager:     # 品牌经理 — 雷思颖
+        tool_weights:
+          creative: 1.5
+          text_processing: 1.3
+        tool_scope_enhance: [vision]
+      content_operator:  # 内容运营 — 陶乐怡
+        tool_weights:
+          creative: 1.5
+          text_processing: 1.4
+        tool_scope_enhance: [creative]
+      data_operator:     # 数据运营 — 徐立成
+        tool_weights:
+          data_analysis: 1.5
+          web_search: 1.2
+      channel_manager:   # 渠道经理 — 朱煜城
+        tool_weights:
+          web_search: 1.4
+          planning: 1.3
+        tool_scope_enhance: [browser]
+
+  02_design:
+    dept_name: 设计部
+    display: 设计
+    count: 8
+    base_tools: [creative, vision, text_processing]
+    enhance_tools: [image_gen, file_operations, web_search]
+    tool_weights:
+      creative: 1.4
+      vision: 1.3
+      image_gen: 1.2
+      file_operations: 1.1
+
+  03_product:
+    dept_name: 产品部
+    display: 产品
+    count: 4
+    base_tools: [web_search, data_analysis, planning, text_processing]
+    enhance_tools: [skills, session_search]
+    tool_weights:
+      web_search: 1.2
+      data_analysis: 1.3
+      planning: 1.4
+      text_processing: 1.1
+
+  04_rd:
+    dept_name: 研发部
+    display: 研发
+    count: 6
+    base_tools: [terminal, code_review, data_analysis, web_search]
+    enhance_tools: [git, todo, skills]
+    tool_weights:
+      terminal: 1.4
+      code_review: 1.3
+      data_analysis: 1.2
+      git: 1.2
+
+  05_pmo:
+    dept_name: 项目管理部
+    display: 项目
+    count: 5
+    base_tools: [planning, text_processing, session_search, skills]
+    enhance_tools: [web_search, data_analysis]
+    tool_weights:
+      planning: 1.5
+      session_search: 1.3
+      text_processing: 1.2
+
+  06_dev:
+    dept_name: 开发部
+    display: 开发
+    count: 30
+    base_tools: [terminal, code_review, git, data_analysis]
+    enhance_tools: [web_search, todo, skills]
+    tool_weights:
+      terminal: 1.4
+      code_review: 1.3
+      git: 1.3
+      todo: 1.1
+
+  07_support_proj:
+    dept_name: 技术支持部
+    display: 技术支持
+    count: 20
+    base_tools: [web_search, terminal, text_processing, skills]
+    enhance_tools: [session_search, planning, data_analysis]
+    tool_weights:
+      web_search: 1.3
+      terminal: 1.2
+      session_search: 1.2
+      skills: 1.1
+
+  08_engineering:
+    dept_name: 工程架构部
+    display: 工程架构
+    count: 23
+    base_tools: [terminal, code_review, planning, web_search]
+    enhance_tools: [skills, data_analysis, git]
+    tool_weights:
+      terminal: 1.3
+      code_review: 1.3
+      planning: 1.2
+      skills: 1.2
+
+  09_qa:
+    dept_name: 质量测试部
+    display: 质量测试
+    count: 8
+    base_tools: [terminal, code_review, data_analysis, skills]
+    enhance_tools: [web_search, text_processing]
+    tool_weights:
+      terminal: 1.3
+      code_review: 1.4
+      data_analysis: 1.2
+      skills: 1.1
+
+  10_media:
+    dept_name: 媒体部
+    display: 媒体
+    count: 7
+    base_tools: [text_processing, creative, web_search, vision]
+    enhance_tools: [data_analysis, skills]
+    tool_weights:
+      text_processing: 1.3
+      creative: 1.3
+      vision: 1.2
+      web_search: 1.1
+
+  11_support:
+    dept_name: 行政支持部
+    display: 行政支持
+    count: 6
+    base_tools: [text_processing, planning, skills, session_search]
+    enhance_tools: [web_search, file_operations]
+    tool_weights:
+      text_processing: 1.3
+      planning: 1.2
+      skills: 1.2
+      session_search: 1.1
+
+  12_sales:
+    dept_name: 销售部
+    display: 销售
+    count: 8
+    base_tools: [web_search, data_analysis, text_processing, planning]
+    enhance_tools: [skills, session_search]
+    tool_weights:
+      web_search: 1.3
+      data_analysis: 1.2
+      planning: 1.2
+      text_processing: 1.1

@@ -1,0 +1,15 @@
+cases:
+- id: case_expert_010_1
+  year: 2024
+  title: AIGC在行业的落地应用
+  problem: 在AI与机器学习领域遇到AIGC在某行业的落地应用的挑战
+  action: 作为多模态AI专家，运用专业知识制定方案并执行
+  result: 将AIGC技术应用于电商场景，商品图生成效率提升10倍
+  transferable: 在AI与机器学习领域的多模态AI专家经验可迁移至类似场景
+- id: case_expert_010_2
+  year: 2023
+  title: AI内容生成平台架构设计
+  problem: 在AI与机器学习领域遇到AI内容生成平台架构设计的挑战
+  action: 作为多模态AI专家，运用专业知识制定方案并执行
+  result: 设计多模态AI内容生成平台，支持文/图/视频一键生成
+  transferable: 在AI与机器学习领域的多模态AI专家经验可迁移至类似场景

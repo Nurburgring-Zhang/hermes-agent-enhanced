@@ -1,0 +1,25 @@
+{
+  "name": "openclaw-web-search",
+  "version": "1.0.0",
+  "description": "Web search plugin with support for Brave, DuckDuckGo, Tavily, and Perplexity APIs",
+  "author": "OpenClaw Team",
+  "entry_point": "__init__.py",
+  "dependencies": [
+    "aiohttp>=3.8.0",
+    "beautifulsoup4>=4.12.0",
+    "lxml>=4.9.0"
+  ],
+  "capabilities": ["web_search", "search", "information_retrieval"],
+  "hooks": [],
+  "config_schema": {
+    "brave_api_key": {"type": "string", "description": "Brave Search API key", "default": ""},
+    "duckduckgo_enabled": {"type": "boolean", "description": "Enable DuckDuckGo", "default": true},
+    "tavily_api_key": {"type": "string", "description": "Tavily API key", "default": ""},
+    "perplexity_api_key": {"type": "string", "description": "Perplexity API key", "default": ""},
+    "cache_enabled": {"type": "boolean", "description": "Enable caching", "default": true},
+    "cache_ttl": {"type": "integer", "description": "Cache TTL in seconds", "default": 3600},
+    "max_results_per_source": {"type": "integer", "description": "Max results per source", "default": 10},
+    "deduplicate": {"type": "boolean", "description": "Deduplicate results", "default": true},
+    "summarize": {"type": "boolean", "description": "Generate summaries", "default": true}
+  }
+}

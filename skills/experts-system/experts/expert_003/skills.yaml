@@ -1,0 +1,26 @@
+skills:
+  - name: "计算机视觉"
+    proficiency: 9
+    last_used: "2026-04"
+    description: "谢瑾瑜在计算机视觉领域有27年专业经验"
+
+  - name: "图像/视频理解"
+    proficiency: 9
+    last_used: "2026-04"
+    description: "谢瑾瑜在图像/视频理解领域有27年专业经验"
+
+  - name: "检测/分割/跟踪"
+    proficiency: 9
+    last_used: "2026-04"
+    description: "谢瑾瑜在检测/分割/跟踪领域有27年专业经验"
+
+  - name: "3D视觉"
+    proficiency: 9
+    last_used: "2026-04"
+    description: "谢瑾瑜在3D视觉领域有27年专业经验"
+
+  - name: "视觉生成"
+    proficiency: 9
+    last_used: "2026-04"
+    description: "谢瑾瑜在视觉生成领域有27年专业经验"
+

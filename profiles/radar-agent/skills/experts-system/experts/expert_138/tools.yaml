@@ -1,0 +1,9 @@
+tools:
+  - name: "专业工具链"
+    type: "管理与沟通工具"
+    description: "远程协作的领域专用工具"
+    access: read_write
+  - name: "分析评估工具"
+    type: "分析工具"
+    description: "专业分析和效果评估"
+    access: read_write

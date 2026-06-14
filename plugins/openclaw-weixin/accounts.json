@@ -1,0 +1,13 @@
+{
+  "accounts": [
+    {
+      "id": "personal",
+      "name": "Personal WeChat",
+      "backend": "itchat",
+      "auto_login": false,
+      "qr_path": "./qr.png",
+      "session_path": "./session.pkl",
+      "status": "inactive"
+    }
+  ]
+}

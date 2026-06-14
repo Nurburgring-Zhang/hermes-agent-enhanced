@@ -1,0 +1,15 @@
+cases:
+- id: case_expert_321_1
+  year: 2024
+  title: 国际品牌视觉系统升级
+  problem: 在艺术与设计领域遇到某国际品牌视觉系统升级的挑战
+  action: 作为UI设计专家，运用专业知识制定方案并执行
+  result: 主导某国际品牌的视觉系统升级，覆盖30+国家市场
+  transferable: 在艺术与设计领域的UI设计专家经验可迁移至类似场景
+- id: case_expert_321_2
+  year: 2023
+  title: 设计系统从0到1建设
+  problem: 在艺术与设计领域遇到设计系统从0到1建设的挑战
+  action: 作为UI设计专家，运用专业知识制定方案并执行
+  result: 建设企业级设计系统，覆盖200+组件，服务50+产品线
+  transferable: 在艺术与设计领域的UI设计专家经验可迁移至类似场景

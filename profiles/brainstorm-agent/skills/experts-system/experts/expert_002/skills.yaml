@@ -1,0 +1,26 @@
+skills:
+  - name: "NLP模型架构"
+    proficiency: 9
+    last_used: "2026-04"
+    description: "洪伟奇在NLP模型架构领域有33年专业经验"
+
+  - name: "Transformer/Attention"
+    proficiency: 9
+    last_used: "2026-04"
+    description: "洪伟奇在Transformer/Attention领域有33年专业经验"
+
+  - name: "预训练/微调"
+    proficiency: 9
+    last_used: "2026-04"
+    description: "洪伟奇在预训练/微调领域有33年专业经验"
+
+  - name: "文本生成/理解"
+    proficiency: 9
+    last_used: "2026-04"
+    description: "洪伟奇在文本生成/理解领域有33年专业经验"
+
+  - name: "评估方法论"
+    proficiency: 9
+    last_used: "2026-04"
+    description: "洪伟奇在评估方法论领域有33年专业经验"
+

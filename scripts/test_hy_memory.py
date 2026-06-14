@@ -13,12 +13,9 @@ test_hy_memory.py — Hy-Memory 三层记忆系统 + 记忆引擎 + 进化引擎
 """
 
 import json
-import logging
-import re
 import sqlite3
 import sys
 from pathlib import Path
-from unittest.mock import MagicMock, patch
 
 import pytest
 
@@ -137,7 +134,7 @@ def memory_db(tmp_path):
 def monkey_l1(monkeypatch, memory_db):
     """Monkeypatch L1 提取器中的数据库路径指向 tmp_path"""
     import l1_extractor as l1
-    monkeypatch.setattr(l1, 'ACTIVE_MEMORY_DB', memory_db)
+    monkeypatch.setattr(l1, "ACTIVE_MEMORY_DB", memory_db)
     return monkeypatch
 
 
@@ -145,7 +142,7 @@ def monkey_l1(monkeypatch, memory_db):
 def monkey_l2(monkeypatch, memory_db):
     """Monkeypatch L2 中的数据库路径"""
     import l2_scene_scheduler as l2
-    monkeypatch.setattr(l2, 'ACTIVE_MEMORY_DB', memory_db)
+    monkeypatch.setattr(l2, "ACTIVE_MEMORY_DB", memory_db)
     return monkeypatch
 
 
@@ -153,7 +150,7 @@ def monkey_l2(monkeypatch, memory_db):
 def monkey_l3(monkeypatch, memory_db):
     """Monkeypatch L3 中的数据库路径"""
     import l3_persona_scheduler as l3
-    monkeypatch.setattr(l3, 'ACTIVE_MEMORY_DB', memory_db)
+    monkeypatch.setattr(l3, "ACTIVE_MEMORY_DB", memory_db)
     return monkeypatch
 
 
@@ -162,13 +159,13 @@ def monkey_engine(monkeypatch, memory_db):
     """Monkeypatch memory_engine 中的 HERMES 指向 tmp_path 父目录"""
     import memory_engine as me
     fake_hermes = memory_db.parent
-    monkeypatch.setattr(me, 'HERMES', fake_hermes)
-    monkeypatch.setattr(me, 'LOG', fake_hermes / 'logs' / 'memory_engine.log')
+    monkeypatch.setattr(me, "HERMES", fake_hermes)
+    monkeypatch.setattr(me, "LOG", fake_hermes / "logs" / "memory_engine.log")
 
     # 确保 logs 目录存在
     (fake_hermes / "logs").mkdir(parents=True, exist_ok=True)
     # 让 init_memory_db 不做任何事（手动创建了表）
-    monkeypatch.setattr(me, 'init_memory_db', lambda db_path=None: [])
+    monkeypatch.setattr(me, "init_memory_db", lambda db_path=None: [])
     return monkeypatch
 
 
@@ -205,7 +202,7 @@ class TestL1LLMExtractor:
     def test_parse_llm_result_valid_json(self):
         from l1_extractor import L1LLMExtractor
         ext = L1LLMExtractor()
-        llm_output = '''[
+        llm_output = """[
             {
                 "scene_name": "编程讨论",
                 "message_ids": [1,2],
@@ -213,7 +210,7 @@ class TestL1LLMExtractor:
                     {"content": "用户喜欢Python编程", "type": "persona", "priority": 80}
                 ]
             }
-        ]'''
+        ]"""
         facts = ext._parse_llm_result(llm_output, "对话")
         assert len(facts) == 1
         assert facts[0]["fact"] == "用户喜欢Python编程"
@@ -223,7 +220,7 @@ class TestL1LLMExtractor:
     def test_parse_llm_result_with_code_fence(self):
         from l1_extractor import L1LLMExtractor
         ext = L1LLMExtractor()
-        llm_output = "```json\n[{\"scene_name\":\"测试\",\"message_ids\":[1],\"memories\":[{\"content\":\"用户要求AI用中文回答\",\"type\":\"instruction\",\"priority\":90}]}]\n```"
+        llm_output = '```json\n[{"scene_name":"测试","message_ids":[1],"memories":[{"content":"用户要求AI用中文回答","type":"instruction","priority":90}]}]\n```'
         facts = ext._parse_llm_result(llm_output, "对话")
         assert len(facts) == 1
         assert facts[0]["type"] == "instruction"
@@ -256,7 +253,7 @@ class TestL1LLMExtractor:
         import urllib.request
         def fake_urlopen(req, timeout=2):
             raise OSError("Connection refused")
-        monkeypatch.setattr(urllib.request, 'urlopen', fake_urlopen)
+        monkeypatch.setattr(urllib.request, "urlopen", fake_urlopen)
         backend = ext._detect_llm_backend()
         assert backend == "delegate"
 
@@ -264,9 +261,9 @@ class TestL1LLMExtractor:
         from l1_extractor import L1LLMExtractor
         ext = L1LLMExtractor("auto")
         # 模拟检测到 delegate
-        monkeypatch.setattr(ext, '_detect_llm_backend', lambda: "delegate")
+        monkeypatch.setattr(ext, "_detect_llm_backend", lambda: "delegate")
         # delegate 调用返回 None
-        monkeypatch.setattr(ext, '_call_delegate_llm', lambda p: None)
+        monkeypatch.setattr(ext, "_call_delegate_llm", lambda p: None)
         result = ext.extract_with_llm("hello world")
         assert result == []
 
@@ -381,7 +378,7 @@ class TestL1Extractor:
         from l1_extractor import L1Extractor
         ext = L1Extractor(llm_mode="delegate")
         # 让 LLM 提取失败
-        monkeypatch.setattr(ext.llm_extractor, 'extract_with_llm',
+        monkeypatch.setattr(ext.llm_extractor, "extract_with_llm",
                             lambda *a, **kw: [])
         result = ext.extract("我喜欢编码", use_llm=True)
         assert result["method"] in ("rule", "none")
@@ -426,10 +423,10 @@ class TestL2SceneScheduler:
     def test_consume_llm_result_valid(self, monkey_l2):
         from l2_scene_scheduler import L2SceneScheduler
         s = L2SceneScheduler()
-        llm_out = '''[
+        llm_out = """[
             {"name": "Python开发", "description": "Python相关工作",
              "keywords": ["python", "flask"], "frequency": 5, "confidence": 0.8}
-        ]'''
+        ]"""
         scenes = s.consume_llm_result(llm_out, [])
         assert len(scenes) == 1
         assert scenes[0]["name"] == "Python开发"
@@ -437,10 +434,10 @@ class TestL2SceneScheduler:
     def test_consume_llm_result_dedup(self, monkey_l2):
         from l2_scene_scheduler import L2SceneScheduler
         s = L2SceneScheduler()
-        llm_out = '''[
+        llm_out = """[
             {"name": "Dev", "description": "d1", "keywords": [], "frequency": 1, "confidence": 0.5},
             {"name": "Dev", "description": "d2", "keywords": [], "frequency": 2, "confidence": 0.6}
-        ]'''
+        ]"""
         scenes = s.consume_llm_result(llm_out, [])
         assert len(scenes) == 1  # 去重
 
@@ -541,14 +538,14 @@ class TestL3PersonaScheduler:
     def test_consume_llm_result_valid(self, monkey_l3):
         from l3_persona_scheduler import L3PersonaScheduler
         s = L3PersonaScheduler()
-        llm_out = '''{
+        llm_out = """{
             "archetype": "Developer",
             "basic_info": {"role": "developer", "domain": "tech", "mode": "interactive"},
             "interests": ["Python", "AI"],
             "protocol": {"comm_style": "technical", "quality_standard": "high", "workflow_pref": "agile"},
             "core": {"decision_logic": "logic", "driving_force": "curiosity", "values": ["quality", "speed"]},
             "summary": "A developer focused on Python and AI"
-        }'''
+        }"""
         persona = s.consume_llm_result(llm_out)
         assert persona is not None
         assert persona["archetype"] == "Developer"
@@ -695,7 +692,7 @@ class TestMemoryCore:
 
 class TestHierarchicalMemory:
     def test_store_and_retrieve_event(self, monkey_engine, memory_db):
-        from memory_engine import HierarchicalMemory, EventEntry
+        from memory_engine import EventEntry, HierarchicalMemory
         hm = HierarchicalMemory(db_path=memory_db)
         event = EventEntry(event_id="e1", timestamp="2024-01-01T00:00:00",
                            fact_summary="test", relation_summary="",
@@ -710,7 +707,7 @@ class TestHierarchicalMemory:
         assert rows[0][3] == "test"  # fact_summary
 
     def test_consolidate_knowledge(self, monkey_engine, memory_db):
-        from memory_engine import HierarchicalMemory, EventEntry
+        from memory_engine import EventEntry, HierarchicalMemory
         hm = HierarchicalMemory(db_path=memory_db)
         events = [
             EventEntry(event_id="e1", timestamp="2024-01-01T00:00:00",
@@ -732,7 +729,7 @@ class TestHierarchicalMemory:
             assert len(knowledge) >= 1 or len(rows) >= 1
 
     def test_archive_old_events(self, monkey_engine, memory_db):
-        from memory_engine import HierarchicalMemory, EventEntry
+        from memory_engine import EventEntry, HierarchicalMemory
         hm = HierarchicalMemory(db_path=memory_db)
         event = EventEntry(event_id="e_old", timestamp="2020-01-01T00:00:00",
                            fact_summary="old", relation_summary="",
@@ -747,7 +744,7 @@ class TestHierarchicalMemory:
         assert cnt >= 1
 
     def test_prune_expired(self, monkey_engine, memory_db):
-        from memory_engine import HierarchicalMemory, EventEntry
+        from memory_engine import EventEntry, HierarchicalMemory
         hm = HierarchicalMemory(db_path=memory_db)
         event = EventEntry(event_id="e_exp", timestamp="2024-01-01T00:00:00",
                            fact_summary="expired", relation_summary="",
@@ -771,7 +768,7 @@ class TestHierarchicalMemory:
         row = conn2.execute("SELECT * FROM layer2_knowledge WHERE knowledge_id='k1'").fetchone()
         conn2.close()
         assert row is not None
-        assert row[2] == 'tech'  # domain
+        assert row[2] == "tech"  # domain
 
     def test_get_stats(self, monkey_engine, memory_db):
         from memory_engine import HierarchicalMemory

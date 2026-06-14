@@ -14,7 +14,7 @@ test_context.py — 上下文系统综合测试
 import json
 import sqlite3
 import sys
-from datetime import datetime, timedelta, timezone
+from datetime import datetime
 from pathlib import Path
 
 import pytest
@@ -134,7 +134,7 @@ def hermes_dir(tmp_path):
 def monkey_packer(monkeypatch, hermes_dir):
     """Monkeypatch context_packer 中的 HERMES 路径"""
     import context_packer as cp
-    monkeypatch.setattr(cp, 'HERMES', hermes_dir)
+    monkeypatch.setattr(cp, "HERMES", hermes_dir)
     return monkeypatch
 
 
@@ -142,14 +142,14 @@ def monkey_packer(monkeypatch, hermes_dir):
 def monkey_guardian(monkeypatch, hermes_dir):
     """Monkeypatch context_guardian 中的路径"""
     import context_guardian as cg
-    monkeypatch.setattr(cg, 'HERMES', hermes_dir)
+    monkeypatch.setattr(cg, "HERMES", hermes_dir)
     # Also patch module-level constants that were computed at import time
-    monkeypatch.setattr(cg, 'STATE_DB', hermes_dir / "state.db")
-    monkeypatch.setattr(cg, 'INTEL_DB', hermes_dir / "intelligence.db")
-    monkeypatch.setattr(cg, 'MEMORY_DB', hermes_dir / "active_memory.db")
-    monkeypatch.setattr(cg, 'AUDIT_SNAPSHOT', hermes_dir / "reports" / "audit_snapshot.json")
-    monkeypatch.setattr(cg, 'TASK_FILE', hermes_dir / "task_current.json")
-    monkeypatch.setattr(cg, 'TRACKER_FILE', hermes_dir / "task_tracker.json")
+    monkeypatch.setattr(cg, "STATE_DB", hermes_dir / "state.db")
+    monkeypatch.setattr(cg, "INTEL_DB", hermes_dir / "intelligence.db")
+    monkeypatch.setattr(cg, "MEMORY_DB", hermes_dir / "active_memory.db")
+    monkeypatch.setattr(cg, "AUDIT_SNAPSHOT", hermes_dir / "reports" / "audit_snapshot.json")
+    monkeypatch.setattr(cg, "TASK_FILE", hermes_dir / "task_current.json")
+    monkeypatch.setattr(cg, "TRACKER_FILE", hermes_dir / "task_tracker.json")
     # Create needed dirs
     (hermes_dir / "reports").mkdir(parents=True, exist_ok=True)
     (hermes_dir / "logs").mkdir(parents=True, exist_ok=True)
@@ -207,10 +207,10 @@ def memory_db(hermes_dir):
 def monkey_failsafe(monkeypatch, hermes_dir):
     """Monkeypatch context_failsafe 中的路径"""
     import context_failsafe as cf
-    monkeypatch.setattr(cf, 'HERMES', hermes_dir)
+    monkeypatch.setattr(cf, "HERMES", hermes_dir)
     # Also patch module-level constants
-    monkeypatch.setattr(cf, 'RECOVERY_PACK', hermes_dir / "reports" / "recovery_pack.json")
-    monkeypatch.setattr(cf, 'RECOVERY_HISTORY', hermes_dir / "reports" / "recovery_history.log")
+    monkeypatch.setattr(cf, "RECOVERY_PACK", hermes_dir / "reports" / "recovery_pack.json")
+    monkeypatch.setattr(cf, "RECOVERY_HISTORY", hermes_dir / "reports" / "recovery_history.log")
     (hermes_dir / "reports").mkdir(parents=True, exist_ok=True)
     (hermes_dir / "logs").mkdir(parents=True, exist_ok=True)
     return monkeypatch
@@ -220,7 +220,7 @@ def monkey_failsafe(monkeypatch, hermes_dir):
 def monkey_segment(monkeypatch, hermes_dir):
     """Monkeypatch segment_manager 中的路径"""
     import segment_manager as sm
-    monkeypatch.setattr(sm, 'HERMES', hermes_dir)
+    monkeypatch.setattr(sm, "HERMES", hermes_dir)
     return monkeypatch
 
 
@@ -359,14 +359,14 @@ class TestContextGuardian:
         assert result is None
 
     def test_get_resume_point_interrupted(self, monkey_guardian, hermes_dir):
-        from context_guardian import mark_task, get_resume_point
+        from context_guardian import get_resume_point, mark_task
         mark_task("task_002", "interrupted", "中断测试")
         result = get_resume_point()
         assert result is not None
         assert result["task_id"] == "task_002"
 
     def test_get_resume_point_completed_returns_none(self, monkey_guardian, hermes_dir):
-        from context_guardian import mark_task, get_resume_point
+        from context_guardian import get_resume_point, mark_task
         mark_task("task_003", "completed")
         result = get_resume_point()
         # completed 状态下返回 None
@@ -397,9 +397,9 @@ class TestContextGuardian:
         assert len(ts) > 10  # ISO 格式
 
     def test_full_cycle(self, monkey_guardian, hermes_dir, intel_db, memory_db, capsys):
-        from context_guardian import full_cycle
         # 重置 gear_signed 状态
         import context_guardian as cg
+        from context_guardian import full_cycle
         cg._gear_signed = False
 
         result = full_cycle()

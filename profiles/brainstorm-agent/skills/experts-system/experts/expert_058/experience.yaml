@@ -1,0 +1,15 @@
+cases:
+- id: case_expert_058_1
+  year: 2024
+  title: 金融系统安全审计与加固
+  problem: 在安全与隐私领域遇到某金融系统安全审计与加固的挑战
+  action: 作为IoT安全专家，运用专业知识制定方案并执行
+  result: 发现并修复200+安全漏洞，通过等保三级认证
+  transferable: 在安全与隐私领域的IoT安全专家经验可迁移至类似场景
+- id: case_expert_058_2
+  year: 2023
+  title: 红蓝对抗演练实战
+  problem: 在安全与隐私领域遇到红蓝对抗演练实战的挑战
+  action: 作为IoT安全专家，运用专业知识制定方案并执行
+  result: 主导多次红蓝对抗演练，将系统防御能力提升3个等级
+  transferable: 在安全与隐私领域的IoT安全专家经验可迁移至类似场景

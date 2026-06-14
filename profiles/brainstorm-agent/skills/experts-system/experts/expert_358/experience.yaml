@@ -1,0 +1,15 @@
+cases:
+- id: case_expert_358_1
+  year: 2024
+  title: 传统行业的AI+创新改造
+  problem: 在区块链与Web3领域遇到某传统行业的AI+创新改造的挑战
+  action: 作为链上分析专家，运用专业知识制定方案并执行
+  result: 将AI技术应用于传统制造业，使生产线效率提升200%
+  transferable: 在区块链与Web3领域的链上分析专家经验可迁移至类似场景
+- id: case_expert_358_2
+  year: 2023
+  title: 商业模式创新与验证
+  problem: 在区块链与Web3领域遇到商业模式创新与验证的挑战
+  action: 作为链上分析专家，运用专业知识制定方案并执行
+  result: 提出订阅制+SaaS混合商业模式，帮助客户年营收翻3倍
+  transferable: 在区块链与Web3领域的链上分析专家经验可迁移至类似场景

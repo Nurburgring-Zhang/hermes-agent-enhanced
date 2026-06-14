@@ -1,24 +1,17 @@
 #!/usr/bin/env python3
 """Tests for hermes_deep_clean_v2 + unified_cleaning_pipeline — cleaning pipeline."""
-import json
 import sqlite3
-import time
-from datetime import datetime
-from pathlib import Path
-from unittest.mock import patch, MagicMock
-
-import pytest
+from unittest.mock import MagicMock, patch
 
 import hermes_deep_clean_v2 as hdc
+import pytest
 import unified_cleaning_pipeline as ucp
-
 
 # ========== Fixtures ==========
 
 @pytest.fixture(autouse=True)
 def reset_caches():
     hdc._keyword_weights_cache = None
-    yield
 
 
 @pytest.fixture
@@ -269,7 +262,7 @@ class TestUcpWhitelistSet:
         assert "python" in ucp.WHITELIST_SET
 
     def test_whitelist_size_property(self):
-        assert ucp.WHITELIST_SIZE == len(ucp.WHITELIST_SET)
+        assert len(ucp.WHITELIST_SET) == ucp.WHITELIST_SIZE
 
     def test_platform_weights_default_exists(self):
         assert "default" in ucp.PLATFORM_WEIGHTS

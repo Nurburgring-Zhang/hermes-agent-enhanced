@@ -1,0 +1,85 @@
+# SuperIntelligence Plugin Configuration
+
+# Model Configuration
+# Each model has an ID, endpoint, and optional parameters
+models:
+  - id: "default"
+    name: "Default Model"
+    provider: "openrouter"  # openrouter, openai, anthropic, local, custom
+    model: "gpt-4"
+    api_key: ""
+    endpoint: ""
+    temperature: 0.7
+    max_tokens: 2048
+    weight: 1.0
+    capabilities: ["chat", "reasoning"]
+    cost_per_token: 0.0
+    priority: 1
+    enabled: true
+
+  - id: "quick"
+    name: "Quick Model"
+    provider: "openrouter"
+    model: "claude-3-haiku"
+    api_key: ""
+    temperature: 0.7
+    max_tokens: 1024
+    weight: 0.8
+    capabilities: ["chat", "fast"]
+    priority: 2
+    enabled: true
+
+  - id: "expert"
+    name: "Expert Model"
+    provider: "openrouter"
+    model: "claude-3-opus"
+    api_key: ""
+    temperature: 0.3
+    max_tokens: 4096
+    weight: 1.2
+    capabilities: ["chat", "reasoning", "code"]
+    priority: 3
+    enabled: false
+
+# Collaboration Strategy
+strategy: "voting"  # consensus, voting, cascade, parallel
+# consensus: all models discuss until agreement
+# voting: collect responses and pick winner
+# cascade: use quick first, then deep if needed
+# parallel: all at once, combine results
+
+# Self-correction / Iteration
+max_iterations: 3
+enable_self_critique: true
+
+# Optimization
+auto_optimize: true
+optimization_window: 100
+
+# Performance
+concurrency_limit: 4
+timeout: 30
+
+# Caching
+cache_responses: true
+cache_ttl: 3600
+
+# Quality Control
+min_confidence_threshold: 0.7
+
+# Logging
+log_requests: false
+log_performance: true
+metrics_file: "./metrics.json"
+
+# Feature Flags
+enable_tool_augmentation: true
+enable_chain_of_thought: true
+enable_reflection: true
+
+# Advanced
+temperature_adjustment: "adaptive"  # fixed, adaptive, dynamic
+dynamic_temperature_factor: 0.1
+max_cost_per_request: 0.10
+enable_fallback: true
+fallback_threshold: 0.5

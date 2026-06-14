@@ -1,0 +1,15 @@
+cases:
+- id: case_expert_335_1
+  year: 2024
+  title: 多源异构数据融合实践
+  problem: 在语言与翻译领域遇到多源异构数据融合实践的挑战
+  action: 作为多语言NLP专家，运用专业知识制定方案并执行
+  result: 整合30+数据源的异构数据，建立统一数据视图
+  transferable: 在语言与翻译领域的多语言NLP专家经验可迁移至类似场景
+- id: case_expert_335_2
+  year: 2023
+  title: 全网舆情监测系统架构设计
+  problem: 在语言与翻译领域遇到全网舆情监测系统架构设计的挑战
+  action: 作为多语言NLP专家，运用专业知识制定方案并执行
+  result: 设计多平台实时数据采集系统，日处理数据量超过1亿条
+  transferable: 在语言与翻译领域的多语言NLP专家经验可迁移至类似场景

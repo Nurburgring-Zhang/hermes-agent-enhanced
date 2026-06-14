@@ -4,9 +4,13 @@ auto_ci.py — Hermes 本地自动CI循环
 替代GitHub Actions，在本地每30分钟自动运行完整检查链
 对标：GitHub Actions CI + GitLab CI Runner
 """
-import os, sys, subprocess, json, time, logging
-from pathlib import Path
+import json
+import logging
+import os
+import subprocess
+import time
 from datetime import datetime
+from pathlib import Path
 
 HERMES = Path(os.path.expanduser("~/.hermes"))
 LOG_DIR = HERMES / "logs" / "auto_ci"
@@ -30,18 +34,18 @@ def run_step(name, cmd, cwd=None):
     start = time.time()
     try:
         r = subprocess.run(
-            cmd, shell=True, capture_output=True, text=True, timeout=300,
+            cmd.split(), capture_output=True, text=True, timeout=300,
             cwd=cwd or str(HERMES)
         )
         duration = time.time() - start
         success = r.returncode == 0
         output = r.stdout[-500:] + r.stderr[-500:]
-        
+
         status = "✅" if success else "❌"
         logger.info(f"[{name}] {status} ({duration:.1f}s)")
         if not success:
             logger.warning(f"[{name}] 失败输出: {r.stderr[-300:]}")
-        
+
         return success, {
             "step": name, "success": success, "duration_s": round(duration, 2),
             "timestamp": datetime.now().isoformat(),
@@ -60,18 +64,18 @@ def run_full_ci():
     """执行完整CI链"""
     logger.info("=" * 60)
     logger.info("HERMES AUTO CI 开始")
-    logger.info(f"  版本: 0.16.0-enhanced")
+    logger.info("  版本: 0.16.0-enhanced")
     logger.info(f"  时间: {datetime.now().isoformat()}")
     logger.info("=" * 60)
-    
+
     results = []
     all_pass = True
-    
+
     # Step 1: Lint
     ok, r = run_step("lint", "ruff check . --exit-zero", cwd=str(HERMES))
     results.append(r)
     if not ok: all_pass = False
-    
+
     # Step 2: Test (核心模块)
     test_cmd = (
         "cd scripts && python3 -m pytest "
@@ -85,7 +89,7 @@ def run_full_ci():
     ok, r = run_step("test_core", test_cmd, cwd=str(HERMES))
     results.append(r)
     if not ok: all_pass = False
-    
+
     # Step 3: Coverage (核心模块)
     cov_cmd = (
         "cd scripts && python3 -m pytest "
@@ -98,11 +102,11 @@ def run_full_ci():
     ok, r = run_step("coverage", cov_cmd, cwd=str(HERMES))
     results.append(r)
     if not ok: all_pass = False
-    
+
     # Step 4: Security
     ok, r = run_step("security", "bandit -r scripts/ --exit-zero", cwd=str(HERMES))
     results.append(r)
-    
+
     # 保存结果
     with open(RESULTS_FILE, "a") as f:
         f.write(json.dumps({
@@ -111,7 +115,7 @@ def run_full_ci():
             "steps": results,
             "total_duration_s": sum(s.get("duration_s", 0) for s in results),
         }) + "\n")
-    
+
     # 报告
     logger.info("=" * 60)
     logger.info(f"CI 结果: {'✅ 全部通过' if all_pass else '❌ 有失败'}")
@@ -119,7 +123,7 @@ def run_full_ci():
         status = "✅" if r.get("success") else "❌"
         logger.info(f"  {status} {r['step']} ({r.get('duration_s',0):.1f}s)")
     logger.info("=" * 60)
-    
+
     return all_pass
 
 
@@ -129,7 +133,7 @@ if __name__ == "__main__":
     parser.add_argument("--loop", type=int, default=0, help="循环间隔(分钟), 0=执行一次")
     parser.add_argument("--max-loops", type=int, default=10, help="最大循环次数")
     args = parser.parse_args()
-    
+
     if args.loop > 0:
         logger.info(f"循环模式已启动: 每{args.loop}分钟一次, 最多{args.max_loops}次")
         for i in range(args.max_loops):

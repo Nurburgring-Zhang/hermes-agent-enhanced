@@ -1,0 +1,353 @@
+# Expert System 30域 → MCP工具映射表
+# 自动生成时间: 2026-05-08
+# 基于 /home/administrator/.hermes/agents_company/experts/ 下 390 位专家配置
+
+domain_mcp_mapping:
+  # =============== AI与机器学习 ===============
+  ai_ml_深度学习:
+    mcp_tools: [web_search, terminal, code_review, data_analysis]
+    web_search_scope: [arxiv, paperswithcode, huggingface, openreview]
+    terminal_scope: [python, pytorch, jax, slurm, kubectl]
+    code_review_scope: [ml_model, training_pipeline, evaluation]
+
+  ai_ml_nlp:
+    mcp_tools: [web_search, terminal, code_review, text_processing]
+    web_search_scope: [arxiv, huggingface, paperswithcode]
+    terminal_scope: [python, transformers, torch]
+    text_processing_scope: [tokenization, embedding, generation]
+
+  ai_ml_cv:
+    mcp_tools: [web_search, terminal, code_review, vision]
+    web_search_scope: [arxiv, paperswithcode]
+    terminal_scope: [python, torchvision, opencv]
+    vision_scope: [image_analysis, object_detection]
+
+  ai_ml_rl:
+    mcp_tools: [web_search, terminal, code_review, data_analysis]
+    web_search_scope: [arxiv, openai, deepmind]
+    terminal_scope: [python, gym, stable_baselines]
+
+  ai_ml_federated:
+    mcp_tools: [web_search, terminal, code_review, data_analysis]
+    web_search_scope: [arxiv, flower, tensorflow_federated]
+    terminal_scope: [python, flower, pytorch]
+
+  ai_ml_model_compress:
+    mcp_tools: [web_search, terminal, code_review, data_analysis]
+    web_search_scope: [arxiv, onnx, tensorrt]
+    terminal_scope: [python, onnx, tensorrt, quantization]
+
+  ai_ml_automl:
+    mcp_tools: [web_search, terminal, code_review, data_analysis]
+    web_search_scope: [arxiv, automl, nas]
+    terminal_scope: [python, automl_frameworks]
+
+  ai_ml_knowledge_graph:
+    mcp_tools: [web_search, terminal, code_review, data_analysis]
+    web_search_scope: [arxiv, neo4j, kg_papers]
+    terminal_scope: [python, neo4j, sparql]
+
+  ai_ml_multimodal:
+    mcp_tools: [web_search, terminal, code_review, vision]
+    web_search_scope: [arxiv, huggingface, multimodal_papers]
+    terminal_scope: [python, clip, llava, whisper]
+
+  # =============== 软件工程 ===============
+  software_engineering_微服务:
+    mcp_tools: [terminal, code_review, web_search, git]
+    terminal_scope: [docker, k8s, istio, go, java]
+    code_review_scope: [microservices, api]
+
+  software_engineering_ddd:
+    mcp_tools: [code_review, terminal, web_search, text_processing]
+    terminal_scope: [java, csharp, python]
+    code_review_scope: [ddd_patterns, bounded_context]
+
+  software_engineering_分布式系统:
+    mcp_tools: [terminal, code_review, web_search, data_analysis]
+    terminal_scope: [go, rust, k8s, etcd, kafka]
+
+  software_engineering_性能优化:
+    mcp_tools: [terminal, data_analysis, code_review, web_search]
+    terminal_scope: [profiling, benchmark, flamegraph]
+    data_analysis_scope: [performance_metrics, latency_analysis]
+
+  # =============== 安全与隐私 ===============
+  security_网络安全:
+    mcp_tools: [web_search, terminal, code_review, file_operations]
+    web_search_scope: [cve, exploit_db, mitre_attck]
+    terminal_scope: [nmap, wireshark, metasploit, burp]
+
+  security_应用安全:
+    mcp_tools: [code_review, web_search, terminal, file_operations]
+    code_review_scope: [owasp, sast, dast]
+    terminal_scope: [sonarqube, snyk, dependency_check]
+
+  security_密码学:
+    mcp_tools: [terminal, web_search, code_review, data_analysis]
+    terminal_scope: [openssl, python_crypto, golang_crypto]
+    web_search_scope: [eprint, crypto_papers]
+
+  # =============== 云计算与基础设施 ===============
+  cloud_云架构:
+    mcp_tools: [web_search, terminal, skills, data_analysis]
+    terminal_scope: [aws, gcp, azure, terraform]
+    web_search_scope: [cloud_patterns, aws_architecture]
+
+  cloud_容器编排:
+    mcp_tools: [terminal, web_search, skills, file_operations]
+    terminal_scope: [kubectl, docker, helm, istio]
+
+  cloud_serverless:
+    mcp_tools: [terminal, web_search, code_review, file_operations]
+    terminal_scope: [lambda, cloud_functions, serverless_framework]
+
+  # =============== DevOps与SRE ===============
+  devops_sre:
+    mcp_tools: [terminal, web_search, code_review, data_analysis]
+    terminal_scope: [promql, kubectl, ansible, terraform, shell]
+    web_search_scope: [sre_patterns, incident_reports]
+
+  devops_混沌工程:
+    mcp_tools: [terminal, data_analysis, web_search]
+    terminal_scope: [chaos_mesh, litmus, gremlin]
+    data_analysis_scope: [resilience_metrics]
+
+  devops_gitops:
+    mcp_tools: [git, terminal, code_review, web_search]
+    terminal_scope: [argocd, flux, helmfile]
+
+  # =============== 前端与用户体验 ===============
+  frontend_react:
+    mcp_tools: [web_search, terminal, code_review, creative]
+    terminal_scope: [react, nextjs, typescript, node]
+    creative_scope: [component_design]
+
+  frontend_vue:
+    mcp_tools: [web_search, terminal, code_review, creative]
+    terminal_scope: [vue, nuxt, typescript, node]
+
+  frontend_web_performance:
+    mcp_tools: [web_search, terminal, data_analysis, code_review]
+    terminal_scope: [lighthouse, webpack, perf_tools]
+    data_analysis_scope: [core_web_vitals]
+
+  ux:
+    mcp_tools: [web_search, creative, vision, text_processing]
+    creative_scope: [wireframe, prototype]
+    vision_scope: [design_review, usability_test]
+
+  # =============== 产品与商业 ===============
+  product_战略:
+    mcp_tools: [web_search, data_analysis, planning, text_processing]
+    planning_scope: [strategy_canvas, roadmap]
+    web_search_scope: [market_trends, competitive_analysis]
+
+  product_用户研究:
+    mcp_tools: [web_search, data_analysis, text_processing, planning]
+    text_processing_scope: [interview, survey, persona]
+
+  product_增长:
+    mcp_tools: [web_search, data_analysis, planning, creative]
+    data_analysis_scope: [growth_metrics, cohort_analysis]
+
+  # =============== 数据与存储 ===============
+  data_仓库:
+    mcp_tools: [terminal, data_analysis, file_operations, web_search]
+    terminal_scope: [sql, spark, dbt, airflow]
+    data_analysis_scope: [data_modeling, etl]
+
+  data_数据湖:
+    mcp_tools: [terminal, data_analysis, file_operations, web_search]
+    terminal_scope: [spark, hadoop, delta_lake, iceberg]
+
+  data_实时计算:
+    mcp_tools: [terminal, data_analysis, web_search]
+    terminal_scope: [flink, kafka_streams, spark_streaming]
+
+  # =============== 管理与沟通 ===============
+  management_项目管理:
+    mcp_tools: [planning, text_processing, session_search, skills]
+    planning_scope: [sprint_planning, risk_management]
+    session_search_scope: [project_archives, lesson_learned]
+
+  management_敏捷教练:
+    mcp_tools: [planning, text_processing, skills, session_search]
+    planning_scope: [agile_transformation, scrum]
+
+  # =============== 质量与测试 ===============
+  qa_自动化测试:
+    mcp_tools: [terminal, code_review, web_search, skills]
+    terminal_scope: [selenium, playwright, cypress, pytest]
+    code_review_scope: [test_framework]
+
+  qa_性能测试:
+    mcp_tools: [terminal, data_analysis, web_search]
+    terminal_scope: [jmeter, k6, locust, gatling]
+    data_analysis_scope: [perf_metrics, bottleneck_analysis]
+
+  # =============== 艺术与设计 ===============
+  art_ui_design:
+    mcp_tools: [creative, vision, web_search, file_operations]
+    creative_scope: [ui_design, design_system]
+    vision_scope: [image_composition, color_theory]
+
+  art_brand:
+    mcp_tools: [creative, web_search, text_processing]
+    creative_scope: [brand_identity, logo, visual_language]
+
+  # =============== 内容与创意 ===============
+  content_技术写作:
+    mcp_tools: [text_processing, web_search, creative]
+    text_processing_scope: [documentation, tutorial]
+
+  content_数据可视化:
+    mcp_tools: [creative, data_analysis, web_search, vision]
+    creative_scope: [visualization, dashboard]
+    data_analysis_scope: [chart_types, data_storytelling]
+
+  # =============== 能源与环保 ===============
+  energy_电池技术:
+    mcp_tools: [web_search, data_analysis, terminal]
+    web_search_scope: [battery_tech, materials_science]
+    data_analysis_scope: [battery_performance, degradation]
+
+  energy_充电系统:
+    mcp_tools: [web_search, data_analysis, terminal]
+    web_search_scope: [charging_standards, ev_infrastructure]
+
+  # =============== 经济与金融 ===============
+  finance_量化交易:
+    mcp_tools: [data_analysis, web_search, terminal]
+    data_analysis_scope: [time_series, backtest, risk]
+    terminal_scope: [python, r, quantlib]
+
+  finance_风险管理:
+    mcp_tools: [data_analysis, web_search, planning]
+    data_analysis_scope: [var, stress_test, credit_risk]
+
+  # =============== 生物与医学 ===============
+  bio_生物信息:
+    mcp_tools: [web_search, data_analysis, terminal]
+    web_search_scope: [pubmed, biorxiv, genome]
+    terminal_scope: [python, r, blast, samtools]
+
+  bio_药物发现:
+    mcp_tools: [web_search, data_analysis, terminal]
+    web_search_scope: [pubmed, drugbank, clinical_trials]
+    terminal_scope: [python, rdkit, deepchem]
+
+  # =============== 物理与材料 ===============
+  physics_量子物理:
+    mcp_tools: [web_search, data_analysis, terminal]
+    web_search_scope: [arxiv_quantum, quanta]
+    terminal_scope: [python, qiskit, cirq]
+
+  physics_材料模拟:
+    mcp_tools: [terminal, data_analysis, web_search]
+    terminal_scope: [python, vasp, lammps, gaussian]
+
+  # =============== 法律与伦理 ===============
+  legal_ai合规:
+    mcp_tools: [web_search, text_processing, session_search]
+    web_search_scope: [gdpr, ai_act, regulation]
+    session_search_scope: [legal_precedents, case_law]
+
+  legal_数据隐私:
+    mcp_tools: [web_search, text_processing, skills]
+    web_search_scope: [privacy_regulations, data_protection]
+
+  # =============== 汽车与交通 ===============
+  automotive_自动驾驶:
+    mcp_tools: [web_search, terminal, code_review, data_analysis]
+    terminal_scope: [python, ros, cuda, simulators]
+    web_search_scope: [autonomous_driving, waymo, tesla]
+
+  automotive_车载软件:
+    mcp_tools: [terminal, code_review, web_search]
+    terminal_scope: [c++, autosar, qnx, linux]
+
+  # =============== 机器人与自动化 ===============
+  robotics_控制:
+    mcp_tools: [terminal, web_search, code_review, data_analysis]
+    terminal_scope: [python, ros, c++, simulink]
+    code_review_scope: [control_algorithm]
+
+  robotics_slam:
+    mcp_tools: [terminal, web_search, vision, data_analysis]
+    terminal_scope: [python, ros, ceres, g2o]
+    vision_scope: [lidar, camera, pointcloud]
+
+  # =============== 教育与培训 ===============
+  education_在线教育:
+    mcp_tools: [web_search, text_processing, creative, planning]
+    text_processing_scope: [curriculum, assessment]
+    creative_scope: [learning_material]
+
+  education_技术培训:
+    mcp_tools: [web_search, text_processing, planning, skills]
+    text_processing_scope: [tutorial, workshop]
+
+  # =============== 心理学与认知 ===============
+  psychology_认知:
+    mcp_tools: [web_search, data_analysis, text_processing]
+    web_search_scope: [pubmed_psych, cognitive_science]
+    data_analysis_scope: [behavioral_data]
+
+  psychology_人因工程:
+    mcp_tools: [web_search, data_analysis, vision, text_processing]
+    vision_scope: [ux_testing, eye_tracking]
+
+  # =============== 地理与空间 ===============
+  geography_gis:
+    mcp_tools: [web_search, data_analysis, vision, terminal]
+    terminal_scope: [python, qgis, gdal, postgis]
+    vision_scope: [map_visualization, satellite_imagery]
+
+  geography_遥感:
+    mcp_tools: [web_search, data_analysis, vision, terminal]
+    terminal_scope: [python, gdal, rasterio, earth_engine]
+    vision_scope: [spectral_analysis]
+
+  # =============== 区块链与Web3 ===============
+  blockchain_智能合约:
+    mcp_tools: [code_review, terminal, web_search]
+    code_review_scope: [solidity, security_audit]
+    terminal_scope: [forge, hardhat, foundry]
+
+  blockchain_defi:
+    mcp_tools: [web_search, data_analysis, terminal]
+    web_search_scope: [defi_protocols, tokenomics]
+    data_analysis_scope: [yield_analysis, tvl_tracking]
+
+  # =============== 供应链与物流 ===============
+  supplychain_优化:
+    mcp_tools: [data_analysis, web_search, planning]
+    data_analysis_scope: [network_optimization, routing]
+    planning_scope: [inventory_planning, demand_forecast]
+
+  supplychain_物流:
+    mcp_tools: [web_search, data_analysis, planning]
+    web_search_scope: [logistics_tech, last_mile]
+    data_analysis_scope: [route_optimization]
+
+  # =============== 数学与理论 ===============
+  math_优化:
+    mcp_tools: [data_analysis, terminal, web_search]
+    terminal_scope: [python, cvxpy, scipy_optimize]
+    data_analysis_scope: [optimization_model, constraint]
+
+  math_图论:
+    mcp_tools: [data_analysis, terminal, web_search]
+    terminal_scope: [python, networkx, graph_tool]
+    data_analysis_scope: [graph_metrics]
+
+  # =============== 哲学与人文 ===============
+  philosophy_技术哲学:
+    mcp_tools: [web_search, text_processing, session_search]
+    web_search_scope: [philpapers, stanford_encyclopedia]
+    text_processing_scope: [essay, critique]
+
+  philosophy_ai伦理:
+    mcp_tools: [web_search, text_processing, session_search]
+    web_search_scope: [ai_ethics, fair_ml, accountability]

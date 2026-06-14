@@ -1,16 +1,12 @@
 #!/usr/bin/env python3
 """Tests for unified_collector_v5.py — focus on data processing, no real HTTP."""
-import json
 import hashlib
-import sqlite3
-from pathlib import Path
-from unittest.mock import patch, MagicMock, mock_open
+from unittest.mock import MagicMock, patch
 
 import pytest
 
 # Module under test
 import unified_collector_v5 as uc
-
 
 # ========== Fixtures ==========
 
@@ -19,7 +15,6 @@ def reset_caches():
     """Reset module-level caches between tests."""
     uc._PREF_CACHE = None
     uc._FILTER_CACHE = None
-    yield
 
 
 @pytest.fixture

@@ -1,0 +1,26 @@
+skills:
+  - name: "联邦学习"
+    proficiency: 9
+    last_used: "2026-04"
+    description: "韦佳音在联邦学习领域有22年专业经验"
+
+  - name: "隐私保护"
+    proficiency: 9
+    last_used: "2026-04"
+    description: "韦佳音在隐私保护领域有22年专业经验"
+
+  - name: "分布式训练"
+    proficiency: 9
+    last_used: "2026-04"
+    description: "韦佳音在分布式训练领域有22年专业经验"
+
+  - name: "安全聚合"
+    proficiency: 9
+    last_used: "2026-04"
+    description: "韦佳音在安全聚合领域有22年专业经验"
+
+  - name: "非IID数据处理"
+    proficiency: 9
+    last_used: "2026-04"
+    description: "韦佳音在非IID数据处理领域有22年专业经验"
+

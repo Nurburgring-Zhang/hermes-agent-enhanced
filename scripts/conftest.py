@@ -48,3 +48,10 @@ def delivery_enforcer(re_module):
 @pytest.fixture
 def three_phase(re_module):
     return re_module.ThreePhaseDevEnforcer
+
+
+@pytest.fixture
+def dual_review_module():
+    """Fixture providing the dual_review_engine module for tests."""
+    import dual_review_engine
+    return dual_review_engine

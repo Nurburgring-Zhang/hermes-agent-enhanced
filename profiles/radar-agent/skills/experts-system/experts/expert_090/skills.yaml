@@ -1,0 +1,10 @@
+skills:
+  - name: "容量规划核心能力"
+    proficiency: 9
+    description: "容量规划所需的深度专业知识和实践经验"
+  - name: "云计算方法论"
+    proficiency: 8
+    description: "云计算领域的系统化专业方法论"
+  - name: "跨团队协作"
+    proficiency: 7
+    description: "与多学科团队高效协作的能力"

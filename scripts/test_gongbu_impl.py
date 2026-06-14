@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """Tests for gongbu_impl.py — 工部（工程建设）Playwright async API"""
 
-import os, sys
-import pytest
+import sys
 from pathlib import Path
+
+import pytest
 
 sys.path.insert(0, str(Path.home() / ".hermes"))
 
@@ -68,9 +69,9 @@ class TestGongbu:
 
     def test_get_gongbu_custom_params(self):
         """get_gongbu() 首次调用时使用自定义参数"""
-        from scripts.gongbu_impl import get_gongbu, _default_gongbu
         # Reset
         import scripts.gongbu_impl as gi
+        from scripts.gongbu_impl import get_gongbu
         gi._default_gongbu = None
         gb = get_gongbu(headless=False, browser_type="firefox")
         assert gb._headless is False

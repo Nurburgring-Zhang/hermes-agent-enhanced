@@ -1,0 +1,15 @@
+cases:
+- id: case_expert_020_1
+  year: 2024
+  title: AI内容生成平台架构设计
+  problem: 在AI与机器学习领域遇到AI内容生成平台架构设计的挑战
+  action: 作为生成式AI专家，运用专业知识制定方案并执行
+  result: 设计多模态AI内容生成平台，支持文/图/视频一键生成
+  transferable: 在AI与机器学习领域的生成式AI专家经验可迁移至类似场景
+- id: case_expert_020_2
+  year: 2023
+  title: 企业级AI提示工程最佳实践
+  problem: 在AI与机器学习领域遇到企业级AI提示工程最佳实践的挑战
+  action: 作为生成式AI专家，运用专业知识制定方案并执行
+  result: 建立企业级提示工程框架，将AI内容质量提升60%
+  transferable: 在AI与机器学习领域的生成式AI专家经验可迁移至类似场景

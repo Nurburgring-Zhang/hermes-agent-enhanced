@@ -1,0 +1,15 @@
+cases:
+- id: case_expert_333_1
+  year: 2024
+  title: AI内容生成平台架构设计
+  problem: 在语言与翻译领域遇到AI内容生成平台架构设计的挑战
+  action: 作为语音合成专家，运用专业知识制定方案并执行
+  result: 设计多模态AI内容生成平台，支持文/图/视频一键生成
+  transferable: 在语言与翻译领域的语音合成专家经验可迁移至类似场景
+- id: case_expert_333_2
+  year: 2023
+  title: AIGC在语音合成专家参与行业的落地应用
+  problem: 在语言与翻译领域遇到AIGC在某行业的落地应用的挑战
+  action: 作为语音合成专家，运用专业知识制定方案并执行
+  result: 将AIGC技术应用于电商场景，商品图生成效率提升10倍
+  transferable: 在语言与翻译领域的语音合成专家经验可迁移至类似场景

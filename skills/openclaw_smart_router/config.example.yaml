@@ -1,0 +1,62 @@
+# OpenClaw AI Smart Router - 配置文件示例
+# ============================================
+
+# 默认模型设置
+default_free_model: claude-3-haiku
+default_standard_model: gpt-4o
+default_premium_model: claude-3.5-sonnet-20241022
+
+# 自动升级设置
+auto_upgrade_enabled: true
+upgrade_threshold: 3          # 满意度低于此值自动升级 (1-5)
+max_consecutive_failures: 3   # 连续失败次数阈值
+
+# 分析器配置
+analysis_model: claude-3-haiku
+analysis_prompt: |
+  你是一个专业的AI任务分析器。请分析以下用户指令...
+
+# 缓存配置
+enable_cache: true
+cache_expiration: 3600        # 缓存过期时间（秒）
+
+# 日志配置
+log_level: info               # debug, info, warn, error
+log_file: /var/log/openclaw/router.log
+
+# 可用模型列表（模型ID，从 models 模块获取）
+models:
+  - claude-3-haiku
+  - gpt-4o-mini
+  - gemini-1.5-flash
+  - claude-3.5-sonnet
+  - gpt-4o
+  - claude-3-opus
+  - gemini-1.5-pro
+  - claude-3.5-sonnet-20241022
+  - o1-preview
+  - o1-mini
+  - gemini-2.0-flash-exp
+  - claude-3-5-sonnet-v2
+  - gpt-4-turbo
+
+# 可选：按层级分组配置
+# models:
+#   free:
+#     - claude-3-haiku
+#     - gpt-4o-mini
+#   standard:
+#     - gpt-4o
+#     - claude-3-opus
+#   premium:
+#     - claude-3.5-sonnet-20241022
+#     - o1-preview
+#   enterprise:
+#     - claude-3-5-sonnet-v2
+#     - gpt-4-turbo
+
+# 高级选项
+# enable_tier_escalation: true
+# min_confidence_for_escalation: 0.6
+# prefer_free_models: true
+# fallback_to_paid: true

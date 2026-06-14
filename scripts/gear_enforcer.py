@@ -73,6 +73,9 @@ from agent.monitor import MonitorEngine, MonitorSignal
 from agent.reflector import ReflectorEngine
 from scripts.consistency_guard import ConsistencyGuard
 from scripts.segment_manager import SegmentManager
+import logging
+logger = logging.getLogger(__name__)
+
 
 _MONITOR = MonitorEngine()
 _REFLECTOR = ReflectorEngine()
@@ -612,8 +615,8 @@ def enforce():
                                 _violations = _violations[-20:]
                             _wg_data["anti_fake_violations"] = _violations
                             _wg_af.write_text(json.dumps(_wg_data, ensure_ascii=False, indent=2))
-                        except:
-                            pass
+                        except Exception as e:
+                            logger.warning(f"Unexpected error in gear_enforcer.py: {e}")
                 # 每5轮才打一次合规日志减少噪声
                 elif seg_turns % 5 == 0:
                     log("  [ANTI-FAKE] ✅ 未检测到模拟/精简词汇")

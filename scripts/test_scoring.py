@@ -1,16 +1,12 @@
 #!/usr/bin/env python3
 """Tests for ai_sixdim_scorer + hermes_ai_scoring — scoring system."""
 import json
-import sqlite3
 from datetime import datetime
-from pathlib import Path
-from unittest.mock import patch, MagicMock
-
-import pytest
+from unittest.mock import MagicMock, patch
 
 import ai_sixdim_scorer as sixdim
 import hermes_ai_scoring as hasc
-
+import pytest
 
 # ========== Fixtures ==========
 

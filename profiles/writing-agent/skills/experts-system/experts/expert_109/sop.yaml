@@ -1,0 +1,29 @@
+# SOP - 全球化
+role: 全球化
+sop_version: '5.0'
+steps:
+  - id: sop_01
+    name: "需求分析"
+    description: "深度理解业务需求和场景"
+    methodology: "产品与商业专业方法"
+    duration: "按需"
+  - id: sop_02
+    name: "方案设计"
+    description: "制定专业解决方案"
+    methodology: "产品与商业专业方法"
+    duration: "按需"
+  - id: sop_03
+    name: "核心实现"
+    description: "交付高质量专业成果"
+    methodology: "产品与商业专业方法"
+    duration: "按需"
+  - id: sop_04
+    name: "评审验证"
+    description: "确保方案和成果质量"
+    methodology: "产品与商业专业方法"
+    duration: "按需"
+  - id: sop_05
+    name: "交付沉淀"
+    description: "交付并沉淀经验"
+    methodology: "产品与商业专业方法"
+    duration: "按需"

@@ -15,6 +15,9 @@ import sqlite3
 import sys
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
+import logging
+logger = logging.getLogger(__name__)
+
 
 HERMES = Path.home() / ".hermes"
 TZ = timezone(timedelta(hours=8))
@@ -73,8 +76,8 @@ def _verify_g6_validation() -> dict:
                 result["verified"] = False
                 result["alerts"].append("G6验证发现齿轮链/脚本/G5有问题")
                 result["g6_alert"] = data
-        except:
-            pass
+        except Exception as e:
+            logger.warning(f"Unexpected error in wake_guide.py: {e}")
 
     # 检查最新验收记录
     if vlog.exists():
@@ -88,8 +91,8 @@ def _verify_g6_validation() -> dict:
                     "accepted": last.get("accepted", False),
                     "ts": last.get("accepted_at") or last.get("status")
                 }
-        except:
-            pass
+        except Exception as e:
+            logger.warning(f"Unexpected error in wake_guide.py: {e}")
 
     return result
 
@@ -140,8 +143,8 @@ def build_wake_guide():
                     guide["actions_required"].append("🔄 恢复中断任务: {} → {}".format(
                         item.get("task_id","?"), item.get("next_action","?")))
                     break
-            except:
-                pass
+            except Exception as e:
+                logger.warning(f"Unexpected error in wake_guide.py: {e}")
 
     # 2. AI评分
     try:
@@ -166,7 +169,8 @@ def build_wake_guide():
             guide["top_pending"] = [{"id": r[0], "title": r[1][:40], "source": r[2]} for r in top]
             guide["actions_required"].append(f"⭐ AI评分: {pending}条待评分 (今日{today}已评{real_ai})")
         db.close()
-    except: pass
+    except Exception as e:
+        logger.warning(f"Unexpected error in wake_guide.py: {e}")
 
     # 3. 推送
     try:
@@ -176,7 +180,8 @@ def build_wake_guide():
         if guide["push_fail_today"] > 0:
             guide["actions_required"].append("🔧 推送失败{}条".format(guide["push_fail_today"]))
         db.close()
-    except: pass
+    except Exception as e:
+        logger.warning(f"Unexpected error in wake_guide.py: {e}")
 
     # 4. Omni loop
     log = HERMES / "logs" / "omni_loop.log"
@@ -198,7 +203,8 @@ def build_wake_guide():
             hb_time = datetime.fromisoformat(hb.read_text().strip())
             diff = now() - hb_time.replace(tzinfo=TZ)
             guide["gear_heartbeat_minutes"] = round(diff.total_seconds() / 60, 1)
-        except: pass
+        except Exception as e:
+            logger.warning(f"Unexpected error in wake_guide.py: {e}")
 
     # ===== G7互审:G6验证结果 =====
     global _gear_signed

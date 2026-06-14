@@ -1,0 +1,15 @@
+cases:
+- id: case_expert_360_1
+  year: 2024
+  title: 商业模式创新与验证
+  problem: 在区块链与Web3领域遇到商业模式创新与验证的挑战
+  action: 作为Web3基础设施专家，运用专业知识制定方案并执行
+  result: 提出订阅制+SaaS混合商业模式，帮助客户年营收翻3倍
+  transferable: 在区块链与Web3领域的Web3基础设施专家经验可迁移至类似场景
+- id: case_expert_360_2
+  year: 2023
+  title: 从0到1的创新产品孵化
+  problem: 在区块链与Web3领域遇到从0到1的创新产品孵化的挑战
+  action: 作为Web3基础设施专家，运用专业知识制定方案并执行
+  result: 基于市场需求提出颠覆性产品概念，6个月完成从想法到MVP
+  transferable: 在区块链与Web3领域的Web3基础设施专家经验可迁移至类似场景

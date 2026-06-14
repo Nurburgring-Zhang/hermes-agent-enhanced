@@ -1,32 +1,266 @@
-# 密钥和配置
-config.yaml
-.env
-*.key
-*.pem
-auth.json
-credentials.json
-
-# 数据库
-*.db
-*.db-shm
-*.db-wal
-*.sqlite
-*.sqlite3
-
-# 缓存
+# === Python ===
 __pycache__/
 *.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# === Testing & Coverage ===
+.pytest_cache/
+.pytest-cache/
+.coverage
+htmlcov/
+
+# === Linting & Type Checking ===
+.ruff_cache/
+.mypy_cache/
+
+# === Virtual Environments ===
+venv/
+venv_hindsight/
+.venv/
+
+# === Node ===
 node_modules/
-.cache/
-*.cache
 
-# 日志
-logs/
-*.log
-
-# 系统
-.DS_Store
-Thumbs.db
+# === IDE & Editor ===
+.vscode/
+.idea/
 *.swp
 *.swo
 *~
+
+# === Hermes-specific caches ===
+.cloakbrowser_cache/
+.hermes_history
+
+# === Environment & Secrets ===
+.env
+.env.*
+APPROVE_ALWAYS_FLAG
+/config.yaml
+/config.yaml.bak
+/config.yaml.bak*
+/config.yaml.backup
+/config.yaml.phase0_*
+/auth.json
+/auth.lock
+/email_credentials.json
+keys/
+
+# === Database files ===
+*.db
+*.sqlite
+*.db-shm
+*.db-wal
+*.db.compress_backup
+*.db.backup.*
+*.db.init.lock
+*.lock
+
+# === Logs, Reports, Outputs ===
+*.log
+reports/
+logs/
+outputs/
+
+# === agents_company (not tracked) ===
+agents_company/
+agents-company
+
+# === Backup & Temp files ===
+*.bak
+*.orig
+*.tmp
+*.corrupted
+*.fixed
+*.save
+
+# === Runtime/generated directories ===
+agent/
+auto_engine/
+auto_run/
+audit_logs/
+bin/
+cache/
+checkpoints/
+config/
+cron/
+data/
+devices/
+discovery/
+docs/
+end_to_end_test/
+engine/
+evolution_v3/
+examples/
+heartbeat/
+hermes-agent/
+hermes_cli/
+images/
+integrated_dashboard/
+js_libs/
+knowledge/
+lsp/
+memories/
+memory/
+migration_audit/
+models/
+monitoring/
+noVNC/
+orchestrate/
+pastes/
+plans/
+production_loop/
+rankings/
+reference/
+research/
+rsshub/
+sessions/
+soul_extended/
+state/
+subagents/
+tasks/
+tools/
+video/
+voice/
+vrm_models/
+webui/
+weixin/
+workflows/
+workspace/
+
+# === Skill copies (these are in profiles/) ===
+skills-brainstorm-agent/
+skills-commander/
+skills-default/
+skills-ops-agent/
+skills-radar-agent/
+skills-writing-agent/
+
+# === Top-level temporary/plan files ===
+CLAUDE.md
+MEMORY.md
+USER.md
+FINAL_REPORT.md
+HERMES_ENHANCEMENT_PLAN.md
+HY_MEMORY_DEEP_INTEGRATION_PLAN.md
+MIGRATION_STATUS.md
+OPENCLAW_MIGRATION_REPORT.md
+QUICK_REFERENCE.md
+SYSTEM_REBUILD_PLAN.md
+ANTI_CRAWL_MATRIX.md
+SOUL_active.md
+SOUL_core.md
+hermes_integration_plan.md
+hy_memory_remediation_plan.md
+phase1_plan.md
+phase2_plan.md
+phase3_plan.md
+qc_issues_report.md
+
+# === Top-level temporary Python scripts ===
+actor_base.py
+analysis_007.py
+batch_score_200_d.py
+check2.py
+collect_intel.py
+collect_intel_v2.py
+compress_agent_final.py
+generate_report.py
+health_check.py
+heartbeat_check.py
+memory_federation.py
+production_pipeline.py
+push_check.py
+replace_paths.py
+schema_check.py
+score_intelligence.py
+start_all.py
+synapse_bus.py
+tmp_db_report.py
+topology_engine.py
+unified_dashboard.py
+world_monitor_web.py
+
+# === Top-level misc files ===
+.cursorrules
+.system_memory.txt
+.update_check
+active_memory.db
+automation_control.sqlite
+boundary_history.jsonl
+bug_report_to_developers.txt
+channel_directory.json
+context_length_cache.yaml
+diagnostic_report_*.json
+gateway_state.json
+health_check_*.json
+health_report_*.json
+memory_inject.json
+memory_layer*.json
+memory_layers.json
+models_dev_cache.json
+offload_entries.jsonl
+omni_heartbeat.txt
+processes.json
+skillopt_buffer.jsonl
+skillopt_protected.json
+skillopt_validation.jsonl
+task_checkpoint.json
+task_current.json
+task_current.json.*
+task_tracker.json
+topology.yaml
+webui.pid
+
+# === Top-level Chinese plan/summary files ===
+skills*.md
+生产体系工程规范.md
+软件开发与生产工程规范.md
+
+# === Misc temp files ===
+*.archived
+
+# === D:/ path reference (existing) ===
+D:/
+airi_*
+audio_models/
+agent_delivery/
+202*
+backups/
+archive/
+
+# === Scripts-internal temp files ===
+scripts/.catalog.md
+scripts/.phase_state.json
+scripts/BUG_REPORT.md
+scripts/README.md
+scripts/RedCrack/
+scripts/audit_logs/
+scripts/intelligence.db
+scripts/pipeline_runs.sqlite
+scripts/push_history.db
+scripts/*.bak
+scripts/*.corrupted
+scripts/*.fixed
+scripts/worldmonitor-cli
+scripts/ai_demo_batch.json
+scripts/ai_rating_batch.json
+scripts/ai_scoring_batch.json
+scripts/hermes_ai_scoring_audit.json
+scripts/next_ai_batch.json
+scripts/overseas_test_results.json
+scripts/push_candidates.json
+
+# === Plugins node_modules ===
+plugins/openclaw-weixin/node_modules/
+
+# === Embedded git repos in collectors ===
+scripts/collectors/MediaCrawler/
+scripts/collectors/TikTokDownloader/
+scripts/collectors/scraper-multi/
+scripts/collectors/wechat-mp-mcp/
+scripts/collectors/xiaohongshu-skill/

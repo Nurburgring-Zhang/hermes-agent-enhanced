@@ -1,14 +1,14 @@
 [build-system]
 requires = ["setuptools>=68.0", "wheel"]
-build-backend = "setuptools.backends._legacy:_Backend"
+build-backend = "setuptools.build_meta"
 
 [project]
 name = "hermes-agent-enhanced"
-version = "0.16.0-enhanced"
+version = "0.16.0"
 description = "Hermes Agent 增强版 — 商用级AI Agent平台"
 readme = "README.md"
 requires-python = ">=3.10"
-license = {text = "MIT"}
+license = "MIT"
 authors = [
     {name = "Nous Research", email = "info@nousresearch.com"},
 ]
@@ -28,11 +28,6 @@ classifiers = [
 ]
 
 dependencies = [
-    # ——— 核心引擎 ———
-    "rule-enforcer>=1.0.0",
-    "env-loader>=0.3.0",
-    "six-part-module>=0.2.0",
-
     # ——— LLM / 推理 ———
     "openai>=1.0.0",
     "anthropic>=0.30.0",
@@ -71,7 +66,6 @@ dependencies = [
     # ——— 实用工具 ———
     "typing-extensions>=4.8.0",
     "dataclasses-json>=0.6.0",
-    "pathlib2>=2.3.0",
     "click>=8.1.0",
 ]
 
@@ -121,12 +115,12 @@ select = ["E", "F", "I", "N", "W"]
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
-testpaths = ["hermes-agent/tests"]
+testpaths = ["scripts"]
 python_files = ["test_*.py"]
 addopts = "-v --tb=short --strict-markers --asyncio-mode=auto"
 
 [tool.coverage.run]
-source = ["hermes-agent"]
+source = ["scripts"]
 omit = ["*/tests/*", "*/venv/*", "*/__pycache__/*"]
 
 [tool.coverage.report]

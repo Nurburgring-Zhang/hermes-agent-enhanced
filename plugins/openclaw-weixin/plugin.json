@@ -1,0 +1,25 @@
+{
+  "name": "openclaw-weixin",
+  "version": "1.0.0",
+  "description": "WeChat channel adapter with multi-account support and message handling",
+  "author": "OpenClaw Team",
+  "entry_point": "__init__.py",
+  "dependencies": [
+    "itchat>=1.3.10",
+    "wxauto>=0.4.0",
+    "aiohttp>=3.8.0",
+    "Pillow>=9.0.0"
+  ],
+  "capabilities": ["channel", "messaging", "weixin"],
+  "hooks": ["message.receive"],
+  "config_schema": {
+    "accounts_file": {"type": "string", "description": "Path to accounts.json", "default": "accounts.json"},
+    "auto_reply": {"type": "boolean", "description": "Enable auto-reply", "default": false},
+    "auto_reply_prefix": {"type": "string", "description": "Auto-reply prefix for bot mentions", "default": "@Bot"},
+    "backends": {"type": "array", "description": "Enabled backends", "default": ["itchat"]},
+    "qr_timeout": {"type": "integer", "description": "QR code login timeout (seconds)", "default": 300},
+    "message_filter": {"type": "string", "description": "Message filter regex", "default": ""},
+    "group_enabled": {"type": "boolean", "description": "Handle group messages", "default": true},
+    "file_cache_dir": {"type": "string", "description": "File cache directory", "default": "./file_cache"}
+  }
+}

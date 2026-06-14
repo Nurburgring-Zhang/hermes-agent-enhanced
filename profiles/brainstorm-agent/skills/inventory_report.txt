@@ -1,0 +1,426 @@
+
+## (root)
+agent-company-intel-bridge|agent_company_intel_bridge.py - 情报桥接: 将最新的高价值情报投递到Agent Company 每天8:30/20:30自动执行，由cron触发
+agent-export-engine|Agent Export — 情报驱动型 AI 分析报告引擎 =========================================== 核心：不是文件搬运，而是真正的情报分析 功能：
+ai-ml-experts|AI与机器学习领域专家团队 - 30位顶级AI/ML专家，覆盖深度学习、NLP、CV、强化学习、联邦学习、模型压缩、大语言模型、生成式AI、知识图谱、AIOps等所有AI子领域。
+anysearch|Real-time search engine supporting web search, vertical domain search, parallel batch search, and URL content extract...
+archive-compressor|import sqlite3, json, time from datetime import datetime, date from pathlib import Path HERMES = Pa
+archive-old-data|Hermes 老旧数据压缩归档 ====================== 将cleaned_intelligence中7天前的数据压缩到history_archive表。 压缩时保留标题/平台/A
+automotive-transport-experts|汽车与交通领域专家团队 - 10位顶级专家，覆盖自动驾驶算法、电池管理系统、车载软件、车联网安全、动力系统、底盘控制、智能座舱、充电基础设施、交通信号优化、共享出行
+awesome-codex-skill-bridge|50+生产级Codex技能迁移桥接方案。映射awesome-codex-skills (github.com/ComposioHQ/awesome-codex-skills) 的全部技能到Hermes技能体系。 包含渐进式加载设计、C...
+bio-medicine-experts|生物与医学领域专家团队 - 10位顶级专家，覆盖生物信息学、计算生物学、药物发现、基因组学、医学影像AI、临床试验设计、流行病学模型、神经科学、蛋白质结构预测、精准医疗
+blockchain-web3-experts|区块链与Web3领域专家团队 - 10位顶级专家，覆盖智能合约、共识算法、DeFi、NFT技术、DAO治理、跨链协议、零知识证明、链上分析、Token经济学、Web3基础设施
+cloud-infra-experts|云计算与基础设施专家团队 - 15位云架构专家，覆盖云架构、容器编排、Serverless、IaC、可观测性、CDN、负载均衡等专业。
+collector-wechat-enhanced|微信公众号增强采集器 - 搜狗微信搜索API 功能: 1. 使用80+用户偏好词作为搜索关键词 2. 每个关键词取前5条 3. 写入 /home/administrator/.hermes/inte
+comms-networks-experts|通信与网络专家团队 - 15位网络专家，覆盖5G、WiFi、SDN、网络协议、光网络、卫星通信、量子通信、网络安全等专业。
+context-guardian-recovery|三重保障机制：中断自动恢复 + 审计快照写文件 + cron心跳
+data-storage-experts|数据与存储专家团队 - 15位数据专家，覆盖数据架构、数据治理、ETL、数据仓库、数据湖、实时计算、BI、数据血缘等专业。
+dept-structure|
+design-experts|艺术与设计领域专家团队 - 10位设计专家，覆盖UI设计、UX研究、品牌设计、插画、3D建模、动效设计、摄影、字体设计等专业。
+devops-experts|DevOps与SRE领域专家团队 - 15位专家，覆盖SRE实践、混沌工程、GitOps、CI/CD、可观测性、SLO管理等。
+diagramming|空白目录 — 此目录暂无技能，为未来图表绘制相关技能预留
+dogfood|Exploratory QA of web apps: find bugs, evidence, reports.
+domain|空白目录 — 此目录暂无技能，为领域特定技能预留
+ecc|ECC (Ensemble Coding Companion) — Agent性能优化系统(189k Stars)。软件开发优先能力，多Agent多子Agent组合使用。自动增强skill直觉、跨会话记忆、安全审计。
+economics-finance-experts|经济与金融领域专家团队 - 10位顶级专家，覆盖量化交易、风险管理、金融建模、保险精算、宏观经济、微观经济、行为金融、衍生品定价、信用评分、反洗钱
+education-training-experts|教育与培训领域专家团队 - 10位顶级专家，覆盖在线教育、技术培训、学习设计、认知科学、评估设计、知识图谱教育、虚拟实验室、教育数据分析、自适应学习、教育公平
+energy-environment-experts|能源与环保领域专家团队 - 10位顶级专家，覆盖电池技术、充电系统、能源管理、碳足迹、绿色计算、光伏技术、储能系统、智能电网、能源交易、节能优化
+engineering-experts|软件工程领域专家团队 - 20位软件工程专家，覆盖微服务架构、DDD、分布式系统、性能优化、代码质量、API设计等专业。
+evolution-fix-actions|四合一进化修复执行器：State DB维护 → 沉默源检查 → QC阈值优化 → 技能固化
+execute-ai-scoring|Hermes AI 评分执行引擎 v2 ========================== 由 ai_scorer.py 生成的评分请求由本脚本实际执行。 通过 delegate_task 对每条内
+expert-ai-automl|AutoML专家 (expert_008) - 世界顶级自动机器学习专家，精通神经架构搜索、超参数优化、自动化特征工程等。
+expert-ai-cv|CV专家 (expert_003) - 世界顶级计算机视觉专家，精通图像识别、目标检测、图像分割、视觉语言模型等CV全栈技术。
+expert-ai-dl-arch|深度学习架构师 (expert_001) - 世界顶级深度学习系统架构专家，22年经验，精通CNN/RNN/Transformer/Diffusion等全架构设计，提供系统级AI架构方案。
+expert-ai-ethics|AI伦理专家 (expert_007) - 世界顶级AI伦理专家，精通AI公平性、透明度、负责任AI等伦理规范与实践。
+expert-ai-federated|联邦学习专家 (expert_005) - 世界顶级联邦学习专家，精通隐私保护机器学习、分布式训练、跨机构协作学习等。
+expert-ai-knowledge-graph|知识图谱专家 (expert_009) - 世界顶级知识图谱专家，精通知识表示、图谱构建、知识推理与问答系统。
+expert-ai-model-compress|模型压缩专家 (expert_006) - 世界顶级模型压缩专家，精通量化、剪枝、蒸馏、NAS等模型优化技术。
+expert-ai-multimodal|多模态AI专家 (expert_010) - 世界顶级多模态AI专家，精通视觉语言模型、跨模态检索、内容生成等多模态技术。
+expert-ai-nlp|NLP专家 (expert_002) - 世界顶级自然语言处理专家，33年经验，精通文本理解、文本生成、LLM微调、提示工程等NLP全栈技术。
+expert-ai-rl|强化学习专家 (expert_004) - 世界顶级强化学习专家，精通策略优化、决策系统、MARL多智能体强化学习等。
+expert-bioinformatics|生物信息学专家 (expert_271) - 世界顶级生物信息学专家，32年经验，精通基因组数据分析、NGS流程、蛋白质结构与AI应用。
+expert-cloud-architecture|云架构专家 (expert_081) - 世界顶级云架构专家，33年经验，精通AWS/Azure/GCP云原生架构、混合云战略与FinOps。
+expert-cloud-identity|身份认证专家 (expert_061) - 世界顶级身份认证专家，33年经验，精通IAM、SSO/OAuth/SAML、零信任架构与身份治理。
+expert-comm-network|错误预算专家 (expert_151) - 世界顶级错误预算专家，34年经验，精通错误预算模型、可靠性-创新性平衡、风险量化评估。
+expert-content-creative|压力测试专家 (expert_211) - 世界顶级压力测试专家，22年经验，精通高并发压测、性能瓶颈分析、分布式压测平台。
+expert-design-director|测试策略专家 (expert_201) - 世界顶级测试策略专家，28年经验，精通全链路测试策略、自动化测试架构、质量门禁体系。
+expert-devops-sre|混合云专家 (expert_091) - 世界顶级混合云专家，33年经验，精通多云架构、云边协同、跨云网络与FinOps。
+expert-distributed-systems|设计模式专家 (expert_035) - 世界顶级设计模式专家，29年经验，精通面向对象设计、架构模式、系统解耦与重构。
+expert-economics|光网络专家 (expert_221) - 世界顶级光网络专家，30年经验，精通OTN/DWDM/PON光纤网络、5G承载网与传输架构设计。
+expert-energy-system|电池技术专家 (expert_231) - 世界顶级电池技术专家，33年经验，精通锂电池/固态电池、BMS设计、储能系统与热管理。
+expert-frontend-architecture|数据仓库专家 (expert_071) - 世界顶级数据仓库专家，32年经验，精通数仓建模、ETL/ELT、大数据存储技术。
+expert-industry-solutions|智慧城市专家 (expert_161) - 世界顶级智慧城市专家，21年经验，精通城市物联网、数字孪生、城市大脑与城市治理数字化。
+expert-legal|AI法律专家 (expert_241) - 世界顶级AI法律专家，32年经验，精通AI法规合规、数据隐私（GDPR/PIPL）、AI知识产权与伦理治理。
+expert-mathematical-modeling|SRE实践专家 (expert_141) - 世界顶级SRE实践专家，28年经验，精通SLO/SLI设计、故障管理、混沌工程与可观测性。
+expert-mobile-architecture|CSS架构专家 (expert_101) - 世界顶级CSS架构专家，31年经验，精通Design System、CSS工程化、响应式设计。
+expert-product-strategy|产品战略专家 (expert_111) - 世界顶级产品战略专家，34年经验，精通产品规划、市场分析、增长策略与商业化。
+expert-project-management|社区运营专家 (expert_121) - 世界顶级社区运营专家，26年经验，精通社区生态建设、用户增长、内容策略与运营分析。
+expert-quality-assurance|移动性能专家 (expert_131) - 世界顶级移动性能专家，31年经验，精通Android/iOS性能优化、APM监控、跨平台方案。
+expert-security-network|网络安全专家 (expert_051) - 世界顶级网络安全专家，32年经验，精通渗透测试、威胁建模、安全架构设计。
+expert-software-arch-microservices|微服务架构专家 (expert_031) - 世界顶级微服务架构专家，26年经验，精通微服务拆分、服务治理、分布式架构设计。
+expert-system|Hermes Expert System - 390 AI experts across 30 domains. Routes requests to the appropriate specialized expert team o...
+feeds|空白目录 — 此目录暂无技能，为信息源订阅和内容聚合相关技能预留
+final-integration-test|第5期: 礼部Actor注册 + 全链路集成测试 ======================================== 注册礼部输出格式化Actor，并运行1-5期全链路集成测试。
+frontend-ux-experts|前端与用户体验专家团队 - 15位前端专家，覆盖React/Vue架构、Web性能、可访问性、设计系统、微前端、WebAssembly、国际化等专业。
+full-link-audit-and-fix|极端严苛的全链路系统审计与修复 — 对自称"全自动AI驱动"的系统逐环节审计，发现并修复虚假实现/降级实现/硬编码模板冒充AI
+geography-space-experts|地理与空间领域专家团队 - 10位顶级专家，覆盖GIS、遥感技术、卫星导航、空间数据分析、气候模型、海洋学、地质建模、城市规划、交通规划、环境监测
+gifs|空白目录 — 此目录暂无技能，为 GIF 动图搜索和处理相关技能预留
+google-agent-skills|Google Agent Skills全生命周期工程规范 - Define/Plan/Build/Verify/Review/Ship 6阶段20技能。版本: 1.0. 创建: 2026-04-22.
+hermes-agent-research|Hermes Agent (NousResearch) 架构研究笔记 - 学习自 github.com/NousResearch/hermes-agent
+hermes-ai-push-manager|Hermes AI增强版智能推送管理器 v2.0 ==================================== 核心升级： 1. 真正的AI价值判断（不仅仅是关键词） 2. 70/30严格
+hermes-all-capabilities-activation|全能力盘点+采集管道升级+新工具集成的工作流。扫描所有skills/scripts/模块，安装缺失采集工具，构建全能力聚合采集器，修复运行时问题，注册cron
+hermes-all-integration|Hermes Agent全能力整合方案 - 38个能力点从31个附件深度分析中提炼，涵盖情报采集、记忆系统、专业Skills、多Agent协作、自进化能力、配置优化、生态工具、工程规范。版本: 1.0. 创建日期: 2026-04-22.
+hermes-archiver|Hermes 数据压缩归档系统 v1.0 =========================== 将超过7天的历史数据压缩存储，释放数据库空间。 压缩策略： 1. cleaned_intellige
+hermes-fast-pipeline|Hermes 快速情报管线 (--fast mode) 采集 -> 清洗 -> 评估 -> 存储 (无推送) 并行采集关键平台，精简高效
+hermes-multi-agent-orchestrator|Hermes Multi-Agent 情报编排系统 v3 =================================== 真正的子Agent集群调度 - 使用 MCP delegate_tas
+hermes-push-v3|Hermes 微信推送系统 — 从候选获取、AI评分排序、HTML构建到PushPlus推送的全链路
+hermes-self-evolve-cluster|Hermes 自进化集群 — 每天凌晨3点全自动执行技能进化/记忆压缩/对话压缩/能力进化/三省六部进化
+hermes-upgrade-workflow|Hermes Agent非破坏性升级工作流 - 在WSL2中安全升级Hermes同时保留所有自定义文件(自定义Commands/Devices/RAG/Security/Expert System)，零数据丢失。版本: 1.0. 创建...
+hermes-webui|Hermes Agent Web UI Auto-Start Script ===================================== Starts the Hermes Agent
+hv-analysis|横纵分析法 (Horizontal-Vertical Analysis) — 基于数字生命卡兹克开源方法论的深度情报分析框架。纵向(时间维度)+横向(空间维度)+竞争战略叠加，生成深度分析报告。
+inference-sh|空白目录 — 此目录暂无技能，为推理 Shell 脚本相关技能预留
+legal-ethics-experts|法律与伦理领域专家团队 - 10位顶级专家，覆盖AI法律、数据保护、知识产权、开源合规、国际数据传输、AI伦理、算法审计、反垄断、消费者保护、网络犯罪
+long-task-guardian|HERMES 长期任务守护神 — 三路冗余守护(数据库检查/Cron管道/自动重启+恢复)，15分钟循环检查
+management-experts|管理与沟通专家团队 - 15位管理专家，覆盖项目管理、敏捷教练、技术领导力、风险管理、团队动力学、冲突调解、变革管理等。
+marketing-experts|市场营销领域专家团队 - 基于产品与商业(15)+内容与创意(10)领域的营销相关专家组成，覆盖增长黑客、市场定位、渠道策略、内容营销、社交媒体等专业。
+massive-prompt-generation|大规模高质量文生图提示词生产——维度库治理、组合规则、90条冲突检测、qc_two逐字质量审核
+master-loop-agent-driven|Hermes 全自主主控循环工作流 — 9步Agent驱动流水线：采集→评分→市场分析→产品设计→技术架构→项目计划→推送候选→记忆更新→审计
+media-experts|内容与创意领域专家团队 - 10位内容创作专家，覆盖技术写作、视频制作、数据可视化、交互叙事、游戏叙事、品牌文案等专业。
+memory-domain-ai-机器学习|领域记忆强化 — AI_机器学习 专业知识查询与利用
+memory-domain-ai与机器学习|领域记忆强化 — AI与机器学习 专业知识查询与利用
+memory-domain-前端与用户体验|领域记忆强化 — 前端与用户体验 专业知识查询与利用
+memory-domain-综合|领域记忆强化 — 综合 专业知识查询与利用
+memory-domain-软件工程|领域记忆强化 — 软件工程 专业知识查询与利用
+memory-evolution-v2|Hermes 深度记忆进化引擎 v2 — 6模块并行执行，真实记忆压缩，自动技能沉淀，终身学习
+memory-search-test|Hermes Memory Search Test Command Usage: hermes memory_search_test [--query QUERY] [--limit N] [--d
+moa-degradation-fallback|MoA(多智能体编排)工具使用OpenRouter模型失败时的降级处理配置知识。记录失败模式和回退策略
+mobile-iot-experts|移动与IoT专家团队 - 15位专家，覆盖iOS/Android架构、跨平台开发、移动安全、嵌入式系统、数字孪生、车联网、工业物联网等专业。
+openclaw_smart_router|空白目录 — 此目录暂无技能，为 OpenClaw 智能路由系统相关技能预留
+parallel-memory-orchestrator|Hermes 并行记忆编配器 — 同时启动5+记忆模块(增强/RAG索引/压缩/技能挖掘/进化分析)的真并行编排器
+phase4-actors|Self-Improving Topology — 三省六部自适应循环 ============================================== 刑部核心：每次任务输出后自动复盘、
+philosophy-humanities-experts|哲学与人文领域专家团队 - 10位顶级专家，覆盖技术哲学、AI伦理哲学、科学哲学、逻辑学、美学、知识论、存在主义、东方哲学、比较哲学、科技史
+physics-materials-experts|物理与材料领域专家团队 - 10位顶级专家，覆盖量子物理、凝聚态物理、材料模拟、纳米技术、超导材料、半导体物理、光学工程、声学工程、热力学、计算物理
+pipeline-orchestrator|Hermes Agent Company - 12-Stage Full Pipeline Orchestrator Executes via delegate_task for each depar
+plan-switcher|Hermes Multi-Agent Plan 自动切换系统 v1 ========================================= 根据任务类型自动选择最合适的 Coding Pl
+product-experts|产品与商业领域专家团队 - 15位产品/商业专家，覆盖产品战略、用户研究、增长黑客、商业模式、市场定位、数据驱动决策等专业。
+production-chain|Hermes 全自动智能生产链 (Full Intelligent Pipeline) ================================================= 从信息采集
+psychology-cognition-experts|心理学与认知领域专家团队 - 10位顶级专家，覆盖认知心理学、行为经济学、人因工程、决策心理学、用户体验心理学、组织心理学、消费者心理学、社会心理学、发展心理学、正念科学
+pushplus-wechat|PushPlus WeChat Push Script ============================= 将智能情报通过 PushPlus 推送到微信 用法: python pushplu
+qa-experts|质量与测试领域专家团队 - 15位测试专家，覆盖测试策略、自动化测试、性能测试、安全测试、混沌测试等专业。
+qc-threshold-optimization|QC评分阈值优化知识。当前QC评分72.4低于80阈值，记录趋势分析和阈值调整建议
+rag-memory-enhanced|增强型RAG记忆系统 - 文件监控、向量嵌入、语义搜索、压缩老化
+rd-director|
+rd-experts|数学与理论领域专家团队 - 15位R&D专家，覆盖线性代数、概率论、优化理论、图论、信息论、博弈论、复杂系统、控制论等专业。
+requirement-mining|Hermes 需求挖掘系统 从情报数据中挖掘需求模式、趋势分析、需求预测
+robotics-automation-experts|机器人与自动化领域专家团队 - 10位顶级专家，覆盖机器人控制、SLAM、运动规划、人机交互、机器人视觉、多机器人协作、软体机器人、仿生机器人、工业机器人、服务机器人
+run-company-pipeline|Agent Company 完整流水线入口 ============================ 由 cron 触发，运行整个 Workflow-Engine pipeline。 流程： 1.
+security-experts|安全与隐私专家团队 - 15位安全专家，覆盖网络安全、应用安全、密码学、渗透测试、零信任、云安全、威胁情报等专业。
+self-evolution-agent-cycle|完整的Hermes AI自进化周期：健康检查→退化检测→修复→报告生成。使用delegate_task调度子Agent做真实进化分析。
+source-cleanup-tag|标记、清理和归档静默数据源。检测4天以上无数据的采集源，标记为已知静默，建议移除或归档
+supplychain-logistics-experts|供应链与物流领域专家团队 - 10位顶级专家，覆盖供应链优化、库存管理、物流路径优化、仓储自动化、需求预测、供应商管理、供应链韧性、冷链物流、跨境电商物流、绿色供应链
+support-experts|客户支持领域专家团队 - 基于产品与商业(15)+管理与沟通(15)领域相关专家组成，覆盖客户成功、社区运营、冲突调解、远程协作等专业。
+synapse-bus-bootstrap|SynapseBus + 三省六部启动/测试脚本 =================================== 独立启动 SynapseBus 事件总线和三省六部引擎。 支持: 启动、测试、
+task-resumer|HERMES 任务断点续跑系统 (Task Resumer) v1.0 =========================================== 当Hermes对话在手工补全任务中断时，
+task-scheduler|High-performance task scheduler with priority queues, DAG dependencies, resource limits, and persistent storage
+toutiao-browser-collector-v4|今日头条采集器 v4 - 基于真实HTML结构分析 从HTML中提取: "title":"xxx" + group_id URL模式
+toutiao-enhanced|今日头条增强采集器 - 多API端点+多关键词 解决头条采集量少问题(7→50+)
+ultimate-collector|Hermes全能力聚合采集器v2 — 6种采集能力(统一平台10核心/RSS/小红书Playwright/微信MCP/scraper-multi/浏览器网页)+ThreadPoolExecutor并行+数据库去重。已验证全部import通过
+unified-cleaning-pipeline|Hermes 情报清洗管道 (Intelligence Cleaning Pipeline) =====================================================
+unified-collector-v5|Hermes Unified Collector v5 - All Platforms Supports 35+ platforms with terminal + browser fallback
+v7-auto-pipeline|Hermes v7 全自动纯AI驱动情报生产管线 ====================================== 纯AI驱动，全程无人干预，自动完成： 1. 全平台采集 (1000+条)
+v8-final-push|v8_final_push.py - 最终推送（用delegate_task做真正AI六维评分）
+wechat-bing-collector|微信公众号采集器 v7 - Bing搜索+微信直访方案 解决Sogou CAPTCHA问题: 用Bing替代Sogou 策略: 1. Bing搜索 "site:mp.weixin.qq.com {k
+wechat-browser-collector-v3|微信公众号采集器 v3 - 多Context轮换方案 解决搜狗反爬 + 频率限制 核心策略： 1. 每个批次(5个关键词)使用全新的browser context 2. 每次请求之间随机延迟3-6秒
+wechat-collector-v9|微信公众号采集器 v9 - 多路冗余采集方案 ========================================= 解决搜狗CAPTCHA封锁问题，不依赖IP白名单。 采集策略（四路冗
+wechat-mp-collector|微信公众号文章采集MCP服务器 — 通过微信公众平台搜索接口获取公众号文章，支持全量/增量爬取、文章内容转Markdown、SQLite去重存储
+workflow-engine|Complete workflow orchestration system - define, run, monitor, and manage complex multi-step workflows with persisten...
+worldmonitor|空白目录 — 此目录暂无技能，为世界监控系统相关技能预留
+wsl-git-checkpoint-optimization|Fix checkpoint_manager failures on WSL Windows filesystem (/mnt/c). Checkpoint git operations timeout or fail with Pe...
+xiaohongshu-collector|小红书内容采集器 — 基于Playwright headless SSR DOM提取采集小红书笔记/文章（无需登录，无需API）
+yuanbao|Yuanbao (元宝) groups: @mention users, query info/members.
+
+## agents-company
+[agents-company]|Hermes Agents Company - 522 independent agents across 12 departments + 30 expert domains. Fully isolated Multi-Agent ...
+emp-fu-haoxuan-market-analysis|傅浩轩(emp_001) - 市场总监·情报分析能力。从Hermes情报系统获取数据，产出市场分析报告
+emp-lin-ruoxi-design-spec|林若溪(emp_011) - 设计主管·产品设计能力。根据市场报告产出产品交互与视觉设计方案
+
+## apple
+[apple]|Apple设备集成 — macOS/iOS 设备上的 iMessage、提醒事项、备忘录、FindMy 和自动化集成技能
+apple-notes|Manage Apple Notes via memo CLI: create, search, edit.
+apple-reminders|Apple Reminders via remindctl: add, list, complete.
+findmy|Track Apple devices/AirTags via FindMy.app on macOS.
+imessage|Send and receive iMessages/SMS via the imsg CLI on macOS.
+macos-computer-use|Drive the macOS desktop in the background — screenshots, mouse, keyboard, scroll, drag — without stealing the user's ...
+
+## autonomous-ai-agents
+[autonomous-ai-agents]|AI代理 — 生成和编排自主AI编码代理、多代理工作流，独立运行代理进程并委派任务协调并行工作流
+claude-code|Delegate coding to Claude Code CLI (features, PRs).
+codex|Delegate coding to OpenAI Codex CLI (features, PRs).
+hermes-agent|Configure, extend, or contribute to Hermes Agent.
+opencode|Delegate coding to OpenCode CLI (features, PR review).
+
+## autonomous-systems
+[autonomous-systems]|自主系统 — 多代理公司编排、全自主公司系统、统一系统编排器等大规模自动化系统的协调技能
+agent-company-mcp-bridge|130名员工独立MCP工具路由桥 — 为Hermes Agents Company每一位员工建立基于部门(department)+ 岗位(role)+工具集(tools.yaml)的独立工具路由(MCP桥接层)，按12个部门分发独立工...
+agent-driven-master-loop|全自主9步主控循环 — 使用delegate_task调度子Agent完成情报采集→评分→分析→设计→架构→规划→推送→记忆→审计的全链路闭环
+agents-company-orchestration|Hermes Agents Company 130人团队Multi-Agent编排架构 - 从unified_gateway.py实战提炼的完整调度模式
+autonomous-company-system|Complete framework for building autonomous AI-powered companies with 130+ digital employees, 12 departments, end-to-e...
+capability-verification|验证Hermes系统中所有能力和模块是否真的在"主动运行"而非"看起来在跑"——包括cron穿透验证、齿轮相互督促链验证、AI评分真实性验证、三重冗余恢复验证
+context-index-resolve|索引摘要+按需复原的上下文管理架构。第一轮全量SOUL.md→后续只传context_index.json(2120t)。14章节按需read_file复原。已全链路修复完成。
+expert-system-mcp-bridge|390名专家独立MCP工具路由桥 — 为Hermes Expert System每一位专家建立基于domain+department的 独立工具集路由(MCP桥接层)，根据expert_XXX/identity.yaml + tool...
+gear-context-compression-v2|10层防御体系，不依赖Hermes记忆的纯cron方案。对话中断自动恢复，AI评分自动检测，垃圾采集时过滤。
+gear-interlocking-audit-v3|G0-G7+DRIVER+MASTER 相互啮合+互审+棘轮锁定+强制推动+自动续跑+验收交付
+guardian-py-workflow|完整文档化 guardian.py 三模式调度系统 — cycle/heal/push。包含cron配置、心跳机制、已知Bug(AR-029)映射、与各技能的关联关系。
+hermes-self-enhancement|Hermes自我强化增强计划: 三重冗余啮合(长期记忆-三引擎/长程任务-热温冷+漂移检测/数据安全-AES-GCM+审计)
+lossless-claw-compression|Lossless-Claw 无损上下文压缩引擎 — 三级压缩策略，上下文使用量降低60-70%
+lossless-claw-v2|Lossless-Claw v2 — 融合QMD(BM25+向量+重排序) + MemPalace记忆宫殿架构，唤醒成本≤900token
+omni-health-monitor|Monitor the OMNI omnibus loop process health, detect stalls (>30min), auto-restart, and track recovery history. Preve...
+production-reliability-engine|生产级可靠性引擎 — 解决长链任务"越往后越做不对、一步错步步错、做完不检查、执行不稳定"四大致命缺陷
+self-evolution-executor|Execute concrete fixes for a degraded Hermes system in priority order (P0-P3). Runs repair commands, reclaims DB spac...
+skills-orchestration-engine|构建Skills组合/并行/链式/组队/流水线编排引擎，让343个skill像Agent Company一样可编排执行
+structmem-hierarchical-memory|StructMem分层结构化记忆框架 — 事件级绑定+跨事件整合，Token消耗降至1/18
+task-auto-resume|每次Hermes醒来时自动检查未完成的长期任务并从断点恢复执行。含齿轮驱动器和上下文漂移恢复。
+unified-system-orchestrator|Multi-process supervisor pattern for managing heterogeneous autonomous subsystems with lifecycle control, health moni...
+
+## creative
+[creative]|创意内容生成 — ASCII艺术、手绘风格图表、知识漫画、信息图、数学动画、像素艺术、网页设计、原创音乐等创意工具的集合
+architecture-diagram|Dark-themed SVG architecture/cloud/infra diagrams as HTML.
+ascii-art|ASCII art: pyfiglet, cowsay, boxes, image-to-ascii.
+ascii-video|ASCII video: convert video/audio to colored ASCII MP4/GIF.
+baoyu-comic|Knowledge comics (知识漫画): educational, biography, tutorial.
+baoyu-infographic|Infographics: 21 layouts x 21 styles (信息图, 可视化).
+claude-design|Design one-off HTML artifacts (landing, deck, prototype).
+comfyui|Generate images, video, and audio with ComfyUI — install, launch, manage nodes/models, run workflows with parameter i...
+comfyui-custom-node|ComfyUI自定义节点开发：从节点类定义、INPUT_TYPES、OUTPUT_NODE机制， 到前端JS扩展（addCustomWidget/addDOMWidget/onDrawForeground）、 参考图上传、websoc...
+design-md|Author/validate/export Google's DESIGN.md token spec files.
+excalidraw|Hand-drawn Excalidraw JSON diagrams (arch, flow, seq).
+humanizer|Humanize text: strip AI-isms and add real voice.
+ideation|Generate project ideas via creative constraints.
+manim-video|Manim CE animations: 3Blue1Brown math/algo videos.
+p5js|p5.js sketches: gen art, shaders, interactive, 3D.
+pixel-art|Pixel art w/ era palettes (NES, Game Boy, PICO-8).
+popular-web-designs|54 real design systems (Stripe, Linear, Vercel) as HTML/CSS.
+pretext|Use when building creative browser demos with @chenglou/pretext — DOM-free text layout for ASCII art, typographic flo...
+prompt-production-pipeline|End-to-end AI prompt production pipeline: build dimension libraries from raw data, compose high-quality prompts with ...
+sketch|Throwaway HTML mockups: 2-3 design variants to compare.
+songwriting-and-ai-music|Songwriting craft and Suno AI music prompts.
+touchdesigner-mcp|Control a running TouchDesigner instance via twozero MCP — create operators, set parameters, wire connections, execut...
+
+## data-science
+[data-science]|数据科学 — Jupyter 实时内核集成，支持有状态的迭代式 Python 执行和探索性分析
+jupyter-live-kernel|Iterative Python via live Jupyter kernel (hamelnb).
+
+## devices
+[devices]|设备控制 — 多协议设备控制系统，支持蓝牙、MQTT、HTTP 等协议的设备配对、管理和 CLI 集成
+device-control-system|Complete device control implementation for Hermes - multi-protocol support, device types, pairing, and CLI integration
+
+## devops
+[devops]|DevOps — npm MCP 服务器配置、Python 项目依赖安装、Webhook 订阅管理等基础设施与运维技能
+cron-audit-and-cleanup|系统审计并清理 Hermes cron job 中的重复/冗余条目。诊断→分组→择优保留→安全删除→验证的完整工作流。
+kanban-orchestrator|Decomposition playbook + anti-temptation rules for an orchestrator profile routing work through Kanban. The "don't do...
+kanban-worker|Pitfalls, examples, and edge cases for Hermes Kanban workers. The lifecycle itself is auto-injected into every worker...
+npm-mcp-server-setup|Install and configure npm-based MCP servers when npm install times out or fails silently. Detect broken node_modules,...
+python-project-setup-with-uv|Install and configure Python projects with incomplete dependency declarations using uv package manager
+system-code-consolidation|多脚本整合工作流 — 评估代码重叠 → 提取共享配置 → 合并 → 替换cron → 安全删除旧代码。适用于cron冗余、功能重复、碎片化代码库清理。
+webhook-subscriptions|Webhook subscriptions: event-driven agent runs.
+
+## email
+[email]|邮件 — 通过 himalaya CLI 管理 IMAP/SMTP 电子邮件，支持多账户、邮件收发和搜索
+himalaya|Himalaya CLI: IMAP/SMTP email from terminal.
+
+## engineering
+[engineering]|工程实践 — Python 调试方法论，处理模块调用异常、状态污染和连接池问题
+api-batch-data-processing|Batch-process local data files through external LLM APIs — read source data, split into batches, call API with struct...
+mass-syntax-fix|Systematically scan and fix syntax errors across large codebases — batch Python compilation checking, pattern-based e...
+module-vs-isolated-debugging|模块调用返回0但单独测试正常 — Python调试方法论，处理导入模块状态污染和连接池问题
+
+## experts-system
+expert-handcrafting-methodology|手工打造专家级配置的方法论——每位专家要有独特研究方向、原创理论、真实感项目经验、工作哲学
+
+## file-operations
+[file-operations]|文件操作 — 项目哲学文档的系统化搜索与集成，发现并整合 SOUL.md、ETHOS.md 等核心文档
+philosophy-file-discovery-integration|Systematic search for and integration of project philosophical documents (SOUL.md, ETHOS.md, etc.) from multiple sources
+
+## gaming
+[gaming]|游戏 — 我的世界模组服务器搭建和宝可梦自主游玩等游戏相关技能
+minecraft-modpack-server|Host modded Minecraft servers (CurseForge, Modrinth).
+pokemon-player|Play Pokemon via headless emulator + RAM reads.
+
+## github
+[github]|GitHub工作流 — 使用 gh CLI 和 git 管理 GitHub 仓库、拉取请求、代码审查、Issue 和代码库检查等工作流
+codebase-inspection|Inspect codebases w/ pygount: LOC, languages, ratios.
+github-auth|GitHub auth setup: HTTPS tokens, SSH keys, gh CLI login.
+github-code-review|Review PRs: diffs, inline comments via gh or REST.
+github-issues|Create, triage, label, assign GitHub issues via gh or REST.
+github-pr-workflow|GitHub PR lifecycle: branch, commit, open, CI, merge.
+github-repo-management|Clone/create/fork repos; manage remotes, releases.
+
+## governance
+green-master-rules|所有格林主人明确过的历史要求和命令，永久固化，永不遗忘。
+
+## hermes
+[hermes]|Hermes系统 — Hermes 代理的系统诊断、升级和自动运行配置等自我管理技能
+clawhub-ranking-monitor|ClawHub 淘金小镇排行榜监控 - 自动化追踪AI技能/插件榜单变化
+edge-ai-collector|采集 edge-ai-vision.com 的Edge AI内容并加入Hermes情报管道
+fix-push-old-articles|修复v12推送混入旧文章的完整方案-采集层+推送层+数据库+定时维护
+flipbook-vidu-bridge|Flipbook+Vidu 视频/图像生成能力桥架 - 非Docker视频生成引擎
+hermes-system-diagnostic|Hermes Agent系统性全面诊断与自检流程。用于对Hermes全系统进行深度诊断，发现问题并修复。诊断范围：Skills/Agents/Expert System/Intelligence/Memory/Workflow Han...
+hermes-upgrade-auto-run|WSL2中Hermes升级 + 全能力自动运行系统搭建 - 包含实际schema验证、情报→专家→记忆管道、cron配置
+push-preference-matching-tags|Push推送引擎的格林主人偏好匹配优化——将extract_tags方向标签集成到推送评分系统，替代旧的关键词→category映射。核心：TAG_TO_TIER映射45+方向标签到P0/P1/P2三层权重、score_quality...
+
+## intelligence
+[intelligence]|情报系统 — 多平台数据采集、情报收集管线、RSS订阅调试、端点发现和统一信息处理的情报工作流
+ai-six-dimension-scoring-pipeline|Hermes AI六维评分引擎 — 基于DeepSeek API的直接HTTP调用评分，六维0-100分，含故障排查
+collection-quality-prescreen|采集时质量预筛 — 在insert_raw_item()阶段直接过滤低质数据，不让垃圾进库
+hermes-cleaning-pipeline-v2|Hermes 情报清洗管道v2 — 热点保底(前8条/平台自动放行) + 649宽泛白名单关键词(16分类)过滤
+hermes-fast-intelligence-pipeline|快速情报采集管线 (--fast) — 并行采集6个源+清洗评估+存储，不推送
+hermes-intelligence-collection-v3|Hermes全平台智能情报系统 v3.6 - 采集状态、推送修复、已知问题
+hermes-intelligence-system-v4|Hermes全平台智能情报采集推送系统v4 — 采集器架构、已知bug、修复记录、IP封锁问题
+hermes-intelligence-v5-debug|Hermes v5采集器调试方法论与平台连通性实测结果 - 2026-04-23重大调试成果
+intelligence-db-path-fix|修复 data/intelligence.db 是幽灵数据库的问题。真实数据在根目录 intelligence.db。
+multi-platform-collection-debugging|Hermes多平台信息采集调试方法论 - 修复微博/头条/快手等平台API采集问题
+platform-endpoint-discovery|通过curl终端测试发现平台API端点的系统性方法
+rss-feed-debugging-playbook|Systematic diagnosis and fix for broken RSS/Atom feed parsing — BOM, entities, namespaces, date formats.
+unified-collection-pipeline|Hermes unified collection + push pipeline skill — discover, fix, build, verify
+
+## leisure
+[leisure]|休闲生活 — 基于 OpenStreetMap 查找附近场所，无需 API 密钥的周边信息查询
+find-nearby|Find nearby places (restaurants, cafes, bars, pharmacies, etc.) using OpenStreetMap. Works with coordinates, addresse...
+
+## mcp
+[mcp]|MCP协议 — 模型上下文协议工具，通过 mcporter 和原生 MCP 客户端连接和管理外部 MCP 服务器
+mcporter|Use the mcporter CLI to list, configure, auth, and call MCP servers/tools directly (HTTP or stdio), including ad-hoc ...
+native-mcp|MCP client: connect servers, register tools (stdio/HTTP).
+
+## media
+[media]|媒体处理 — YouTube 转录、GIF 搜索、音乐生成和音频可视化等多媒体内容处理技能
+gif-search|Search/download GIFs from Tenor via curl + jq.
+heartmula|HeartMuLa: Suno-like song generation from lyrics + tags.
+songsee|Audio spectrograms/features (mel, chroma, MFCC) via CLI.
+spotify|Spotify: play, search, queue, manage playlists and devices.
+youtube-content|YouTube transcripts to summaries, threads, blogs.
+
+## migration
+[migration]|迁移 — OpenClaw 工作空间迁移工具，将 OpenClaw 项目完整迁移到其他代理系统
+openclaw-workspace-migration|Migrate from OpenClaw workspace to another agent system - complete framework integration with philosophy merging, mem...
+
+## mlops
+[mlops]|ML工程化 — 机器学习全生命周期工具，涵盖模型训练、微调、部署、推理优化和向量数据库等 MLOps 技能
+audiocraft-audio-generation|AudioCraft: MusicGen text-to-music, AudioGen text-to-sound.
+axolotl|Expert guidance for fine-tuning LLMs with Axolotl - YAML configs, 100+ models, LoRA/QLoRA, DPO/KTO/ORPO/GRPO, multimo...
+clip|OpenAI's model connecting vision and language. Enables zero-shot image classification, image-text matching, and cross...
+cloud|GPU 云提供商和无服务器计算平台，用于 ML 工作负载
+dspy|DSPy: declarative LM programs, auto-optimize prompts, RAG.
+evaluating-llms-harness|lm-eval-harness: benchmark LLMs (MMLU, GSM8K, etc.).
+evaluation|模型评估基准、实验跟踪、数据整理、分词器和可解释性工具
+fine-tuning-with-trl|Fine-tune LLMs using reinforcement learning with TRL - SFT for instruction tuning, DPO for preference alignment, PPO/...
+gguf-quantization|GGUF format and llama.cpp quantization for efficient CPU/GPU inference. Use when deploying models on consumer hardwar...
+grpo-rl-training|Expert guidance for GRPO/RL fine-tuning with TRL for reasoning and task-specific model training
+guidance|Control LLM output with regex and grammars, guarantee valid JSON/XML/code generation, enforce structured formats, and...
+huggingface-hub|HuggingFace hf CLI: search/download/upload models, datasets.
+inference|模型推理服务、量化、结构化输出和推理优化工具
+llama-cpp|llama.cpp local GGUF inference + HF Hub model discovery.
+modal-serverless-gpu|Serverless GPU cloud platform for running ML workloads. Use when you need on-demand GPU access without infrastructure...
+models|特定模型架构和工具 — 计算机视觉、语音、音频生成和多模态模型
+obliteratus|OBLITERATUS: abliterate LLM refusals (diff-in-means).
+outlines|Guarantee valid JSON/XML/code structure during generation, use Pydantic models for type-safe outputs, support local m...
+peft-fine-tuning|Parameter-efficient fine-tuning for LLMs using LoRA, QLoRA, and 25+ methods. Use when fine-tuning large models (7B-70...
+pytorch-fsdp|Expert guidance for Fully Sharded Data Parallel training with PyTorch FSDP - parameter sharding, mixed precision, CPU...
+research|ML 研究框架，使用声明式编程构建和优化 AI 系统
+segment-anything-model|SAM: zero-shot image segmentation via points, boxes, masks.
+serving-llms-vllm|vLLM: high-throughput LLM serving, OpenAI API, quantization.
+stable-diffusion-image-generation|State-of-the-art text-to-image generation with Stable Diffusion models via HuggingFace Diffusers. Use when generating...
+training|微调、RLHF/DPO/GRPO 训练、分布式训练框架和优化工具
+unsloth|Expert guidance for fast fine-tuning with Unsloth - 2-5x faster training, 50-80% less memory, LoRA/QLoRA optimization
+vector-databases|向量相似性搜索和嵌入数据库，用于 RAG、语义搜索和 AI 应用后端
+weights-and-biases|W&B: log ML experiments, sweeps, model registry, dashboards.
+whisper|OpenAI's general-purpose speech recognition model. Supports 99 languages, transcription, translation to English, and ...
+
+## note-taking
+[note-taking]|笔记 — Obsidian 知识库的读取、搜索和笔记创建
+obsidian|Read, search, create, and edit notes in the Obsidian vault.
+
+## openclaw-migration
+[openclaw-migration]|OpenClaw迁移 — 系统性将 OpenClaw 全功能迁移到 Hermes 的实战方法论
+openclaw-full-migration|系统性迁移 OpenClaw 全功能到 Hermes - 基于实战的成功方法论
+
+## operations
+[operations]|运维 — PushPlus 推送故障排查与直接 API 调用方案等运维技能
+hermes-db-maintenance|Systematic database maintenance for all Hermes SQLite databases — WAL checkpoint, vacuum, dedup, size monitoring, fre...
+hermes-pushplus-troubleshooting|Hermes PushPlus 推送故障排查与直接 API 调用方案
+lowscore-cleaning-workflow|系统清理Hermes intelligence.db中AI评分低于阈值的低质量数据。诊断→清理→管道改造全流程。
+reflex-fabric-heartbeat|Reflex Fabric heartbeat maintenance — detect stale nodes, clean old messages, output stats. Runs as cron job.
+weixin-gateway-failure-playbook|Weixin Gateway 推送失败诊断与修复手册 — iLink sendmessage error: ret=-2 和 Timeout context manager 错误的系统性排查方案
+
+## productivity
+[productivity]|生产力工具 — 文档创建、演示文稿、电子表格、OCR识别、PDF处理、项目管理、地图服务等办公效率技能
+airtable|Airtable REST API via curl. Records CRUD, filters, upserts.
+google-workspace|Gmail, Calendar, Drive, Docs, Sheets via gws CLI or Python.
+linear|Linear: manage issues, projects, teams via GraphQL + curl.
+maps|Geocode, POIs, routes, timezones via OpenStreetMap/OSRM.
+nano-pdf|Edit PDF text/typos/titles via nano-pdf CLI (NL prompts).
+notion|Notion API via curl: pages, databases, blocks, search.
+ocr-and-documents|Extract text from PDFs/scans (pymupdf, marker-pdf).
+powerpoint|Create, read, edit .pptx decks, slides, notes, templates.
+pushplus-rate-limit-handler|PushPlus微信推送频率限制诊断与处理
+teams-meeting-pipeline|Operate the Teams meeting summary pipeline via Hermes CLI — summarize meetings, inspect pipeline status, replay jobs,...
+
+## red-teaming
+godmode|Jailbreak LLMs: Parseltongue, GODMODE, ULTRAPLINIAN.
+
+## research
+[research]|研究与采集 — 学术论文发现、文献综述、博客监控、市场数据聚合、内容监控和科学知识检索等研究相关的技能
+anti-crawl-research-and-implement|全网反爬技术调研+实战验证+矩阵构建工作流。系统性的搜索、评估、安装、测试反爬方案，产出文档矩阵，集成到采集器。
+arxiv|Search arXiv papers by keyword, author, category, or ID.
+blogwatcher|Monitor blogs and RSS/Atom feeds via blogwatcher-cli tool.
+browser-multi-platform-collector|浏览器多平台采集最佳实践 - 针对各平台JS提取、常见陷阱、URL修复。替代终端采集失败时的备选方案。
+hermes-intelligence-heartbeat|Hermes 情报系统心跳检测 - 数据库健康/采集监控/推送检查/定时任务验证
+hermes-web-collection-browser|Hermes全平台网页采集最佳实践 - 终端网络受限环境下的浏览器采集方案
+llm-wiki|Karpathy's LLM Wiki: build/query interlinked markdown KB.
+platform-collection-debugging-playbook|Hermes平台信息采集调试方法论 - 从实战中提炼的调试流程、根因诊断、已知平台问题与解决方案
+polymarket|Query Polymarket: markets, prices, orderbooks, history.
+research-paper-writing|Write ML papers for NeurIPS/ICML/ICLR: design→submit.
+
+## security
+security-permissions-system|Complete security & permissions infrastructure for AI agent systems with RBAC, execution approvals, sandbox isolation...
+
+## smart-home
+openhue|Control Philips Hue lights, scenes, rooms via OpenHue CLI.
+
+## social-media
+[social-media]|社交媒体 — X/Twitter 平台集成，通过 x-cli 和 xurl 进行推文发布、时间线阅读、搜索等操作
+xitter|Interact with X/Twitter via the x-cli terminal client using official X API credentials. Use for posting, reading time...
+xurl|X/Twitter via xurl CLI: post, search, DM, media, v2 API.
+
+## software-development
+[software-development]|软件开发 — 涵盖代码开发、调试、测试、代码审查、计划编写、子代理开发、插件架构、系统补丁等全流程的软件工程技能
+agents-company-real-output|Fix the Agents Company workflow to produce actual runnable software instead of simulated/mock data by patching handle...
+cli-anything-bridge|CLI-Anything桥架 — 让Hermes操控40+专业软件(GIMP/Blender/LibreOffice等)，把任意软件变成AI原生CLI工具
+comfyui-node-development|ComfyUI custom node development — registration, parameter patterns, ensemble upscale fusion, AuraSR, 5-round audit cy...
+cross-review-autoresearch|多Agent交叉审核Skill — 基于AutoResearch方法论的Hermes原生实现。 两个Agent交替担任实现者和审核者，5维度加权评分，4阶段循环。
+debugging-hermes-tui-commands|Debug Hermes TUI slash commands: Python, gateway, Ink UI.
+extreme-code-audit-triple-agent|极端严苛的商用级深度代码审核方法论 — 3路并行delegate_task子Agent审核+汇总缺陷+P0/P1并行修复+回归验证
+hermes-agent-skill-authoring|Author in-repo SKILL.md: frontmatter, validator, structure.
+multi-expert-routing-system|Implement a multi-expert agent system with automatic routing, isolated workspaces/memory, and inter-expert collaborat...
+node-inspect-debugger|Debug Node.js via --inspect + Chrome DevTools Protocol CLI.
+plan|Plan mode: write markdown plan to .hermes/plans/, no exec.
+plugin-system-architecture|Design and implement a production-ready plugin system with lifecycle management, dependency resolution, event bus, ho...
+python-debugpy|Debug Python: pdb REPL + debugpy remote (DAP).
+requesting-code-review|Pre-commit review: security scan, quality gates, auto-fix.
+spike|Throwaway experiments to validate an idea before build.
+subagent-driven-development|Execute plans via delegate_task subagents (2-stage review).
+systematic-debugging|4-phase root cause debugging: understand bugs before fixing.
+systematic-python-source-patching|Safely modify Python source files by replacing whole function/method blocks without breaking indentation or introduci...
+test-driven-development|TDD: enforce RED-GREEN-REFACTOR, tests before code.
+worldmonitor-external-event-monitoring|Complete external event monitoring system with multiple event sources, processing pipelines, persistence, and HTTP ma...
+writing-plans|Write implementation plans: bite-sized tasks, paths, code.
+
+## .archive
+chinese-aesthetic-prompt-engineering|高质量中文文生图提示词工程 — 为AI图像生成(Stable Diffusion/Midjourney/ComfyUI等)撰写500-800字的高美学中文提示词。涵盖艺术风格、数据分析、模板结构、质量控制和大规模自动化生产管线。
+cronjob-batch-generator|Orchestrate massive AI content generation using parallel cronjobs. Key idea: for 100K-scale generation, delegate_task...
+library-prompt-composition|Compose high-quality text-to-image prompts by combining multiple dimension libraries. Enforces logical consistency vi...
+prompt-library-engineering|Build high-quality specialized prompt dimension libraries from raw data — extraction, surgical cleaning, dimension an...
+
+---
+Total domains: 34
+Total skills: 354
