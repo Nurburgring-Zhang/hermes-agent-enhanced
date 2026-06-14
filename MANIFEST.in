@@ -1,0 +1,66 @@
+# MANIFEST.in — Hermes Agent Enhanced
+# Specifies which files to include in the source distribution (sdist)
+
+# Core package
+graft scripts
+
+# Skills directory (378+ skill modules)
+graft skills
+
+# Plugins directory
+graft plugins
+
+# Profiles directory
+graft profiles
+
+# Documentation
+include README.md
+include SOUL.md
+include AGENTS.md
+include CLAUDE.md
+include CONTRIBUTING.md
+include SECURITY.md
+include LICENSE
+include pyproject.toml
+include Makefile
+include .gitignore
+
+# Explicitly exclude runtime artifacts
+prune scripts/__pycache__
+prune scripts/.pytest_cache
+prune scripts/audit_logs
+prune scripts/collectors
+prune scripts/RedCrack
+prune __pycache__
+prune .pytest_cache
+prune .pytest-cache
+prune .ruff_cache
+prune .git
+prune .github
+prune venv
+prune venv_hindsight
+prune hermes-agent
+prune logs
+prune reports
+prune outputs
+prune memories
+prune memory
+prune state
+prune state-snapshots
+prune checkpoints
+prune cache
+prune sandboxes
+prune backups
+prune audio_cache
+prune image_cache
+prune data
+
+# Exclude large binary files
+global-exclude *.pyc
+global-exclude *.pyo
+global-exclude *.so
+global-exclude *.db
+global-exclude *.db-wal
+global-exclude *.db-shm
+global-exclude .DS_Store
+global-exclude *.pack

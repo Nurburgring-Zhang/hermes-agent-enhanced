@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=68.0", "wheel"]
+requires = ["setuptools>=77.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -9,6 +9,7 @@ description = "Hermes Agent 增强版 — 商用级AI Agent平台"
 readme = "README.md"
 requires-python = ">=3.10"
 license = "MIT"
+license-files = ["LICENSE"]
 authors = [
     {name = "Nous Research", email = "info@nousresearch.com"},
 ]
@@ -94,6 +95,12 @@ db = [
     "asyncpg>=0.29.0",
     "alembic>=1.12.0",
 ]
+
+[project.scripts]
+hermes-enhanced-version = "scripts.__version__:get_version"
+hermes-auto-ci = "scripts.auto_ci:run_full_ci"
+hermes-audit = "scripts.audit_logger:main"
+hermes-gear = "scripts.gear_enforcer:enforce"
 
 [tool.setuptools.packages.find]
 where = ["."]

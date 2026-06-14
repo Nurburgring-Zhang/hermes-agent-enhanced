@@ -43,14 +43,32 @@
 ## 快速开始
 
 ```bash
+# 克隆仓库
 git clone git@github.com:Nurburgring-Zhang/hermes-agent-enhanced.git
 cd hermes-agent-enhanced
+
+# 创建虚拟环境 (推荐)
+python3 -m venv venv
+source venv/bin/activate
+
+# 安装
 pip install -e .
+
+# 验证版本
+hermes-enhanced-version
+# 输出: 0.16.0-enhanced
+
+# 导入测试
+python3 -c "import scripts; print(scripts.__version__)"
+
 # 运行测试
-pytest scripts/ -v
+cd scripts && python -m pytest -v
+
 # 运行CI
-python3 scripts/auto_ci.py
+make check
 ```
+
+> 详细安装步骤请参阅 [INSTALL.md](INSTALL.md)
 
 ## 项目结构
 

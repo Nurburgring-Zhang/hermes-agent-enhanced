@@ -680,13 +680,13 @@
     "created_at": "2026-06-09T19:47:27.101415+00:00",
     "created_by": null,
     "last_patched_at": "2026-06-14T18:29:38.146422+00:00",
-    "last_used_at": "2026-06-14T18:18:28.430823+00:00",
-    "last_viewed_at": "2026-06-14T18:18:28.428503+00:00",
+    "last_used_at": "2026-06-14T19:25:32.543281+00:00",
+    "last_viewed_at": "2026-06-14T19:25:32.540760+00:00",
     "patch_count": 56,
     "pinned": false,
     "state": "active",
-    "use_count": 48,
-    "view_count": 48
+    "use_count": 49,
+    "view_count": 49
   },
   "edge-ai-collector": {
     "archived_at": null,
@@ -2105,6 +2105,19 @@
     "use_count": 0,
     "view_count": 0
   },
+  "pre-task-checklist": {
+    "archived_at": null,
+    "created_at": "2026-06-14T20:02:43.277091+00:00",
+    "created_by": null,
+    "last_patched_at": "2026-06-14T20:03:38.269102+00:00",
+    "last_used_at": "2026-06-14T20:02:43.279827+00:00",
+    "last_viewed_at": "2026-06-14T20:02:43.277102+00:00",
+    "patch_count": 3,
+    "pinned": false,
+    "state": "active",
+    "use_count": 1,
+    "view_count": 1
+  },
   "pretext": {
     "archived_at": null,
     "created_at": "2026-06-09T08:08:00.514640+00:00",
@@ -2338,6 +2351,19 @@
     "state": "active",
     "use_count": 0,
     "view_count": 0
+  },
+  "self-correction": {
+    "archived_at": null,
+    "created_at": "2026-06-14T19:31:00.163719+00:00",
+    "created_by": null,
+    "last_patched_at": "2026-06-14T20:03:18.014254+00:00",
+    "last_used_at": "2026-06-14T20:03:08.063114+00:00",
+    "last_viewed_at": "2026-06-14T20:03:08.060438+00:00",
+    "patch_count": 3,
+    "pinned": false,
+    "state": "active",
+    "use_count": 4,
+    "view_count": 4
   },
   "self-evolution-agent-cycle": {
     "archived_at": null,
@@ -2837,13 +2863,13 @@
     "archived_at": null,
     "created_at": "2026-06-10T16:52:51.664541+00:00",
     "created_by": "agent",
-    "last_patched_at": "2026-06-14T19:14:21.811481+00:00",
-    "last_used_at": "2026-06-14T19:13:45.467761+00:00",
-    "last_viewed_at": "2026-06-14T19:13:45.464825+00:00",
-    "patch_count": 100,
+    "last_patched_at": "2026-06-14T20:04:04.991303+00:00",
+    "last_used_at": "2026-06-14T20:03:41.202703+00:00",
+    "last_viewed_at": "2026-06-14T20:03:41.200247+00:00",
+    "patch_count": 113,
     "pinned": false,
     "state": "active",
-    "use_count": 68,
-    "view_count": 68
+    "use_count": 73,
+    "view_count": 73
   }
 }

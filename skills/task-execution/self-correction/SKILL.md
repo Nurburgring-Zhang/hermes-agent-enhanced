@@ -38,3 +38,7 @@ Root cause: xxx
 Fix applied: xxx
 Prevention: xxx
 ```
+
+## 已知失败模式库
+参见 `references/common-failure-patterns.md` — 包含6种经过实战验证的故障模式及修复方案。
+每次遇到新故障时，先查询此库。如果匹配，直接应用已知修复。如果不匹配，修复后添加新模式。

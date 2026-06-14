@@ -671,6 +671,65 @@ assert hasattr(mod, 'post_conversation_hook')
 复盘 + Memory提取 + 进化候选 + 齿轮注册。
 输出: 交付物 + 复盘报告 + 记忆更新
 
+### Multi-Round Commercial Polish Protocol（2026-06-16新增）
+
+当用户说"商用级深度打磨"或"多轮打磨"时，按以下结构执行多轮迭代：
+
+**Round结构：**
+- R1: 基础加固（SOUL.md+Skill+前端Loading/空态+后端异常处理）
+- R2: 交互深度（页面交互密度+数据库索引+性能基准）
+- R3: 自我复盘（经验教训提取+memory/skill更新）
+- R4+: 根据R3结论定制下一轮打磨方向
+
+**每轮固定输出：**
+1. 构建验证（npm run build，记录时间）
+2. 性能基准（API响应时间 + 构建产物大小）
+3. 测试通过（pytest输出）
+4. 更新todo进度
+
+**打磨深度递增原则：**
+- 第一轮：覆盖所有模块的通用问题（loading/错误/空态）
+- 第二轮：针对评分最低的页面做专项增强
+- 第三轮：性能指标 + 数据库优化
+
+### Shell命令逃逸陷阱（2026-06-16实战）
+
+**症状**：在`execute_code`的f-string中嵌入带双引号和反引号的shell命令时，Python f-string的`\\\"`转义与shell的`\"`引号层层叠加导致SyntaxError。
+
+```python
+# ❌ 这样做必定爆炸
+r = terminal(f"curl -s http://... | python3 -c 'print(f\"{d[\\\"key\\\"]}\")'")
+```
+
+**正确做法**：把复杂shell命令放在terminal()的command参数中（不是execute_code的f-string）：
+```python
+# ✅ 正确
+r = terminal("curl -s http://... | python3 -c 'import sys,json;d=json.load(sys.stdin);print(d.get(\"key\",\"?\"))'")
+```
+
+### Build验证强制Step（2026-06-16新增）
+
+每次前端文件修改后，必须运行：
+```bash
+cd web && npm run build 2>&1 | tail -5
+```
+如果构建失败，检查：
+1. Icon import不存在（@element-plus/icons-vue版本差异）
+2. 组件名拼写错误
+3. 循环引用
+4. 未使用的import
+
+### 数据库索引优化模式（2026-06-16新增）
+
+对SQLite数据库优化时：
+1. 先分析当前索引：`sqlite3 data/nanobot.db ".indices"`
+2. 分析查询模式：搜索server.py/database.py中的SELECT/JOIN/WHERE
+3. 添加索引：关联表外键必须加索引（JOIN优化），过滤/排序字段加索引
+4. 创建可重用的 `scripts/optimize_indexes.py`（支持--analyze/--vacuum/--postgres模式）
+5. 索引数量目标：核心表的关联字段100%覆盖
+
+## 参考文件（2026-06-16 新增4个模式文件）\n- `references/multi-user-auth-pattern.md` — 多用户系统实施(DB持久化/API Key/管理员面板/权限矩阵)\n- `references/production-deployment-pattern.md` — 生产部署模式(uvicorn workers/production_app.py/端口清理/共享状态注意事项)\n- `references/inline-html-sink-debugging.md` — 内联HTML被多子Agent注入破坏的根因链与修复模式\n- `references/nanobot-factory-performance-baseline.md` — 性能基准数据(API 1-10ms/构建19.56s/4 workers)
+
 ## 参考文件
 - `references/deep-code-audit-methodology.md` — 极端深度代码审核方法(7层审核步骤)
 - `references/commercial-grade-sprint-patterns.md` — 商用级工程化Sprint模式
