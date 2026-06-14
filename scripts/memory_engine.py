@@ -21,6 +21,7 @@ import gzip
 import hashlib
 import json
 import logging
+logger = logging.getLogger(__name__)
 import re
 import sqlite3
 import sys

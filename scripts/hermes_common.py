@@ -42,7 +42,7 @@ def atomic_write(path: Path, data: Any, mode: str = "json") -> None:
         mode = "bytes"
 
     # 写临时文件
-    tmp = path.with_suffix(".tmp." + hashlib.md5(str(path).encode()).hexdigest()[:8])
+    tmp = path.with_suffix(".tmp." + hashlib.sha256(str(path).encode()).hexdigest()[:8])
     try:
         if mode == "bytes":
             tmp.write_bytes(content)

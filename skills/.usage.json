@@ -679,14 +679,14 @@
     "archived_at": null,
     "created_at": "2026-06-09T19:47:27.101415+00:00",
     "created_by": null,
-    "last_patched_at": "2026-06-14T06:17:13.312229+00:00",
-    "last_used_at": "2026-06-14T16:56:39.110943+00:00",
-    "last_viewed_at": "2026-06-14T16:56:39.106006+00:00",
-    "patch_count": 54,
+    "last_patched_at": "2026-06-14T18:18:54.662685+00:00",
+    "last_used_at": "2026-06-14T18:18:28.430823+00:00",
+    "last_viewed_at": "2026-06-14T18:18:28.428503+00:00",
+    "patch_count": 55,
     "pinned": false,
     "state": "active",
-    "use_count": 47,
-    "view_count": 47
+    "use_count": 48,
+    "view_count": 48
   },
   "edge-ai-collector": {
     "archived_at": null,
@@ -2837,13 +2837,13 @@
     "archived_at": null,
     "created_at": "2026-06-10T16:52:51.664541+00:00",
     "created_by": "agent",
-    "last_patched_at": "2026-06-14T17:11:28.583588+00:00",
-    "last_used_at": "2026-06-14T17:11:05.756985+00:00",
-    "last_viewed_at": "2026-06-14T17:11:05.754456+00:00",
-    "patch_count": 85,
+    "last_patched_at": "2026-06-14T18:25:50.172812+00:00",
+    "last_used_at": "2026-06-14T18:24:46.574185+00:00",
+    "last_viewed_at": "2026-06-14T18:24:46.571734+00:00",
+    "patch_count": 92,
     "pinned": false,
     "state": "active",
-    "use_count": 57,
-    "view_count": 57
+    "use_count": 64,
+    "view_count": 64
   }
 }

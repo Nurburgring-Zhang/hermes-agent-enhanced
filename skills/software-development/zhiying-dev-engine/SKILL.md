@@ -177,22 +177,48 @@ assert backticks % 2 == 0, f"反引号(模板字符串)数量为奇数: {backtic
 这样可以避免两个AI犯同样的错误，实现真正的不同视角互审。
 当delegate_task可用时，监督AI使用不同的模型接入，独立于执行AI。
 
-### 子Agent强制指定模型（2026-06-15实战）
+## 子Agent强制指定模型（2026-06-15实战新增）
 
-当用户要求使用特定模型但当前上下文已被降级时：
-1. **在delegate_task调用中显式指定模型**：`delegate_task(goal=..., model={"model":"deepseek-v4-pro","provider":"deepseek"})`
-2. 如果自身模型已降级，**必须主动告知用户**，建议通过子Agent使用目标模型
-3. 不要静默接受降级 — 用户对此愤怒
+**触发条件**：用户要求使用deepseek-v4-pro等特定模型，但当前自身已被降级到其他模型
 
-### 旧进程彻底清理（2026-06-15实战）
+**正确做法**：
+1. 不要在goal中写"使用deepseek-v4-pro"作为要求
+2. **在delegate_task参数中显式指定模型**：`delegate_task(goal=..., model={"model":"deepseek-v4-pro","provider":"deepseek"})`
+3. 如果自身模型已降级，**必须明确告知用户当前模型**，同时通过子Agent使用目标模型完成任务
+4. 不要只报告问题不行动 — 用户对"我无法切换"后什么都不做的行为非常愤怒
 
-当端口被占用时，fuser -k可能杀不干净。必须用：
+## 端口清理协议（2026-06-15实战新增）
+
+当fuser -k 8001/tcp杀不干净时（旧进程残留导致新进程bind error）：
 ```bash
 pkill -9 -f "python3 server.py"
 sleep 3
 fuser 8001/tcp 2>/dev/null || echo "free"
 ```
-然后用background=true启动新进程，再通过process(action='wait', timeout=15)确认启动日志中有Application startup complete。
+新进程启动后必须用process(wait, timeout=15)检查启动日志中是否有"Application startup complete"。
+
+严重警告：绝对不要用 `pkill -9 -f` 后面不带具体进程名（会杀掉所有python进程）
+
+## Element Plus图标版本陷阱（2026-06-15实战新增）
+
+条件判断为真时：
+- element-plus 2.8.x版本中 `@element-plus/icons-vue` 不导出所有图标
+- 构建报错示例：`"Stop" is not exported by "@element-plus/icons-vue"`
+- 解决方案：删除不可用的import，用emoji或SVG替代
+
+## Vue3页面创建完整协议（2026-06-15实战新增）
+
+当需要创建新的Vue3前端页面时，必须依次执行4步：
+1. 创建 `.vue` 文件（web/src/pages/目录下）
+2. 注册路由（router/index.ts添加import + path）
+3. 添加侧边栏菜单（SideBar.vue添加el-menu-item）
+4. 构建验证（npm run build，检查import错误）
+5. **如果构建失败**：检查是否有图标import不存在、组件名拼写错误、循环引用
+
+本会话已创建的参考页面：
+- ImageEditor.vue（图片编辑器，1555行）→ 见references/vue3-image-editor-pattern.md
+- InfiniteCanvas.vue（无限画布，1587行）→ 见references/infinite-canvas-pattern.md
+- DBAdmin.vue（数据库管理，848行）→ 见references/dbadmin-pattern.md
 
 ## 致命教训：禁止内联HTML — 必须使用独立前端文件（2026-06-13实战）
 
@@ -267,6 +293,40 @@ fuser 8001/tcp 2>/dev/null || echo "free"
 **三报告交叉验证：** 不一致处标记"需人工决策"
 
 **核心思想：** 不同角色的AI从不同视角审视同一问题，互相验证、互相纠偏。
+
+### "全部功能真实实现"审计模式（2026-06-15实战固化）
+
+**触发**：用户问"全部功能都真实实现了吗？"
+
+**禁止行为**：
+- ❌ 扫一眼代码说"都实现了"
+- ❌ 只审计API路由不审计前端页面
+- ❌ 只审计后端不审计数据持久化
+- ❌ 说"看起来能用"而不实际运行验证
+
+**必须行为**：
+1. 逐维度列出完整功能清单（数据生产/标注/审核/管理/采集/导出/工作流/团队/AI辅助）
+2. 每项标注 ✅真实实现 / ⚠️部分实现(API有但前端入口缺失) / ❌占位/mock
+3. 运行真实API调用验证（curl + python3直接调用引擎）
+4. 检查前端每个页面是否加载真实数据（不是mock随机数）
+5. 输出"已知缺失清单"而非"全部完成"
+
+**典型差距模式**：
+- 后端API通但返回mock随机数 → 不算真实实现
+- 引擎有代码但前端无入口 → 用户看不到=不存在
+- 画布节点可拖拽但执行返回占位 → 核心未完成
+
+### 前端独立文件铁律（2026-06-13/15 反复验证） 
+
+**永远不要**把HTML/CSS/JS内联在Python `r"""..."""` 字符串中。
+- 43833字符的HTML_TEMPLATE被3个子Agent注入破坏 → 花括号不匹配 → JS全不执行 → `typeof switchTab === undefined`
+- sed/patch操作Python行号会破坏字符串内的JS括号匹配
+- 改为 `frontend/index.html` + `frontend/js/pages/*.js` + `frontend/css/main.css`
+- FastAPI用 `StaticFiles` 挂载 `/css` `/js` 目录
+- 根路由 `/` 返回 `frontend/index.html` 文件内容(用`open().read()`)
+- 保留 `/canvas` 路由返回原始HTML_TEMPLATE作为备选
+
+**PAGE_RENDERERS动态查找**: navigate()必须用`window[name]`而非缓存字典，因为后续加载的JS覆盖全局函数时缓存不会更新。
 
 ### DAG编辑器模式（2026-06-14实战）
 - 纯TS实现（不依赖React Flow），5文件~1900行

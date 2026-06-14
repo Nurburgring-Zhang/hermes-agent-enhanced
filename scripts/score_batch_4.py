@@ -319,7 +319,7 @@ for item in batch_data:
     url = item.get("url", "") or ""
     published_at = item.get("published_at", "") or ""
 
-    url_hash = hashlib.md5(url.encode()).hexdigest() if url else None
+    url_hash = hashlib.sha256(url.encode()).hexdigest() if url else None
 
     # Perform AI six-dimension scoring
     result = ai_six_dimension_score(title, content, source, url, tags)

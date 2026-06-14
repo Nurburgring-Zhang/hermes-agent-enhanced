@@ -4,13 +4,18 @@ test_resilience_patterns.py — 完整测试套件
 覆盖: CircuitBreaker, RetryWithBackoff, RateLimiter, FallbackRegistry,
       DryRunMode, MetricsCollector, UnifiedRuleEnforcer
 """
+import logging
 import os
 import sys
 import time
+from pathlib import Path
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+logging.basicConfig(level=logging.WARNING)
+logger = logging.getLogger(__name__)
 
-from resilience_patterns import (
+sys.path.insert(0, str(Path.home() / ".hermes"))
+
+from scripts.resilience_patterns import (
     CircuitBreaker,
     CircuitBreakerConfig,
     CircuitBreakerOpenError,
@@ -274,9 +279,7 @@ engine.register_rule("allow_rule", lambda d: {"allowed": True, "user": d.get("us
 engine.register_rule("deny_rule", lambda d: {"allowed": False})
 
 # 正常执行
-from resilience_patterns import RateLimiterConfig
-import logging
-logger = logging.getLogger(__name__)
+from scripts.resilience_patterns import RateLimiterConfig
 
 
 engine.rate_limiter_cfg = RateLimiterConfig(max_requests=100, window_seconds=60)

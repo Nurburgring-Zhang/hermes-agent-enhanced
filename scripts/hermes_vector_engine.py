@@ -45,7 +45,7 @@ def text_to_vector(text: str) -> list:
     if not words:
         return vector
     for word in words:
-        h = hashlib.md5(word.encode("utf-8")).digest()
+        h = hashlib.sha256(word.encode("utf-8")).digest()
         for i in range(min(8, len(h))):
             idx = (h[i] ^ (h[i] << 1)) % EMBEDDING_DIM
             vector[idx] += 1.0

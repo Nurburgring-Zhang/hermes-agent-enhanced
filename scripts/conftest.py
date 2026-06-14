@@ -6,6 +6,9 @@ from pathlib import Path
 import pytest
 
 SCRIPTS_DIR = Path(__file__).parent
+HERMES_DIR = SCRIPTS_DIR.parent
+if str(HERMES_DIR) not in sys.path:
+    sys.path.insert(0, str(HERMES_DIR))
 if str(SCRIPTS_DIR) not in sys.path:
     sys.path.insert(0, str(SCRIPTS_DIR))
 
@@ -26,7 +29,7 @@ def re_module():
     for mod in list(sys.modules.keys()):
         if "rule_enforcer" in mod:
             del sys.modules[mod]
-    import rule_enforcer
+    import scripts.rule_enforcer as rule_enforcer
     return rule_enforcer
 
 
@@ -53,5 +56,5 @@ def three_phase(re_module):
 @pytest.fixture
 def dual_review_module():
     """Fixture providing the dual_review_engine module for tests."""
-    import dual_review_engine
+    import scripts.dual_review_engine as dual_review_engine
     return dual_review_engine

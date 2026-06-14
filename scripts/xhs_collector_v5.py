@@ -39,7 +39,7 @@ def get_db():
 
 
 def url_hash(url: str) -> str:
-    return hashlib.md5(url.encode()).hexdigest()
+    return hashlib.sha256(url.encode()).hexdigest()
 
 
 def insert_note(note: dict, source_type: str = "xhs_cloakbrowser") -> bool:
@@ -58,7 +58,7 @@ def insert_note(note: dict, source_type: str = "xhs_cloakbrowser") -> bool:
             return False
 
         content = f"{title}\n作者: {author}\n👍{like}"
-        uh = url_hash(url) if url else hashlib.md5(note_id.encode()).hexdigest()
+        uh = url_hash(url) if url else hashlib.sha256(note_id.encode()).hexdigest()
 
         db = get_db()
         existing = db.execute("SELECT id FROM raw_intelligence WHERE url_hash=?", (uh,)).fetchone()

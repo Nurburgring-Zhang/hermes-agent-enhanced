@@ -293,7 +293,7 @@ def main():
 
         try:
             # 1. Insert into raw_intelligence if not exists
-            url_hash = hashlib.md5(url.encode()).hexdigest() if url else ""
+            url_hash = hashlib.sha256(url.encode()).hexdigest() if url else ""
             c.execute("SELECT id FROM raw_intelligence WHERE id = ?", (item_id,))
             if not c.fetchone():
                 c.execute("""

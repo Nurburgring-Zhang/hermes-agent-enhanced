@@ -12,6 +12,8 @@ Hermes 深度记忆进化引擎 v2 (Parallel Lifecycle)
 5. **能力进化** — 自动检测能力瓶颈并生成改进方案
 6. **记忆融合** — 将分散的rag_index.db + main.sqlite统一成一个可搜索层
 """
+import logging
+logger = logging.getLogger(__name__)
 
 import hashlib
 import json
@@ -151,7 +153,7 @@ def module_enhance(min_importance: float = 0, limit: int = 200):
         enhanced = 0
         for row in rows:
             row_dict = dict(row)
-            content_hash = hashlib.md5(
+            content_hash = hashlib.sha256(
                 (str(row_dict.get("title", "")) + str(row_dict.get("content", ""))[:500]).encode()
             ).hexdigest()
 
@@ -485,7 +487,7 @@ def module_lifelong_learning():
         for name, path in memory_files.items():
             if path.exists():
                 content = path.read_text(encoding="utf-8")
-                content_hash = hashlib.md5((name + content[:500]).encode()).hexdigest()
+                content_hash = hashlib.sha256((name + content[:500]).encode()).hexdigest()
 
                 existing = rag_conn.execute(
                     "SELECT id FROM memory_entries WHERE entry_type='persistent_memory' AND content LIKE ? LIMIT 1",

@@ -227,7 +227,7 @@ class L2SceneScheduler:
                     """, (desc, tags, freq, conf, now, name))
                     result["updated"] += 1
                 else:
-                    scene_id = f"scene_{int(time.time())}_{hashlib.md5(name.encode()).hexdigest()[:8]}"
+                    scene_id = f"scene_{int(time.time())}_{hashlib.sha256(name.encode()).hexdigest()[:8]}"
                     cur.execute("""
                         INSERT INTO memory_scene 
                         (id, name, description, tags, frequency, confidence, last_activated, created_at)

@@ -73,7 +73,7 @@ def get_db():
     return sqlite3.connect(str(DB_PATH), timeout=30)
 
 def url_hash(url):
-    return hashlib.md5(url.encode()).hexdigest()[:16] if url else ""
+    return hashlib.sha256(url.encode()).hexdigest()[:16] if url else ""
 
 def save_items(items, platform):
     """保存采集结果到数据库"""

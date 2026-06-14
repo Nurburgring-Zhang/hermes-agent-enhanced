@@ -259,7 +259,7 @@ class StoryboardGenerator:
                 "height": 1920,
                 "frames": int(fps * seconds_per_scene),
                 "fps": fps,
-                "seed": int(hashlib.md5(str(scene["scene_id"]).encode()).hexdigest()[:8], 16)
+                "seed": int(hashlib.sha256(str(scene["scene_id"]).encode()).hexdigest()[:8], 16)
             },
             "dialogues": [d["text"] for d in dialogues]
         }
@@ -274,7 +274,7 @@ class VoiceGenerator:
     @staticmethod
     def generate_tts(text: str, voice: str = "auto", output_path: str | None = None) -> dict:
         """生成配音"""
-        output_path = output_path or str(DRAMA_VOICE_DIR / f"voice_{hashlib.md5(text.encode()).hexdigest()[:8]}.wav")
+        output_path = output_path or str(DRAMA_VOICE_DIR / f"voice_{hashlib.sha256(text.encode()).hexdigest()[:8]}.wav")
 
         # 尝试可用的TTS引擎：edge-tts / openai / minimax
         tts_engines = []

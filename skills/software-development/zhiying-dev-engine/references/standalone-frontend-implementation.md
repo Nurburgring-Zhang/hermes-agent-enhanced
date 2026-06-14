@@ -1,132 +1,94 @@
-# 独立前端实现方案（替代内联HTML_TEMPLATE）
+# IMDF 独立前端迁移模式（2026-06-13/15 实战总结）
 
 ## 背景
+IMDF项目原始前端是43833字符的内联HTML_TEMPLATE（Python r"""...""" 字符串），被多个子Agent的sed/patch注入破坏后全部JS不执行。迁移到独立前端文件后解决了所有问题。
 
-IMDF项目原始前端存储在 `api/canvas_web.py` 的 `HTML_TEMPLATE = r"""..."""` 字符串中（约43833字符/864行）。多轮子Agent注入导致：
-1. JS花括号不匹配
-2. 对象字面量内的非法`//`注释
-3. script块整体被浏览器丢弃
-4. 侧边栏不渲染，用户只看到空白画布
+## 迁移步骤
 
-## 解决方案：独立前端文件
-
-### 目录结构
+### 1. 创建独立文件结构
 ```
 frontend/
-├── index.html         # 主入口（不受sed/patch影响）
+├── index.html          # 主应用入口(单页应用)
 ├── css/
-│   └── main.css       # 深色工业主题（CSS变量驱动）
-├── js/
-│   ├── lib/
-│   │   └── api.js     # api()/apiGet()/apiPost()全局封装
-│   ├── pages/
-│   │   ├── dashboard.js  # 首页渲染
-│   │   ├── datasets.js   # 数据集管理(Phase2)
-│   │   ├── annotate.js   # 标注工具(Phase2)
-│   │   └── workflow.js   # 工作流画布(Phase2)
-│   └── app.js         # 导航路由+PAGE_RENDERERS+状态栏
+│   └── main.css        # 深色工业主题样式(24KB)
+└── js/
+    ├── lib/
+    │   └── api.js      # API调用封装(apiGet/apiPost/$
+    ├── pages/
+    │   ├── dashboard.js    # 首页
+    │   ├── datasets.js     # 数据集管理
+    │   ├── annotate.js     # 标注工具
+    │   ├── canvas.js       # 工作流画布
+    │   ├── business.js     # 任务/团队/交付/审核/统计/设置
+    │   ├── data-browser-grid.js    # 数据浏览器
+    │   ├── lifecycle-pipeline.js   # 生命周期流水线
+    │   ├── personal-workspace.js   # 个人工作台
+    │   ├── template-pipeline.js    # 模板化流水线
+    │   ├── media-production.js     # 图片/视频生产
+    │   ├── llm-training-pipeline.js # LLM训练管线
+    │   ├── pipeline.js    # 数据处理管线
+    │   ├── zhiying.js     # 智影数据工厂
+    │   ├── image-editor.js    # 图片标注工具
+    │   ├── eval-review.js     # 评测审核
+    │   └── data-collection.js # 数据采集
+    └── app.js           # 导航路由+应用初始化
 ```
 
-### FastAPI配置
-
+### 2. FastAPI StaticFiles配置
 ```python
+# canvas_web.py 中添加:
 from fastapi.staticfiles import StaticFiles
+import os
+_frontend_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "frontend")
+if os.path.exists(_frontend_dir):
+    app.mount("/css", StaticFiles(directory=os.path.join(_frontend_dir, "css")), name="css")
+    app.mount("/js", StaticFiles(directory=os.path.join(_frontend_dir, "js")), name="js")
 
-# 在app = FastAPI() 之后
-app.mount("/css", StaticFiles(directory="frontend/css"), name="css")
-app.mount("/js", StaticFiles(directory="frontend/js"), name="js")
-
-# 根路由
+# 根路由改为返回独立前端:
 @app.get("/", response_class=HTMLResponse)
 async def root():
-    idx = os.path.join(os.path.dirname(__file__), "..", "frontend", "index.html")
-    if os.path.exists(idx):
-        return open(idx).read()
+    frontend_index = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "frontend", "index.html")
+    if os.path.exists(frontend_index):
+        with open(frontend_index, "r", encoding="utf-8") as f:
+            return f.read()
     return HTML_TEMPLATE  # 备选
 
-# 保留旧画布备选
+# 保留旧入口作为备选:
 @app.get("/canvas", response_class=HTMLResponse)
 async def canvas_page():
     return HTML_TEMPLATE
 ```
 
-### SPA路由（JavScript端）
-
-使用`PAGE_RENDERERS`对象实现简单路由：
-
+### 3. 导航路由模式（app.js）
 ```javascript
 const PAGE_RENDERERS = {
   dashboard: renderDashboard,
   datasets: renderDatasets,
   annotate: renderAnnotate,
   workflow: renderWorkflow,
-  // ... 其他页面
+  // ... 所有页面
 };
 
+// 关键：动态查找而非缓存引用
 function navigate(page) {
-  // 更新导航高亮
-  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-  const navItem = document.querySelector(`.nav-item[data-page="${page}"]`);
-  if (navItem) navItem.classList.add('active');
-  
-  // 渲染页面
-  const renderer = PAGE_RENDERERS[page];
-  if (renderer) renderer();
+  let renderer = PAGE_RENDERERS[page];
+  if (typeof renderer !== 'function') {
+    renderer = window['render' + page.charAt(0).toUpperCase() + page.slice(1)];
+  }
+  if (typeof renderer === 'function') {
+    renderer();
+  }
 }
 ```
 
-### 首页默认视图（格林主人要求的直接呈现）
+### 4. 关键教训
+- **不要用sed修改HTML_TEMPLATE** — Python行号≠HTML字符串内位置，会破坏括号匹配
+- **检查花括号配对** — `js.count('{') == js.count('}')` 必须成立
+- **对象字面量内禁止//注释** — 必须用 `/* ... */`
+- **PAGE_RENDERERS动态查找** — 后续加载的JS覆盖全局函数时缓存不会更新
+- **每个新页面需要4步注册**：创建JS文件→index.html添加`<script>`→app.js添加PAGE_RENDERERS→index.html添加导航菜单项
 
-```
-┌─ 今日生产量 ─┐  ┌─ 待审核任务 ─┐  ┌─ 在线人数 ─┐  ┌─ 系统状态 ─┐
-│   1,234 条   │  │    56 项    │  │   12 人   │  │  🟢 正常   │
-└──────────────┘  └──────────────┘  └──────────────┘  └──────────────┘
-
-[📁 上传数据] [🖌️ 开始标注] [🚀 执行工作流] [📊 查看看板]
-[📋 创建任务] [👥 邀请成员] [📦 交付数据] [📈 统计分析]
-
-┌─ 最近任务 ──────────────────┐  ┌─ 快速标注 ────────┐
-│ 商品图片标注  67% 进行中 ▶   │  │ 🖼️ 拖拽图片到此处  │
-│ 车辆检测     100% 审核中 ▶   │  │ 或点击上传        │
-│ 医疗影像     0%  待分配 ▶   │  └──────────────────┘
-│ LLM数据      100% 已完成 ▶   │
-└─────────────────────────────┘
-```
-
-## 关键经验
-
-### 1. 前端独立于Python代码
-- 不再塞进 `r"""..."""` 字符串
-- 修改前端不需要重启Python服务（热更新）
-- 不会被sed/patch误伤
-
-### 2. 保留备选入口
-- `/canvas` 路由返回旧的HTML_TEMPLATE
-- 独立前端出问题时用户还能用画布
-
-### 3. JS加载顺序
-```html
-<script src="/js/lib/api.js"></script>      <!-- 1. 基础API -->
-<script src="/js/pages/dashboard.js"></script> <!-- 2. 页面渲染器 -->
-<script src="/js/app.js"></script>            <!-- 3. 初始化+路由 -->
-```
-- `DOMContentLoaded`中调用`navigate('dashboard')`
-- 所有渲染器函数必须在app.js之前加载
-
-### 4. 状态栏自动刷新
-```javascript
-document.addEventListener('DOMContentLoaded', () => {
-  navigate('dashboard');
-  refreshStatusBar();
-  setInterval(refreshStatusBar, 30000);
-});
-```
-
-### 5. Common Pitfalls
-
-| 陷阱 | 现象 | 原因 | 解决 |
-|------|------|------|------|
-| 导航切换无反应 | JS不执行 | 渲染器函数未定义(undefined in PAGE_RENDERERS) | 确认所有renderXxx函数已定义 |
-| 指标卡不显示 | 首页白板 | api.js未加载或dashboard.js未加载 | 检查script标签顺序 |
-| 404 on JS/CSS | 控制台报错 | StaticFiles挂载路径不对 | 检查app.mount路径是否与frontend/目录一致 |
-| 旧页面缓存 | 修改前端后浏览器还是旧版 | 浏览器缓存 | 加`?t=timestamp`或清除缓存 |
+## 结果
+- 从4个tab按钮（经常坏）→ 21个导航菜单项（稳定）
+- 从43833字符单文件 → 16个独立JS文件（303KB, 6569行）
+- 子Agent可以安全地单独修改一个页面JS文件而不影响其他页面

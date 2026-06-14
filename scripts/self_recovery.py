@@ -139,13 +139,13 @@ def check_file_integrity(backup: Path, rel_path: str) -> tuple[bool, bool]:
         return False, False
 
     with open(backup_file, "rb") as f:
-        backup_hash = hashlib.md5(f.read()).hexdigest()
+        backup_hash = hashlib.sha256(f.read()).hexdigest()
 
     if not local_file.exists():
         return True, False
 
     with open(local_file, "rb") as f:
-        local_hash = hashlib.md5(f.read()).hexdigest()
+        local_hash = hashlib.sha256(f.read()).hexdigest()
 
     return True, backup_hash == local_hash
 

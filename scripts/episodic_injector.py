@@ -111,7 +111,7 @@ class EpisodicInjector:
         # 写入数据库
         # 生成ID
         ts = time.strftime("%Y%m%d%H%M%S")
-        h = hashlib.md5(content.encode()).hexdigest()[:8]
+        h = hashlib.sha256(content.encode()).hexdigest()[:8]
         entry_id = f"ep_{ts}_{h}"
 
         conn = self._get_db()

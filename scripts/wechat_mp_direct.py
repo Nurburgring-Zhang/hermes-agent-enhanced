@@ -249,7 +249,7 @@ def save_articles(articles: list[dict]) -> tuple[int, int]:
         if not art.get("url") or not art.get("title"):
             continue
 
-        url_hash = hashlib.md5(art["url"].encode()).hexdigest()
+        url_hash = hashlib.sha256(art["url"].encode()).hexdigest()
         exists = db.execute(
             "SELECT 1 FROM raw_intelligence WHERE url_hash=?", (url_hash,)
         ).fetchone()

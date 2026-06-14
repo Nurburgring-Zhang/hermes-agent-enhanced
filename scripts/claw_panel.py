@@ -231,7 +231,7 @@ class ClawPanel:
         """实时监控"""
         try:
             while True:
-                os.system("clear" if os.name == "posix" else "cls")
+                os.system("clear" if os.name == "posix" else "cls")  # nosec B605 - terminal clear only
                 print(f"Hermes 三省六部 实时监控 (刷新每{interval}s, Ctrl+C退出)")
                 print(f"{'='*50}")
                 self.show_system_status()

@@ -110,7 +110,7 @@ def extract_full_content(html: str) -> tuple[str, str]:
 def save_item(title: str, content: str, url: str, author: str, category: str):
     try:
         db = sqlite3.connect(str(DB_PATH))
-        url_hash = hashlib.md5(url.encode()).hexdigest()
+        url_hash = hashlib.sha256(url.encode()).hexdigest()
         exists = db.execute("SELECT 1 FROM raw_intelligence WHERE url_hash=?", (url_hash,)).fetchone()
         if exists:
             db.close()

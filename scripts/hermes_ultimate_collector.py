@@ -38,7 +38,7 @@ def get_db():
     return sqlite3.connect(str(DB_PATH), timeout=30)
 
 def is_dup(db, url):
-    url_hash = hashlib.md5(url.encode()).hexdigest()
+    url_hash = hashlib.sha256(url.encode()).hexdigest()
     cur = db.cursor()
     cur.execute("SELECT id FROM raw_intelligence WHERE url_hash=?", (url_hash,))
     return cur.fetchone() is not None
@@ -46,7 +46,7 @@ def is_dup(db, url):
 def insert_article(db, source, platform, title, url, content, author="", summary="", category_tags=""):
     if is_dup(db, url):
         return False
-    url_hash = hashlib.md5(url.encode()).hexdigest()
+    url_hash = hashlib.sha256(url.encode()).hexdigest()
     cur = db.cursor()
     try:
         cur.execute("""

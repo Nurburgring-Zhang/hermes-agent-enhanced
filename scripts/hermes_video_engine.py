@@ -335,7 +335,7 @@ class HTMLVideoEngine:
 
         返回: {"status": "generated", "html_path": "...", "mp4_path": "...", "preview_url": "..."}
         """
-        output_name = hashlib.md5(content.encode()).hexdigest()[:12]
+        output_name = hashlib.sha256(content.encode()).hexdigest()[:12]
         html_path = str(OUTPUT_DIR / f"{output_name}.html")
         mp4_path = str(OUTPUT_DIR / f"{output_name}.mp4")
 

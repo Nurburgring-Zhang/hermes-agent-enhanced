@@ -472,7 +472,7 @@ class L1DBWriter:
 
     def _generate_id(self, fact: str) -> str:
         ts = time.strftime("%Y%m%d%H%M%S")
-        h = hashlib.md5(fact.encode()).hexdigest()[:12]
+        h = hashlib.sha256(fact.encode()).hexdigest()[:12]
         return f"sem_{ts}_{h}"
 
     def _keywordize(self, fact: str) -> str:

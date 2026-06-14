@@ -249,7 +249,7 @@ for script in ["context_packer.py", "surgical_context_slicer.py"]:
     hashes = []
     for i in range(5):
         out, err, rc = run_script(script)
-        h = hashlib.md5(out.encode()).hexdigest()
+        h = hashlib.sha256(out.encode()).hexdigest()
         hashes.append(h)
     consistent = len(set(hashes)) == 1
     check(f"一致性/{script}(5次)", consistent,

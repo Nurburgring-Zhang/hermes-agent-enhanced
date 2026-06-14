@@ -140,7 +140,7 @@ def save_item(
         return False
     try:
         db = sqlite3.connect(str(DB_PATH))
-        url_hash = hashlib.md5(url.encode()).hexdigest() if url else hashlib.md5(title.encode()).hexdigest()
+        url_hash = hashlib.sha256(url.encode()).hexdigest() if url else hashlib.sha256(title.encode()).hexdigest()
         exists = db.execute(
             "SELECT 1 FROM raw_intelligence WHERE url_hash=?", (url_hash,)
         ).fetchone()
@@ -415,7 +415,7 @@ def collect_by_keywords() -> list[dict]:
         encoded = urllib.parse.quote(kw)
         # 仅构建搜索URL作为数据源URL，不尝试解析搜索结果页
         search_url = f"https://www.douyin.com/search/{encoded}?type=general"
-        kw_hash = hashlib.md5(f"kw:{kw}".encode()).hexdigest()
+        kw_hash = hashlib.sha256(f"kw:{kw}".encode()).hexdigest()
 
         # 如果这个关键词还没有被热搜覆盖，添加一个占位搜索条目
         already_covered = any(kw in item.get("tags", "") or kw in item.get("title", "")
@@ -601,7 +601,7 @@ def run_self_test() -> dict:
 
     # 3. 数据库写入测试
     try:
-        test_hash = hashlib.md5(f"test_douyin_v2_{time.time()}".encode()).hexdigest()
+        test_hash = hashlib.sha256(f"test_douyin_v2_{time.time()}".encode()).hexdigest()
         db = sqlite3.connect(str(DB_PATH))
         now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         db.execute(

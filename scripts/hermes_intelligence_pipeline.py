@@ -341,7 +341,7 @@ def index_items(items: list[dict]) -> dict:
         ranked = sorted(scores.items(), key=lambda x: -x[1]["score"])
         primary = ranked[0][0] if ranked else "AI与机器学习"
 
-        content_hash = hashlib.md5(f"{item['id']}{item['title']}".encode()).hexdigest()
+        content_hash = hashlib.sha256(f"{item['id']}{item['title']}".encode()).hexdigest()
         c.execute("""
             INSERT OR IGNORE INTO rag_index
             (intelligence_id, title, content, domain, value_level, tags, url, indexed_at, content_hash)

@@ -119,7 +119,7 @@ def run_script(cmd: str, timeout: int = 30, input_data: str = None,
     start = time.time()
     try:
         proc = subprocess.run(
-            cmd, shell=True, input=input_data,
+            cmd, shell=True, input=input_data,  # nosec B602 - test infrastructure runner
             stdout=subprocess.PIPE, stderr=subprocess.PIPE,
             timeout=timeout, env=env,
             text=True, encoding="utf-8", errors="replace"
