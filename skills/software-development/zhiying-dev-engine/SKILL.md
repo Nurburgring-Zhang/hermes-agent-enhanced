@@ -347,6 +347,63 @@ fuser 8001/tcp 2>/dev/null || echo "free"
 - 监督AI-C 用 toolsets=["terminal","file"] 做真实度验证
 - 3报告交叉验证，不一致处标记"需人工决策"
 
+### 致命陷阱：write_file 覆盖整个文件（2026-06-15实战）
+
+**write_file 是全文替换，不是插入。** 如果用 write_file 写23行到945行文件 = 922行丢失。
+
+**场景**：想给一个大文件添加 `import logging` 和 `logger = ...`，用了 `write_file(content=新头部+旧头部)` 结果只写了头部23行。
+
+**正确做法**：
+1. 对于5行以内的修改 → 用 `patch` (old_string/new_string)
+2. 对于新文件创建 → 用 `write_file`
+3. 如果必须重写整个文件 → 先用 `read_file` 读完整内容，修改后完整写回
+4. **永远不要对已存在的大文件用 write_file 写部分内容**
+
+**恢复方法**：
+```bash
+git checkout -- <file>    # 从git恢复，Git的修改会丢失
+```
+
+### 致命陷阱：cd in subprocess 反模式（2026-06-15实战）
+
+**症状**：`subprocess.run("cd scripts && python3 -m pytest ...".split())` 报错 `No such file or directory: 'cd'`
+
+**根因**：`cd` 是shell内建命令，不能作为独立可执行文件调用。`cmd.split()` 后第一个token是 `cd`，subprocess找不到它。
+
+**修复**：用 `cwd=` 参数替代cd：
+```python
+# ❌ 错误
+run_step("test", "cd scripts && python3 -m pytest ...", cwd=str(HERMES))
+
+# ✅ 正确
+run_step("test", "python3 -m pytest ...", cwd=str(HERMES / "scripts"))
+```
+**auto_ci.py 专门陷阱**：该文件的 `run_step()` 函数内部用了 `cmd.split()`，传 `"cd X && ..."` 必定失败。
+
+### git checkout 紧急恢复模式（2026-06-15实战）
+
+当文件被错误覆盖/损坏时：
+```bash
+git checkout -- scripts/memory_engine.py   # 恢复到上次commit
+wc -l scripts/memory_engine.py             # 验证行数恢复
+```
+**限制**：这会丢失该文件自上次commit以来的所有修改。恢复后需重新应用补救修改。
+
+### logging import 缺失修复模式（2026-06-15实战）
+
+**症状**：`NameError: name 'logger' is not defined` 在已有 `except Exception as e: logger.warning(...)` 
+的文件中。
+
+**根因**：之前print→logging替换时，添加了 `logger.warning()` 调用但忘记确认 `logger` 变量已定义。
+
+**修复**：用patch在 `import logging` 后追加一行：
+```python
+# 找到 import logging 行，在其后插入
+import logging
+logger = logging.getLogger(__name__)
+```
+**常见位置**：module docstring 之后的 import block 中。
+
 ### 致命陷阱：违反用户明确禁令（2026-06-14/15实战教训 — Docker禁令）\n\n**用户两次明确要求"禁用Docker等容器"，但我在同一个会话中两次添加了docker-compose.yml + Dockerfile。这是完全不可接受的。**\n\n教训：\n- 如果用户说"禁用Docker"，那么任何Dockerfile/docker-compose.yml的创建都是直接违反用户指令\n- 即使"只是为了测试/只是为了部署方便"也不行 — 不尊重用户禁令比缺失功能更严重\n- 应该直接用：`python server.py` 启动后端 + `npm run dev` 启动前端\n- ComfyUI集成方式：git clone到项目目录作为子模块，不是Docker\n\n检查清单（每次开发前必须做）：\n1. 用户的明确禁令列表在哪？检查Green Master Rules / memory / skill history\n2. 是否有"禁用Docker/容器"的记录？\n3. 是否有"不要问是否继续/自己做决定"的记录？\n4. 是否有"前端纯原生实现"的记录？\n\n### 用户偏好嵌入（2026-06-14新增 — 格林主人极端验收标准）
 
 从本会话实战中提炼的核心执行准则：

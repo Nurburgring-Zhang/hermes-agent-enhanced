@@ -260,7 +260,28 @@ cat ~/.hermes/logs/dual_review/reviews.jsonl | python3 -c "import json,sys; [pri
 # 期望: 最近有delegate_task调用记录
 ```
 
-## 已知陷阱（2026-06-10 实战）
+### 模型切换反模式（2026-06-15实战）
+
+**场景**：配置的default是 deepseek-v4-pro，但当前会话实际运行在 deepseek-chat（启动时指定的）。
+
+**正确检测流程**：
+1. 先查 config.yaml default model: `hermes config show | grep "Model:"`
+2. 再对比当前会话的 conversation_started metadata 中的 Model 字段
+3. 如果不一致 → 立刻告知用户并提供修复命令
+
+**修复命令序列**：
+```bash
+hermes config set model deepseek-v4-pro
+hermes config set provider deepseek
+```
+然后用户用 `/model deepseek-v4-pro` 在当前会话切换，或重启对话。
+
+**禁止行为**：
+- ❌ 只改 config.yaml 不告知用户当前会话没切换
+- ❌ 用户明确要求切换后仍继续用旧模型干活
+- ❌ 说"无法切换"后什么都不做 — 至少通过子Agent用目标模型完成任务
+
+### 已知陷阱（2026-06-10 实战）
 
 ### 🔴 陷阱1：自豁免循环（最严重）
 
