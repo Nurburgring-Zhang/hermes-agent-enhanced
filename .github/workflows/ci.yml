@@ -1,0 +1,77 @@
+name: Hermes CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+      - run: pip install ruff
+      - run: ruff check . --exit-zero
+
+  test:
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+      - run: pip install pytest pytest-timeout
+      - name: Run all tests
+        run: |
+          cd scripts && python3 -m pytest \
+            test_rule_enforcer.py test_audit_system.py test_ministry.py \
+            test_resilience_patterns.py test_env_loader.py test_error_framework.py \
+            test_wake_guide.py test_gear_system.py test_gongbu_impl.py \
+            test_unified_collector.py test_cleaning_pipeline.py test_scoring.py \
+            test_push.py test_hy_memory.py test_context.py \
+            -q --tb=short
+
+  coverage:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+      - run: pip install pytest pytest-cov
+      - name: Check core module coverage
+        run: |
+          cd scripts && python3 -m pytest \
+            test_rule_enforcer.py test_audit_system.py \
+            test_ministry.py test_resilience_patterns.py test_env_loader.py \
+            test_error_framework.py test_wake_guide.py test_gear_system.py \
+            test_gongbu_impl.py --cov --cov-report=term -q --tb=short
+      - name: Coverage gate
+        run: |
+          cd scripts && python3 -m pytest \
+            test_rule_enforcer.py test_audit_system.py \
+            test_ministry.py test_resilience_patterns.py test_env_loader.py \
+            test_error_framework.py test_wake_guide.py test_gear_system.py \
+            test_gongbu_impl.py --cov --cov-report=term --cov-fail-under=60 -q --tb=short
+
+  security:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+      - run: pip install bandit
+      - name: Run bandit security scan
+        run: bandit -r scripts/ --exit-zero

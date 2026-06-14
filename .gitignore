@@ -1,0 +1,32 @@
+# 密钥和配置
+config.yaml
+.env
+*.key
+*.pem
+auth.json
+credentials.json
+
+# 数据库
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+
+# 缓存
+__pycache__/
+*.pyc
+node_modules/
+.cache/
+*.cache
+
+# 日志
+logs/
+*.log
+
+# 系统
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~

@@ -1,0 +1,166 @@
+# ============================================================================
+# Hermes Agent — Ruff 代码风格配置
+# ============================================================================
+# 对标 Google Python Style Guide (https://google.github.io/styleguide/pyguide.html)
+# 基于 ruff 0.15.x 配置文件格式
+# ============================================================================
+
+# ── 目标版本 ──────────────────────────────────────────────────────────
+target-version = "py311"
+
+# ── 行长度: Google Style 推荐 80, 但团队项目放宽至 100 ──────────────
+line-length = 100
+
+# ── 缩进: 4 空格 (Google Style §3.4) ───────────────────────────────
+indent-width = 4
+
+# ── 引号: 双引号 (Google Style §3.5 — 倾向于双引号) ───────────────
+[format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "auto"
+docstring-code-format = true
+docstring-code-line-length = 80
+
+# ── 忽略的文件/目录 ────────────────────────────────────────────────
+exclude = [
+    ".git",
+    ".mypy_cache",
+    ".pytest_cache",
+    ".ruff_cache",
+    "__pycache__",
+    "venv",
+    ".venv",
+    "node_modules",
+    "build",
+    "dist",
+    "*.egg-info",
+    "htmlcov",
+    ".coverage",
+    "coverage.xml",
+    "./scripts/collectors/ECC",
+    "**/collectors/ECC",
+]
+
+# ── lint 规则 ──────────────────────────────────────────────────────
+[lint]
+
+# Google Python Style 核心规则映射:
+# E — pycodestyle 错误 (Google Style §3 — 格式化)
+# F — pyflakes (Google Style §2 — 导入/未使用变量)
+# I — isort 导入排序 (Google Style §2.2 — 导入分组: 标准库→第三方→本地)
+# N — pep8-naming (Google Style §3.17 — 命名约定: snake_case, CapWords)
+# W — pycodestyle 警告
+# UP — pyupgrade (Python 3.11+ 语法现代化)
+# RUF — Ruff 特有规则
+# SIM — 简化表达式
+# S — 安全相关 (Google Style §3.20 — 避免安全反模式)
+# A — 内置变量阴影
+# C4 — 组合式检查 (列表推导等)
+# DTZ — 时区感知 datetime (Google Style §3.16)
+# EXE — 可执行权限检查
+# FLY — 文件系统路径建议
+# FURB — 现代化代码模式
+# G — 日志格式化 (Google Style §3.14 — 使用 %s 而非 %)
+# ICN — import 约定 (Google Style §2.2)
+# INP — 包命名推断
+# INT — 整数类型检查
+# NPY — NumPy 特定规则
+# PD — pandas 规则
+# PERF — 性能优化
+# PIE — 实用规则
+# PL — Pylint 规则子集 (Google Style §3)
+# PTH — pathlib 推荐
+# PT — pytest 测试规范 (Google Style §3.15)
+# PYI — stub 文件规则
+# Q — 引号一致性
+# RET — return 语句风格
+# RSE — 异常的 raise 风格
+# RUF100 — 未使用的 noqa 注释
+# SLF — 私有成员访问
+# SLOT — __slots__ 检查
+# T10 — 调试语句检查 (print → logging)
+# T20 — print 语句检查
+# TCH — typing 条件导入
+# TD — TODO 注释检查 (禁用以兼容)
+# TRY — try/except 风格
+# UP — pyupgrade
+# W — pycodestyle 警告
+select = [
+    "E",     # pycodestyle errors
+    "F",     # pyflakes
+    "I",     # isort
+    "N",     # pep8-naming
+    "W",     # pycodestyle warnings
+    "UP",    # pyupgrade
+    "S",     # flake8-bandit security
+    "SIM",   # simplify
+    "A",     # builtin shadowing
+    "C4",    # comprehensions
+    "G",     # logging format
+    "ICN",   # import conventions
+    "PIE",   # flake8-pie
+    "PL",    # pylint (subset)
+    "PT",    # pytest
+    "Q",     # quotes
+    "RET",   # return
+    "RSE",   # raise
+    "RUF",   # ruff-specific
+    "SLF",   # private access
+    "T10",   # debugger
+    "T20",   # print
+    "TRY",   # try/except
+    "PERF",  # performance
+    "PTH",   # pathlib
+    "FURB",  # modernize
+]
+
+# ── 忽略的规则 ─────────────────────────────────────────────────────
+ignore = [
+    # Google Style 允许行尾逗号 (好的 diff)
+    "COM812",
+
+    # Google Style 对文档字符串无严格行宽要求
+    "D100", "D101", "D102", "D103", "D104", "D105", "D106", "D107",
+
+    # 宽松的 # noqa 注释策略
+    "RUF100",
+
+    # eval/subprocess 在 Hermes Agent 自动化场景中合法使用
+    "S307",  # eval
+    "S603",  # subprocess without shell=True
+
+    # 允许 TODO 注释作为开发期内记录
+    "TD002", "TD003",
+]
+
+# ── 导入排序: Google Style §2.2 ───────────────────────────────────
+[lint.isort]
+force-single-line = false
+force-sort-within-sections = false
+known-first-party = ["hermes_agent", "hermes_cli", "tui_gateway", "gateway", "plugins"]
+known-third-party = ["pydantic", "openai", "httpx", "aiohttp", "fastapi", "sqlalchemy", "redis"]
+section-order = ["future", "standard-library", "third-party", "first-party", "local-folder"]
+split-on-trailing-comma = true
+
+# ── 命名约定: Google Style §3.17 ──────────────────────────────────
+[lint.pep8-naming]
+classmethod-decorators = ["classmethod", "pydantic.validator"]
+ignore-names = ["setUp", "tearDown", "setUpClass", "tearDownClass"]
+
+# ── pytest 规则: Google Style §3.15 ───────────────────────────────
+[lint.flake8-pytest-style]
+# pytest 测试函数命名强制 test_ 前缀
+fixture-parentheses = false
+mark-parentheses = false
+parametrize-names-type = "tuple"
+
+# ── 安全的函数/类注册 ─────────────────────────────────────────────
+[lint.ruff]
+# Allow common dunder variables
+parenthesize-tuple-in-subscript = true
+
+# ── pycodestyle 微调 ──────────────────────────────────────────────
+[lint.pycodestyle]
+max-doc-length = 80
+ignore-overlong-task-comments = true

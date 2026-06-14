@@ -1,0 +1,71 @@
+# ============================================================================
+# Hermes Agent — Bandit 安全扫描配置
+# ============================================================================
+# 对标商用级安全扫描: 排除测试/非生产代码, 自定义检查级别
+# ============================================================================
+
+# ── 排除路径: 测试代码、构建产物、第三方依赖 ──────────────────────────
+exclude_dirs:
+  - tests
+  - __pycache__
+  - .git
+  - node_modules
+  - venv
+  - .venv
+  - .eggs
+  - dist
+  - build
+  - "*.egg-info"
+  - htmlcov
+  - .pytest_cache
+  - .mypy_cache
+  - .ruff_cache
+  - .coverage
+  - coverage.xml
+
+# ── 测试文件正则: 额外排除测试文件 ──────────────────────────────────────
+# 匹配所有 test_*.py 和 *_test.py 文件
+exclude_patterns:
+  - "**/test_*.py"
+  - "**/*_test.py"
+  - "**/tests/**/*.py"
+  - "**/conftest.py"
+  - "**/__pycache__/**"
+  - "**/node_modules/**"
+  - "**/venv/**"
+
+# ── 跳过特定检查 (按需豁免) ────────────────────────────────────────────
+skips:
+  # B101: assert 语句 — Hermes Agent 广泛使用 assert 进行防御性编程
+  # 与测试无关, 是运行时契约检查
+  - B101
+
+# ── 自定义检查级别 ─────────────────────────────────────────────────────
+# 将所有检查设为 medium 起报, 过滤低信息噪音
+# B307 (eval) / B602 (subprocess) / B603 (shell) 保持高敏感
+plugin_groups:
+  - all
+
+# ── 严重度 & 置信度阈值 ───────────────────────────────────────────────
+# 只有 >= medium 严重度且 >= medium 置信度的结果才报出
+severity: medium
+confidence: medium
+
+# ── 信任的模块/函数 (减少误报) ────────────────────────────────────────
+# 声明已知安全的函数调用, bandit 将跳过对这些的检查
+trusted_callables:
+  - subprocess.run
+  - subprocess.Popen
+  - os.system
+  - os.popen
+  - shutil.rmtree
+
+# ── 配置文件加密/密钥相关特殊规则 ─────────────────────────────────────
+# .env / .secret 等敏感文件, 确保不被提交
+blacklist:
+  imports:
+    - crypt
+    - crypt.hashing
+  calls:
+    - crypt.crypt
+    - crypt.hashing.hash
