@@ -11,10 +11,11 @@ Hermes 公共工具模块 v1.0
 import fcntl
 import hashlib
 import json
+import logging
 from datetime import datetime
 from pathlib import Path
 from typing import Any
-import logging
+
 logger = logging.getLogger(__name__)
 
 
@@ -74,7 +75,7 @@ class FileLock:
     """
     基于fcntl的文件互斥锁。
     用于cron脚本防止同一脚本多实例并发。
-    
+
     用法：
         with FileLock("context_packer"):
             # 只有一个实例能进入
@@ -204,7 +205,4 @@ def push_wechat(title: str, content: str) -> bool:
         return False
 
 if __name__ == "__main__":
-    print("Hermes Common Utility Module v1.0")
-    print(f"Token: {'已配置' if get_pushplus_token() else '未配置'}")
-    print("原子写入: ✅")
-    print("文件锁: ✅")
+    pass

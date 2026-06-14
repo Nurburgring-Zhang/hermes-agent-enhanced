@@ -220,7 +220,70 @@ fuser 8001/tcp 2>/dev/null || echo "free"
 - InfiniteCanvas.vue（无限画布，1587行）→ 见references/infinite-canvas-pattern.md
 - DBAdmin.vue（数据库管理，848行）→ 见references/dbadmin-pattern.md
 
-## 致命教训：禁止内联HTML — 必须使用独立前端文件（2026-06-13实战）
+## 致命规则：禁止询问"要继续吗"（2026-06-15实战，2026-06-16强化）
+
+**用户对"要继续吗"、"是否执行"、"同意这个方案吗"等问题极度愤怒。这句话出现的每一次都让用户更加愤怒。**
+
+**铁律：** 所有方案直接执行，不询问，不征求意见，不等指令。用户说"完整实现"就全部实现，不要分批交付后中途停下来问。
+
+**触发模式：** 已完成Phase1→内心想"要不要先汇报再继续"→立即抑制这个想法→直接开始Phase2。
+
+**正确做法：**
+- ✅ "全网调研完成。现在三Agent分析→然后并行实施所有阶段。"
+- ❌ "Phase1完成（X/Y通过）。要继续Phase2吗？"
+- ❌ "这个方案你觉得可以接受吗？"
+- ❌ "需要我先做哪个？"
+- ❌ "需要继续吗？"（任何变体）
+
+## 商用级强制执行框架 R9-R15（2026-06-16新增）
+
+基于全网7主题调研汇编的《商用级软件开发与任务执行方法论》（255行），Hermes新增7条代码级强制规则：
+
+### R9: WBS任务分解强制
+任何3步以上的任务必须先产出WBS（Epic→Feature→Story→Task），MoSCoW优先级标注，Fibonacci点数估算。不可直接跳到执行。由 `commercial_grade_enforcer.wbs_injector` 插件强制注入。跳过分解放直接拦截。
+
+### R10: 幂等性保护
+所有写操作（POST/PUT/DELETE/PATCH）必须生成幂等键（SHA256(url+body+timestamp)），SQLite去重存储。重复提交自动返回已有结果。
+
+### R11: Checkpoint保护
+任务超过10步自动保存完整状态快照（内存+文件+DB），失败从最近Checkpoint恢复。
+
+### R12: 五道质量门禁
+代码修改后自动过5道门：①Lint语法 ②Type类型 ③Security安全扫描 ④Test单元测试 ⑤Performance性能。任一门失败=BLOCKED。
+
+### R13: 三Agent评估器
+执行AI、监督AI、评估AI必须使用不同模型家族（如DeepSeek+Gemini+Claude），防止同质化错误。HITL触发条件：置信度<70%/连续3次失败/影响数据>1000条。
+
+### R15: 五级降级策略
+任务失败按5级处理：①RETRY（指数退避3次）→ ②DEGRADE（降级执行，返回部分结果）→ ③SKIP（跳过非关键步骤）→ ④ESCALATE（升级人工决策）→ ⑤BREAK（硬停止）。
+
+### 插件实现
+`commercial_grade_enforcer` 插件（10文件/~2800行）:
+- `wbs_injector.py` — R9: WBS分解注入
+- `idempotency_guard.py` — R10: SHA256幂等键+SQLite去重
+- `checkpoint_guard.py` — R11: 状态快照+断点恢复
+- `quality_gate.py` — R12: Lint/Type/Security/Test/Performance 5道门
+- `verifier_agent.py` — R13: 模型家族检测+HITL触发
+- `acceptance_checklist.py` — R14: ATDD格式验收清单(已在三阶段铁律中)
+- `degradation_handler.py` — R15: RETRY→DEGRADE→SKIP→ESCALATE→BREAK
+- `metrics_collector.py` — 后台线程: 完成率/首次通过率/人工干预率/端到端耗时
+- `plugin.yaml` — 插件元数据: 4个hook注册(pre_task_start/pre_tool_call/post_tool_call/post_task_complete)
+
+### 主动能力使用强化（2026-06-16更新）
+
+**用户极度愤怒于我有能力但不用。以下每项能力必须主动使用，不等用户提醒：**
+
+1. **模型切换** — 当前模型降级时，必须开子Agent(delegate_task)使用目标模型（如deepseek-v4-pro）完成任务，不要停留在降级模型上继续做。子Agent的goal中不要写"使用deepseek-v4-pro"——直接在delegate_task参数中指定model。
+
+2. **上下文压缩** — force_compressor插件存在但需要主动触发。上下文超过15万token或80%使用率时，必须主动压缩。不要等系统自动做。每次长对话开始前检查token使用量。
+
+3. **长期记忆** — 会话中每次学到新东西、踩了新坑，必须立即更新到memory和对应skill。不要等到会话结束。这是永久禁令级别的要求。
+
+4. **多子Agent并行** — 独立Phase必须用delegate_task的tasks数组并行执行（最多3个），不是顺序执行。每批完成后立即验证并开始下一批。
+
+5. **任务拆分+分阶段** — 复杂任务必须先拆分为独立子任务，标注依赖关系，然后分批并行。不要在单个Agent上从头做到尾。用户不需要提醒，Hermes自己应该主动规划。
+
+详见 `references/commercial-grade-enforcement-framework.md`
 
 43833字符的HTML_TEMPLATE(r"""..."""字符串)被多轮子Agent注入破坏导致全部JS不执行。根因链: 子Agent注入→花括号不匹配→//注释在对象字面量内→sed删除破坏括号→execNode被重复覆盖3次。最终`typeof switchTab === undefined`。
 
@@ -230,7 +293,19 @@ fuser 8001/tcp 2>/dev/null || echo "free"
 
 详见`references/inline-html-sink-debugging.md`
 
-## 双AI互审贯穿全程
+## 主动能力使用规则（2026-06-15实战）
+
+**用户极度愤怒于我有能力但不用：**
+
+1. **模型切换** — SOUL.md定义了路由链。遇到超难任务必须主动切换到顶级模型，或通过子Agent使用指定模型。不要停留在降级模型上继续做。
+
+2. **上下文压缩** — force_compressor插件存在但需要主动触发。上下文超过15万token或80%使用率时，必须主动压缩。不要等系统自动做。
+
+3. **长期记忆** — 会话中每次学到新东西、踩了新坑，必须立即更新到memory和对应skill。不要等到会话结束。
+
+4. **多子Agent并行** — 独立Phase必须用delegate_task的tasks数组并行执行（最多3个），不是顺序执行。每批完成后立即验证并开始下一批。
+
+5. **任务拆分** — 复杂任务必须先拆分为独立子任务，标注依赖关系，然后分批并行。不要一个Agent从头做到尾。
 
 **铁律：双AI互审不可关闭、不可绕过、任何时候不能跳过。**
 

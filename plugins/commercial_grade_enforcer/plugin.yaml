@@ -1,0 +1,24 @@
+name: commercial_grade_enforcer
+version: "1.0.0"
+description: "商用级强制执行器 — 将《商用级软件开发与任务执行方法论》代码化注入"
+author: "Hermes Agent Team"
+enabled: true
+auto_start: true
+entry_point: "__init__.py"
+dependencies:
+  - dual_review
+  - rule_enforcer
+hooks:
+  - pre_task_start
+  - pre_tool_call
+  - post_tool_call
+  - post_task_complete
+capabilities:
+  - idempotency_guard       # R10: 幂等键去重
+  - checkpoint_guard        # R11: Checkpoint强制
+  - quality_gate            # R12: 质量门禁(5道)
+  - wbs_injector            # R9: WBS分解
+  - verifier_agent          # R13: 评估器独立模型
+  - acceptance_checklist    # R14: 交付验收清单
+  - degradation_handler     # R15: 优雅降级
+  - metrics_collector       # 指标收集: 完成率/通过率/干预率/耗时

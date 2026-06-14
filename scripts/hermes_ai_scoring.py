@@ -33,8 +33,7 @@ HERMES = Path.home() / ".hermes"
 # ========== 提前定义简单日志（在env加载之前可用） ==========
 def _early_log(msg):
     """env加载阶段使用的简单日志"""
-    ts = datetime.now().strftime("%H:%M:%S")
-    print(f"[{ts}] {msg}")
+    datetime.now().strftime("%H:%M:%S")
 
 # ========== 加载.env环境变量 ==========
 # 确保cron子进程也能获取到API key
@@ -78,7 +77,6 @@ MIN_CONTENT_LEN_RULE = 0
 
 def log(msg: str):
     ts = datetime.now().strftime("%H:%M:%S")
-    print(f"[{ts}] {msg}")
     from datetime import date as _date
     logfile = LOG_DIR / f"ai_scoring_{_date.today().strftime('%Y%m%d')}.log"
     with open(logfile, "a", encoding="utf-8") as f:
@@ -126,7 +124,7 @@ def score_timeliness(published_at: str | None) -> int:
     if not published_at:
         return 5
     try:
-        pub = datetime.fromisoformat(published_at.replace("Z", "+00:00"))
+        pub = datetime.fromisoformat(published_at)
         now = datetime.now(pub.tzinfo) if pub.tzinfo else datetime.now()
         hours = (now - pub).total_seconds() / 3600
         if hours <= 24: return 10
@@ -198,7 +196,7 @@ def generate_ai_scoring_prompt(items: list[dict], kw_weights: dict[str, float]) 
 - **发布时间**: {pub}
 """)
 
-    prompt = f"""你是一位严格的情报价值评估专家。请对以下{len(items)}条情报逐条进行**真正的AI内容理解评分**。
+    return f"""你是一位严格的情报价值评估专家。请对以下{len(items)}条情报逐条进行**真正的AI内容理解评分**。
 
 用户关注领域(供偏好匹配参考):
 {pref_hints}
@@ -225,7 +223,7 @@ def generate_ai_scoring_prompt(items: list[dict], kw_weights: dict[str, float]) 
   {{
     "id": ID(必须原样返回),
     "scarcity": 0-30,
-    "impact": 0-30, 
+    "impact": 0-30,
     "tech_depth": 0-20,
     "timeliness": 0-10,
     "preference": 0-10,
@@ -242,9 +240,8 @@ def generate_ai_scoring_prompt(items: list[dict], kw_weights: dict[str, float]) 
 
 确保对所有{len(items)}条都评分,不要遗漏。"""
 
-    return prompt
 
-def parse_ai_response(ai_text: str, items: list[dict] = None) -> list[dict]:
+def parse_ai_response(ai_text: str, items: list[dict] | None = None) -> list[dict]:
     """解析AI返回的评分JSON"""
     # 尝试直接解析
     ai_text = ai_text.strip()
@@ -403,7 +400,7 @@ def save_scores_to_db(scores: list[dict]) -> int:
     if updated_ids:
         placeholders = ",".join(["?"] * len(updated_ids))
         conn.execute(f"""
-            DELETE FROM ai_score_queue 
+            DELETE FROM ai_score_queue
             WHERE item_id IN ({placeholders}) AND status = 'pending'
         """, updated_ids)
 
@@ -804,7 +801,7 @@ def apply_rule_scores_directly():
     # 输出统计
     conn = sqlite3.connect(str(DB_PATH))
     stats = conn.execute("""
-        SELECT COUNT(*), 
+        SELECT COUNT(*),
                SUM(CASE WHEN ai_score_total >= 80 THEN 1 ELSE 0 END),
                SUM(CASE WHEN ai_score_total >= 60 AND ai_score_total < 80 THEN 1 ELSE 0 END),
                SUM(CASE WHEN ai_score_total >= 30 AND ai_score_total < 60 THEN 1 ELSE 0 END),
@@ -828,7 +825,6 @@ if __name__ == "__main__":
     # 默认: 增强规则评分(快速后备)
     if "--save" in sys.argv:
         result = save_scored_items_from_stdin()
-        print(result)
     elif "--dry-run" in sys.argv:
         items = get_pending_items(limit=10, min_content_len=0, full=True)
         log(f"待评分: {len(items)} 条")
@@ -849,16 +845,14 @@ if __name__ == "__main__":
         log(f"📦 获取到 {len(items)} 条待评分条目")
         if not items:
             log("✅ 没有待评分的条目")
-            print("TASK_DONE:0")
         else:
             model = os.environ.get("HERMES_AI_MODEL", "deepseek-chat")
             saved = score_items_via_openrouter(items, kw_weights, model=model, batch_size=5)
             if saved > 0:
-                print(f"TASK_BATCH_SCORED:{saved}")
+                pass
             else:
                 log("⚠️ 批量AI评分未成功，回退到规则评分")
                 saved = apply_rule_scores_directly()
-                print(f"TASK_DONE:{saved}")
     elif "--ai" in sys.argv:
         # 真正的AI评分模式
         limit = 50
@@ -867,11 +861,9 @@ if __name__ == "__main__":
         if len(sys.argv) > 2 and sys.argv[2].isdigit():
             limit = int(sys.argv[2])
         result = run_ai_scoring_via_delegate_task(limit=limit)
-        print(result)
     elif "--apply-rules" in sys.argv:
         # 明确的规则评分
         saved = apply_rule_scores_directly()
-        print(f"TASK_DONE:{saved}")
     else:
         # 默认: 先尝试AI评分，如果失败回退规则评分
         result = run_ai_scoring_via_delegate_task(limit=20)

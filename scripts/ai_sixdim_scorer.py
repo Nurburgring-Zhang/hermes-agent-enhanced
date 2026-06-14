@@ -416,19 +416,12 @@ def main():
     with open(INPUT_PATH, encoding="utf-8") as f:
         items = json.load(f)
 
-    print(f"读取 {len(items)} 条情报进行AI六维评分...\n")
 
     results = []
     for item in items:
         result = score_item(item)
         results.append(result)
 
-        print(f"[ID={result['id']:>8}] {str(item['title'])[:50]}")
-        print(f"  独家性:{result['scarcity']:>2}  影响力:{result['impact']:>2}  技术深度:{result['tech_depth']:>2}  "
-              f"时效:{result['timeliness']:>2}  偏好:{result['preference']:>2}  可信:{result['credibility']:>2}  "
-              f"总分:{result['total']:>3}")
-        print(f"  重要性:{result['importance_score']:.1f}")
-        print()
 
     # 写入数据库
     conn = sqlite3.connect(DB_PATH)
@@ -467,14 +460,10 @@ def main():
     conn.commit()
     conn.close()
 
-    print(f"数据库更新完成: {updated} 条记录已更新")
-    print(f"评分时间: {now}")
 
     # 输出结果摘要
-    print("\n=== 评分结果摘要 ===")
     for r in results:
-        reasoning = json.loads(r["reasoning"])
-        print(f"ID={r['id']:>8} | 总分={r['total']:>3} | {reasoning['summary']}")
+        json.loads(r["reasoning"])
 
 
 if __name__ == "__main__":

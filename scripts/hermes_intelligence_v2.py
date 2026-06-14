@@ -18,7 +18,9 @@ Usage:
   python hermes_intelligence_v2.py --agent=国内  # 仅国内平台
   python hermes_intelligence_v2.py --agent=海外 # 仅海外平台
 """
+import contextlib
 import json
+import logging
 import os
 import queue
 import re
@@ -28,7 +30,7 @@ import time
 import urllib.request
 from datetime import datetime
 from html import unescape
-import logging
+
 logger = logging.getLogger(__name__)
 
 
@@ -272,9 +274,8 @@ if RSSHUB_AVAILABLE:
         {"name":"Telegram-ML.news","platform":"telegram","type":"rsshub","url":f"{LOCAL_RSSHUB_URL}/telegram/channel/EngineerFeed","category":"AI","lang":"en","weight":0.9},
         {"name":"Telegram-StatLearning","platform":"telegram","type":"rsshub","url":f"{LOCAL_RSSHUB_URL}/telegram/channel/ak_family","category":"AI","lang":"en","weight":0.8},
     ]
-    print(f"[RSSHub] 本地RSSHub可用,已加载 {len(SOURCES_RSSHUB)} 个来源")
 else:
-    print("[RSSHub] 本地RSSHub未配置,仅使用直接可访问来源")
+    pass
 
 # ============================================================
 # 今日头条多分类来源(通过API)
@@ -579,7 +580,6 @@ def fetch_rss(source):
     try:
         import xml.etree.ElementTree as ET
         root = ET.fromstring(data.encode("utf-8") if isinstance(data, str) else data)
-        ns = {"atom": "http://www.w3.org/2005/Atom"}
         entries = root.findall(".//entry") or root.findall(".//item") or []
         for entry in entries[:20]:
             title_el = entry.find("title") or entry.find("atom:title")
@@ -819,7 +819,7 @@ def collect_all(sources, max_workers=20):
         t.join(timeout=30)
 
     while not result_queue.empty():
-        name, items = result_queue.get()
+        _name, items = result_queue.get()
         all_items.extend(items)
 
     return all_items
@@ -840,9 +840,9 @@ def clean_dedup(items):
     conn = get_db()
     c = conn.cursor()
     c.execute("SELECT title FROM push_records WHERE push_status='sent' AND push_time > datetime('now','-7 days')")
-    sent_titles = set(r[0].lower() for r in c.fetchall())
+    sent_titles = {r[0].lower() for r in c.fetchall()}
     c.execute("SELECT title FROM cleaned_intelligence WHERE cleaned_at > datetime('now','-1 days')")
-    recent_titles = set(r[0].lower() for r in c.fetchall())
+    recent_titles = {r[0].lower() for r in c.fetchall()}
     conn.close()
 
     seen = set()
@@ -957,7 +957,7 @@ def update_trends(evaluated_items, conn):
                       now, now, item["importance_score"], trend_id))
         else:
             # 新建追踪记录
-            c.execute("""INSERT INTO trend_tracking 
+            c.execute("""INSERT INTO trend_tracking
                 (keyword,title,url,source,platform,importance_score,first_seen,last_seen,hit_days,hit_count,source_count,is_hot,is_extreme,status)
                 VALUES (?,?,?,?,?,?,?,?,1,1,1,0,0,'active')""",
                      (keyword, title[:100], item.get("url",""), item["source"],
@@ -974,8 +974,8 @@ def save_all(raw_items, evaluated, conn):
 
     # 保存原始数据
     for item in raw_items:
-        try:
-            c.execute("""INSERT OR IGNORE INTO raw_intelligence 
+        with contextlib.suppress(Exception):
+            c.execute("""INSERT OR IGNORE INTO raw_intelligence
                 (title,content,url,platform,source,author,category,hot_score,view_count,like_count,comment_count,published_at,raw_data,collected_at)
                 VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
                      (item["title"], item.get("content",""), item.get("url",""),
@@ -983,13 +983,11 @@ def save_all(raw_items, evaluated, conn):
                       item.get("category",""), item.get("hot_score",0), item.get("view_count",0),
                       item.get("like_count",0), item.get("comment_count",0),
                       item.get("published_at"), item.get("raw_data","{}"), now))
-        except Exception:
-            pass
 
     # 保存清洗后数据
     for item in evaluated:
-        try:
-            c.execute("""INSERT INTO cleaned_intelligence 
+        with contextlib.suppress(Exception):
+            c.execute("""INSERT INTO cleaned_intelligence
                 (raw_id,title,content,url,source,platform,author,category,importance_score,value_level,value_reasons,is_ai_related,language,chinese_ratio,published_at,collected_at,cleaned_at)
                 VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
                      (0, item["title"], item.get("content",""), item.get("url",""),
@@ -998,8 +996,6 @@ def save_all(raw_items, evaluated, conn):
                       item.get("matched_keywords",""), item.get("is_ai_related",0),
                       item.get("language","zh"), item.get("chinese_ratio",1.0),
                       item.get("published_at"), now, now))
-        except Exception:
-            pass
 
     conn.commit()
 
@@ -1027,7 +1023,7 @@ def push_wechat(title, content, level=3, item=None, conn=None):
         # 写入推送记录
         if conn and item:
             c = conn.cursor()
-            c.execute("""INSERT INTO push_records 
+            c.execute("""INSERT INTO push_records
                 (cleaned_id,title,content,url,source,platform,push_level,push_channel,push_status,push_time,push_response)
                 VALUES (?,?,?,?,?,?,?,?,?,?,?)""",
                      (0, item["title"], content[:500], item.get("url",""),
@@ -1039,7 +1035,7 @@ def push_wechat(title, content, level=3, item=None, conn=None):
     except Exception as e:
         if conn and item:
             c = conn.cursor()
-            c.execute("""INSERT INTO push_records 
+            c.execute("""INSERT INTO push_records
                 (cleaned_id,title,content,url,source,platform,push_level,push_channel,push_status,push_time,push_response)
                 VALUES (?,?,?,?,?,?,?,?,?,?,?)""",
                      (0, item["title"], content[:500], item.get("url",""),
@@ -1052,10 +1048,7 @@ def push_wechat(title, content, level=3, item=None, conn=None):
 # 报告生成(含背景+技术分析)
 # ============================================================
 def build_report(items, level_filter=None):
-    if level_filter:
-        filtered = [x for x in items if x["value_level"] >= level_filter]
-    else:
-        filtered = items
+    filtered = [x for x in items if x["value_level"] >= level_filter] if level_filter else items
 
     date = datetime.now().strftime("%Y-%m-%d %H:%M")
     lines = [
@@ -1115,9 +1108,6 @@ def build_report(items, level_filter=None):
 # 主运行函数(Multi-Agent调度)
 # ============================================================
 def run(dry_run=False, urgent_only=False, agent_filter=None):
-    print(f"\n{'='*60}")
-    print("  Hermes 全平台智能情报系统 v2 - Multi-Agent采集")
-    print(f"{'='*60}")
 
     # 过滤来源
     if agent_filter == "国内":
@@ -1127,40 +1117,26 @@ def run(dry_run=False, urgent_only=False, agent_filter=None):
     else:
         sources = ALL_SOURCES
 
-    print(f"\n[调度Agent] 已分配 {len(sources)} 个采集子Agent")
 
-    print("\n[Step 1] Multi-Agent并行采集...")
     all_items = collect_all(sources, max_workers=20)
-    print(f"  总计采集: {len(all_items)}条")
     if not all_items:
-        print("  ⚠️ 采集为空,尝试备用方案...")
         # 备用:只采B站+微博+GitHub
         fallback = [s for s in ALL_SOURCES if s["platform"] in ("bilibili","weibo","github","36kr","solidot")]
         all_items = collect_all(fallback, max_workers=10)
-        print(f"  备用采集: {len(all_items)}条")
 
-    print("\n[Step 2] 清洗去重...")
     cleaned = clean_dedup(all_items)
-    print(f"  清洗后: {len(cleaned)}条")
 
-    print("\n[Step 3] 评估分析...")
     evaluated = sorted([evaluate(i) for i in cleaned], key=lambda x: x["importance_score"], reverse=True)
-    for lv in sorted(set(x["value_level"] for x in evaluated), reverse=True):
-        cnt = sum(1 for x in evaluated if x["value_level"] == lv)
-        print(f"  ⭐{lv}: {cnt}条")
+    for lv in sorted({x["value_level"] for x in evaluated}, reverse=True):
+        sum(1 for x in evaluated if x["value_level"] == lv)
 
     # 趋势更新
     conn = get_db()
-    print("\n[Step 4] 趋势追踪更新...")
     update_trends(evaluated, conn)
-    print("  趋势追踪已更新")
 
     if not dry_run:
-        print("\n[Step 5] 存储数据库...")
         save_all(all_items, evaluated, conn)
-        print("  原始+清洗数据已存储")
 
-        print("\n[Step 6] 推送...")
         # ⭐5/⭐4 立即推送
         high_items = [x for x in evaluated if x["value_level"] >= 4]
         if urgent_only:
@@ -1169,17 +1145,14 @@ def run(dry_run=False, urgent_only=False, agent_filter=None):
         for item in high_items[:10]:
             bg = f"**来源**: {item['source']} | **平台**: {item['platform']}\n\n"
             content = bg + f"**关键词**: {item.get('matched_keywords','')}\n\n**链接**: {item.get('url','')}"
-            r = push_wechat(f"⭐{item['value_level']}级情报: {item['title'][:30]}", content, item["value_level"], item, conn)
-            print(f"  {'✅' if r.get('code')==200 else '❌'} [LV{item['value_level']}] {item['title'][:40]}")
+            push_wechat(f"⭐{item['value_level']}级情报: {item['title'][:30]}", content, item["value_level"], item, conn)
             time.sleep(1.5)
 
         # 日报推送
         report = build_report(evaluated)
-        r = push_wechat("全平台情报日报", report, 3, {"title": "日报", "url": "", "source": "系统", "platform": "system"}, conn)
-        print(f"\n  {'✅ 日报已推送' if r.get('code')==200 else '❌ 日报推送失败'}")
+        push_wechat("全平台情报日报", report, 3, {"title": "日报", "url": "", "source": "系统", "platform": "system"}, conn)
 
     conn.close()
-    print(f"\n[完成] {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
 
 # ============================================================
 # 入口

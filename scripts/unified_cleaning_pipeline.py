@@ -213,7 +213,7 @@ BROAD_WHITELIST = [
 ]
 
 # 构建白名单集合(全部小写)
-WHITELIST_SET = set(kw.lower() for kw in BROAD_WHITELIST)
+WHITELIST_SET = {kw.lower() for kw in BROAD_WHITELIST}
 
 # 白名单长度
 WHITELIST_SIZE = len(WHITELIST_SET)
@@ -312,10 +312,7 @@ def matches_whitelist(item: dict) -> bool:
     # 也检查 source 和 platform
     source = (item.get("source", "") or "").lower()
     platform = (item.get("platform", "") or "").lower()
-    for kw in WHITELIST_SET:
-        if kw in source or kw in platform:
-            return True
-    return False
+    return any(kw in source or kw in platform for kw in WHITELIST_SET)
 
 
 def is_noise(item: dict) -> bool:
@@ -335,9 +332,7 @@ def is_noise(item: dict) -> bool:
         return True
     # 空内容过滤 — 只有标题没有实际内容
     content_body = (item.get("content", "") or "").strip()
-    if not content_body and len(title) < 20:
-        return True
-    return False
+    return bool(not content_body and len(title) < 20)
 
 
 def title_similarity(t1: str, t2: str) -> float:
@@ -429,7 +424,7 @@ def clean_batch(batch_size: int = 200, max_batches: int = 100, order_by_hot: boo
                 # 内存级别去重(同批次内相似标题)
                 title_key = re.sub(r"[^\w]", "", title_str[:30].lower())
                 dup_found = False
-                for seen_key, seen_id in seen_titles.items():
+                for seen_key in seen_titles:
                     if title_similarity(title_key, seen_key) > 0.8:
                         dup_found = True
                         break
@@ -514,7 +509,7 @@ def clean_batch(batch_size: int = 200, max_batches: int = 100, order_by_hot: boo
                     batch_wl += 1
 
             except Exception as e:
-                log.error(f"清洗失败 id={item.get('id', '?')}: {e}")
+                log.exception(f"清洗失败 id={item.get('id', '?')}: {e}")
                 batch_err += 1
 
         conn.commit()
@@ -552,14 +547,14 @@ def clean_batch(batch_size: int = 200, max_batches: int = 100, order_by_hot: boo
 
     # 清洗后自动清理本轮产生的低分数据
     low_cut = conn.execute("""
-        SELECT COUNT(*) FROM cleaned_intelligence 
+        SELECT COUNT(*) FROM cleaned_intelligence
         WHERE ai_score_total < 20
     """).fetchone()[0]
     if low_cut > 0:
         low_items = conn.execute("""
-            SELECT id, title, content, url, source, platform, 
+            SELECT id, title, content, url, source, platform,
                    ai_score_total, ai_score_reasoning
-            FROM cleaned_intelligence 
+            FROM cleaned_intelligence
             WHERE ai_score_total < 20
         """).fetchall()
         for li in low_items:
@@ -568,7 +563,7 @@ def clean_batch(batch_size: int = 200, max_batches: int = 100, order_by_hot: boo
                 "source": li[3], "platform": li[4], "url": li[5],
             }, ensure_ascii=False)
             conn.execute("""
-                INSERT OR IGNORE INTO archive_cleaned 
+                INSERT OR IGNORE INTO archive_cleaned
                 (id, title, platform, source, archived_at, compressed_data,
                  ai_score_total, ai_score_reasoning, ai_scored_at)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -601,15 +596,12 @@ if __name__ == "__main__":
         max_batches=args.max_batches,
         order_by_hot=args.order_by_hot,
     )
-    print(f"\n{'='*60}")
-    print(f"清洗结果: {json.dumps(result, ensure_ascii=False, indent=2)}")
-    print(f"{'='*60}")
 
     with open(LOG_PATH, encoding="utf-8") as f:
         log_lines = f.readlines()
     log_text = "\n".join(log_lines[-5:]) if log_lines else ""
     # 检测清洗完成字样
     if "清洗完成" in log_text:
-        print("✅ 检测到'清洗完成'字样 — 管道执行成功")
+        pass
     else:
-        print("❌ 未检测到'清洗完成'字样")
+        pass

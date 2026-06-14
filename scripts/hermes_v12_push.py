@@ -9,6 +9,7 @@ Hermes v12 推送系统 — HTML模板+可点击链接+平台高亮
 4. ✅ 智能降级 — 不足8条降级推送
 """
 import json
+import logging
 import re
 import sqlite3
 import sys
@@ -16,7 +17,7 @@ import time
 import urllib.request
 from datetime import datetime, timedelta
 from pathlib import Path
-import logging
+
 logger = logging.getLogger(__name__)
 
 
@@ -84,8 +85,7 @@ TIER_MARKERS = {
 
 def get_tier_for_tag(tag):
     """根据tags中的方向标签返回P0/P1/P2层级"""
-    tier = TAG_TO_TIER.get(tag, "P2")
-    return tier
+    return TAG_TO_TIER.get(tag, "P2")
 
 def get_tier_marker(tag):
     """获取层级的显示标记"""
@@ -116,7 +116,6 @@ def log(msg):
     global _LOG_FILE
     ts = datetime.now().strftime("%H:%M:%S")
     line = f"[{ts}] {msg}"
-    print(line)
     try:
         with open(PUSH_LOG, "a", encoding="utf-8") as f:
             f.write(line + "\n")
@@ -138,16 +137,15 @@ def load_user_keywords():
         conn.close()
         _USER_KW_CACHE = rows
         _USER_KW_CACHE_TIME = now
-        print(f"[kw] 已加载 {len(rows)} 条偏好关键词")
         return rows
     except Exception:
         return []
 
     ts = datetime.now().strftime("%H:%M:%S")
     line = f"[{ts}] {msg}"
-    print(line)
     with open(PUSH_LOG, "a", encoding="utf-8") as f:
         f.write(line + "\n")
+    return None
 
 def get_platform_icon(platform):
     return PLATFORM_ICONS.get(platform, "🌐")
@@ -166,7 +164,7 @@ def _load_spam_keywords():
     try:
         db = sqlite3.connect(str(DB_PATH))
         rows = db.execute("""
-            SELECT keyword, severity FROM spam_filter_keywords 
+            SELECT keyword, severity FROM spam_filter_keywords
             WHERE is_active = 1 AND severity >= 3
         """).fetchall()
         db.close()
@@ -219,10 +217,7 @@ def is_trash(title, content="", item=None):
     if item_score >= 50:
         HARD_TRASH = {"目瑙纵歌", "小说", "修仙", "穿越", "赘婿", "兵王", "末世",
                       "诡秘", "玄幻", "斗罗", "食人魔", "打赏"}
-        for kw in HARD_TRASH:
-            if kw.lower() in text:
-                return True
-        return False  # 高分内容直接放行
+        return any(kw.lower() in text for kw in HARD_TRASH)  # 高分内容直接放行
 
     # 原过滤逻辑（仅对低分内容严格执行）
     for kw in TRASH_KEYWORDS_HARD:
@@ -256,7 +251,7 @@ def is_trash(title, content="", item=None):
     stripped = title.strip()
     if stripped.startswith("就在刚刚"):
         return True
-    if stripped.endswith("刚刚") or stripped.endswith("刚刚,") or stripped.endswith("刚刚,"):
+    if stripped.endswith(("刚刚", "刚刚,", "刚刚,")):
         return True
     # 政治套话/空洞标题
     political_vacuous = ["总书记对", "殷切期望", "重要指示", "重要讲话", "深入学习贯彻", "凝心聚力",
@@ -277,10 +272,7 @@ def is_trash(title, content="", item=None):
             return True
     # 低质vlog/景区/探店
     low_quality = ["景区", "探店", "打卡", "航拍", "延时摄影", "主副驾", "高速上", "驾车"]
-    for kw in low_quality:
-        if kw in text:
-            return True
-    return False
+    return any(kw in text for kw in low_quality)
 
 # ============ 核心排序 ============
 def score_quality(item):
@@ -338,7 +330,7 @@ def score_quality(item):
             tag_bonus += 12.0 * mult * tag_weight
             matched_tags.append(tag)
             tag_tiers.add(tier)
-        elif tag != "General" and tag != "News":
+        elif tag not in {"General", "News"}:
             # 有具体方向(非General/News)：+5分
             tag_bonus += 5.0 * mult * tag_weight
             matched_tags.append(tag)
@@ -372,10 +364,9 @@ def score_quality(item):
         return 0.0, 0
 
     # 调试输出
-    tag_str = "|".join(matched_tags[:3]) if matched_tags else "无标签"
-    kw_str = f"{len(matched_kws)}个关键词" if matched_kws else "无关键词"
-    tier_str = "".join(TIER_MARKERS.get(t, "") for t in sorted(tag_tiers, reverse=True))
-    print(f"  🎯 [{total:7.1f}] 标签:{tag_str} | {kw_str} {tier_str}| ai={ai_score:.0f}")
+    "|".join(matched_tags[:3]) if matched_tags else "无标签"
+    f"{len(matched_kws)}个关键词" if matched_kws else "无关键词"
+    "".join(TIER_MARKERS.get(t, "") for t in sorted(tag_tiers, reverse=True))
 
     item["_matched_tiers"] = tag_tiers
     return total, len(matched_tags) + len(matched_kws)
@@ -434,13 +425,13 @@ def get_candidates_balanced():
             c.execute("""
                 SELECT id,title,content,url,platform,source,importance_score,ai_score_total,
                        cleaned_at,category,personal_match_score,published_at,tags
-                FROM cleaned_intelligence 
-                WHERE collected_at >= ? 
+                FROM cleaned_intelligence
+                WHERE collected_at >= ?
                   AND id NOT IN (SELECT DISTINCT cleaned_id FROM push_records WHERE push_time >= ?)
                   AND (
                     (COALESCE(ai_score_total,0) >= 15 OR COALESCE(importance_score,0) >= 15)
                     AND tags IS NOT NULL AND tags != '' AND tags != 'General'
-                    AND (tags LIKE '%AI%' OR tags LIKE '%Military%' OR tags LIKE '%Tech%' 
+                    AND (tags LIKE '%AI%' OR tags LIKE '%Military%' OR tags LIKE '%Tech%'
                          OR tags LIKE '%Dev%' OR tags LIKE '%EV%' OR tags LIKE '%Auto%'
                          OR tags LIKE '%Security%' OR tags LIKE '%Sports_Fight%'
                          OR tags LIKE '%Beauty_Photo%' OR tags LIKE '%Space%'
@@ -460,7 +451,7 @@ def get_candidates_balanced():
             c.execute("""
                 SELECT id,title,content,summary,url,source,category,score,preference_tags,
                        matched_keywords,ai_score,published_at,collected_at,tags
-                FROM cleaned_intelligence 
+                FROM cleaned_intelligence
                 WHERE is_pushed=0 AND score>=35 AND collected_at>=?
                   AND tags IS NOT NULL AND tags != '' AND tags != 'General'
                   AND (tags LIKE '%AI%' OR tags LIKE '%Military%' OR tags LIKE '%Tech%')
@@ -489,7 +480,7 @@ def get_candidates_balanced():
             c.execute("""
                 SELECT id,title,content,url,platform,source,importance_score,ai_score_total,
                        cleaned_at,category,personal_match_score,published_at,tags
-                FROM cleaned_intelligence 
+                FROM cleaned_intelligence
                 WHERE collected_at >= ? AND (COALESCE(ai_score_total,0) >= 10 OR COALESCE(importance_score,0) >= 10)
                   AND tags IS NOT NULL AND tags != '' AND tags != 'General'
                   AND id NOT IN (SELECT DISTINCT cleaned_id FROM push_records WHERE push_time >= ?)
@@ -499,7 +490,7 @@ def get_candidates_balanced():
             c.execute("""
                 SELECT id,title,content,summary,url,source,category,score,preference_tags,
                        matched_keywords,ai_score,published_at,collected_at,tags
-                FROM cleaned_intelligence 
+                FROM cleaned_intelligence
                 WHERE is_pushed=0 AND score>=20 AND collected_at>=?
                   AND tags IS NOT NULL AND tags != '' AND tags != 'General'
                 ORDER BY score DESC LIMIT 300
@@ -528,7 +519,7 @@ def get_candidates_balanced():
             c.execute("""
                 SELECT id,title,content,url,platform,source,importance_score,ai_score_total,
                        cleaned_at,category,personal_match_score,published_at,tags
-                FROM cleaned_intelligence 
+                FROM cleaned_intelligence
                 WHERE collected_at >= ? AND ai_score_total < 15
                   AND tags IS NOT NULL AND tags != '' AND tags != 'General'
                   AND id NOT IN (SELECT DISTINCT cleaned_id FROM push_records WHERE push_time >= ?)
@@ -545,7 +536,7 @@ def get_candidates_balanced():
             c.execute("""
                 SELECT id,title,content,url,platform,source,importance_score,ai_score_total,
                        cleaned_at,category,personal_match_score,published_at,tags
-                FROM cleaned_intelligence 
+                FROM cleaned_intelligence
                 WHERE collected_at >= ? AND (COALESCE(ai_score_total,0) >= 15 OR COALESCE(importance_score,0) >= 15)
                   AND (tags IS NULL OR tags = '' OR tags = 'General')
                   AND id NOT IN (SELECT DISTINCT cleaned_id FROM push_records WHERE push_time >= ?)
@@ -555,7 +546,7 @@ def get_candidates_balanced():
             c.execute("""
                 SELECT id,title,content,summary,url,source,category,score,preference_tags,
                        matched_keywords,ai_score,published_at,collected_at,tags
-                FROM cleaned_intelligence 
+                FROM cleaned_intelligence
                 WHERE is_pushed=0 AND score>=30 AND collected_at>=?
                   AND (tags IS NULL OR tags = '' OR tags = 'General')
                 ORDER BY score DESC LIMIT 100
@@ -577,7 +568,7 @@ def get_candidates_balanced():
         log(f"补充后候选: {len(candidates)}条")
 
     conn.close()
-    log(f"总候选: {len(candidates)}条, {len(set(r.get('platform','?') for r in candidates))}个平台")
+    log(f"总候选: {len(candidates)}条, {len({r.get('platform','?') for r in candidates})}个平台")
     return candidates
 
 # ============ 多样性强制 ============
@@ -615,7 +606,7 @@ def enforce_diversity(items, target_count):
                 if remaining <= 0: break
         if not added:
             break
-    final_platforms = set(item.get("platform", "?") for item in selected)
+    final_platforms = {item.get("platform", "?") for item in selected}
     log(f"多样性后: {len(final_platforms)}个平台, {len(selected)}条")
     selected.sort(key=lambda x: x.get("_score", 0), reverse=True)
     return selected
@@ -779,10 +770,9 @@ def record_pushed(items, push_levels=None):
     conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
     now = datetime.now().isoformat()
-    saved = 0
     for i, item in enumerate(items):
         try:
-            title = (item.get("title", "") or "")[:255]
+            (item.get("title", "") or "")[:255]
             # 检查是否已记录过（去重：72h窗口，防止跨天重复推送）
             existing = c.execute(
                 "SELECT id FROM push_records WHERE cleaned_id=? AND push_time >= ?",
@@ -793,7 +783,7 @@ def record_pushed(items, push_levels=None):
             level = (push_levels[i] if push_levels and i < len(push_levels) else
                      max(3, min(9, int(float(item.get("_score", 0)) / 10))) )
             c.execute("""
-                INSERT INTO push_records (cleaned_id, title, content, url, source, platform, 
+                INSERT INTO push_records (cleaned_id, title, content, url, source, platform,
                                           push_level, push_channel, push_status, push_time, created_at)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """, (
@@ -846,13 +836,13 @@ def push_v12():
     if not candidates:
         log("❌ 无候选数据")
         return None
-    log(f"候选池: {len(candidates)}条, {len(set(r['platform'] for r in candidates))}个平台")
+    log(f"候选池: {len(candidates)}条, {len({r['platform'] for r in candidates})}个平台")
 
     # 3. 偏好评分
     log("🔍 偏好评分排序...")
     scored = []
     for item in candidates:
-        score_val, kw_count = score_quality(item)
+        score_val, _kw_count = score_quality(item)
         item["_score"] = score_val
         if score_val > 0:
             scored.append(item)
@@ -968,7 +958,7 @@ def push_v12():
             log(f"❌ 最终不足5条({len(final)}条)")
             return None
 
-    log(f"✅ 最终: {len(final)}条, {len(set(i.get('platform','?') for i in final))}个平台")
+    log(f"✅ 最终: {len(final)}条, {len({i.get('platform','?') for i in final})}个平台")
 
 
     # ===== 二次垃圾过滤 + 等级评分(在构建HTML之前) =====
@@ -1014,31 +1004,25 @@ def push_v12():
     html_message = build_html_message(final, push_time)
 
     # 预览
-    print("\n" + "=" * 50)
-    print("📋 推送预览(HTML):")
-    print(f"标题: 📊 Hermes 情报 {push_time} | {len(final)}条 | {len(set(i.get('platform','?') for i in final))}平台")
     for i, item in enumerate(final, 1):
         title = (item.get("title", "") or "").strip()[:50]
-        platform = item.get("platform", "?")
+        item.get("platform", "?")
         score = item.get("ai_score_total", 0) or 0
         url = item.get("url", "") or ""
-        has_url = "✅" if url.startswith("http") else "❌"
+        "✅" if url.startswith("http") else "❌"
         # 层级标记 — 用tags方向标签
         item_tags = item.get("tags", "") or ""
         preview_tiers = set()
         for t in item_tags.split("|"):
             if t.strip():
                 preview_tiers.add(get_tier_for_tag(t.strip()))
-        tier_str = "".join(TIER_MARKERS.get(t, "") for t in sorted(preview_tiers, reverse=True))
-        tier_prefix = f"{tier_str} " if tier_str else ""
-        print(f"  {i}. [{has_url}] {tier_prefix}[{platform}] ⭐{score:.0f} | {title}")
-    print("=" * 50)
+        "".join(TIER_MARKERS.get(t, "") for t in sorted(preview_tiers, reverse=True))
 
     # 10. 推送
     if "--push" in sys.argv:
         log("📤 推送微信(HTML模板)...")
         result = push_wechat(
-            f"📊 Hermes 情报 {push_time} | {len(final)}条 | {len(set(i.get('platform','?') for i in final))}平台",
+            f"📊 Hermes 情报 {push_time} | {len(final)}条 | {len({i.get('platform','?') for i in final})}平台",
             html_message
         )
         if result.get("code") == 200:
@@ -1051,6 +1035,7 @@ def push_v12():
 
     elapsed = time.time() - start
     log(f"⏱️ 耗时: {elapsed:.1f}s")
+    return None
 
 
 def main():

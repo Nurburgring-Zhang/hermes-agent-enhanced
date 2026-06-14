@@ -10,6 +10,7 @@ Usage:
   python hermes_intelligence.py --urgent     # 仅推送紧急信息
 """
 import json
+import logging
 import os
 import re
 import sqlite3
@@ -17,7 +18,7 @@ import time
 import urllib.request
 from datetime import datetime
 from html import unescape
-import logging
+
 logger = logging.getLogger(__name__)
 
 
@@ -271,7 +272,7 @@ def clean_dedup(items):
     conn = get_db()
     c = conn.cursor()
     c.execute("SELECT title FROM cleaned_intelligence WHERE cleaned_at > datetime('now','-1 days')")
-    existing = set(r[0].lower() for r in c.fetchall())
+    existing = {r[0].lower() for r in c.fetchall()}
     conn.close()
     seen = set()
     result = []
@@ -288,7 +289,7 @@ def save_all(all_items, evaluated):
     c = conn.cursor()
     for item in all_items:
         try:
-            c.execute("""INSERT INTO raw_intelligence 
+            c.execute("""INSERT INTO raw_intelligence
                 (title,content,url,platform,source,author,category,hot_score,view_count,like_count,comment_count,published_at,raw_data)
                 VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)""",
                 (item["title"],item.get("content",""),item.get("url",""),item["platform"],
@@ -299,7 +300,7 @@ def save_all(all_items, evaluated):
             logger.warning(f"Unexpected error in hermes_intelligence.py: {e}")
     for item in evaluated:
         try:
-            c.execute("""INSERT INTO cleaned_intelligence 
+            c.execute("""INSERT INTO cleaned_intelligence
                 (title,content,url,source,platform,author,category,importance_score,value_level,value_reasons,is_ai_related,language,chinese_ratio,published_at,collected_at)
                 VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,datetime('now'))""",
                 (item["title"],item.get("content",""),item.get("url",""),item["source"],
@@ -344,42 +345,32 @@ def build_report(items):
     return "\n".join(lines)
 
 def run(dry_run=False, urgent_only=False):
-    print("\n[Step 1] 采集...")
     all_items = []
     for name, func in [("B站",fetch_bilibili),("微博",fetch_weibo),("GitHub",fetch_github_trending),
                         ("Solidot",fetch_solidot),("开源中国",fetch_oschina),("IT之家",fetch_ithome)]:
         try:
             items = func()
-            print(f"  {name}: +{len(items)}")
             all_items.extend(items)
         except Exception:
-            print(f"  {name}: 失败")
-    print(f"  总计: {len(all_items)}条")
+            pass
     if not all_items: return
 
-    print("[Step 2] 清洗...")
     cleaned = clean_dedup(all_items)
-    print(f"  清洗后: {len(cleaned)}条")
 
-    print("[Step 3] 评估...")
     evaluated = sorted([evaluate(i) for i in cleaned], key=lambda x: x["importance_score"], reverse=True)
-    for lv in sorted(set(x["value_level"] for x in evaluated), reverse=True):
-        print(f"  ⭐{lv}: {sum(1 for x in evaluated if x['value_level']==lv)}条")
+    for lv in sorted({x["value_level"] for x in evaluated}, reverse=True):
+        pass
 
     if not dry_run:
-        print("[Step 4] 存储...")
         save_all(all_items, evaluated)
 
-        print("[Step 5] 推送...")
         for item in [x for x in evaluated if x["value_level"]>=4][:5]:
             c = f"**{item['title']}**\n\n来源: {item['source']}\n平台: {item['platform']}\n\n{item.get('value_reasons','')}"
-            r = push_wechat(f"⭐{item['value_level']}级情报", c, item["value_level"])
-            print(f"  {'✅' if r.get('code')==200 else '❌'} {item['title'][:40]}")
+            push_wechat(f"⭐{item['value_level']}级情报", c, item["value_level"])
             time.sleep(2)
 
         report = build_report(evaluated)
-        r = push_wechat("全平台情报日报", report, 3)
-        print(f"  {'✅ 报告已推送' if r.get('code')==200 else '❌ 报告失败'}")
+        push_wechat("全平台情报日报", report, 3)
 
 if __name__ == "__main__":
     import argparse

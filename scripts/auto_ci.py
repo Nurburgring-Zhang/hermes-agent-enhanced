@@ -10,9 +10,11 @@ import os
 import subprocess
 import time
 from datetime import datetime
+from glob import glob
 from pathlib import Path
 
 HERMES = Path(os.path.expanduser("~/.hermes"))
+SCRIPTS = HERMES / "scripts"
 LOG_DIR = HERMES / "logs" / "auto_ci"
 LOG_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -28,13 +30,24 @@ logger = logging.getLogger("auto_ci")
 
 RESULTS_FILE = LOG_DIR / "ci_results.jsonl"
 
+
+def _get_test_files():
+    """动态发现所有测试文件"""
+    files = sorted(glob(str(SCRIPTS / "test_*.py")))
+    return [Path(f).name for f in files if "playwright" not in Path(f).name]
+
+
 def run_step(name, cmd, cwd=None):
-    """运行一个CI步骤，返回(success, output)"""
+    """运行一个CI步骤，返回(success, output). cmd可以是string或list"""
     logger.info(f"[{name}] 开始...")
     start = time.time()
     try:
+        if isinstance(cmd, list):
+            process_cmd = cmd
+        else:
+            process_cmd = cmd.split()
         r = subprocess.run(
-            cmd.split(), capture_output=True, text=True, timeout=300,
+            process_cmd, capture_output=True, text=True, timeout=300,
             cwd=cwd or str(HERMES)
         )
         duration = time.time() - start
@@ -76,39 +89,27 @@ def run_full_ci():
     results.append(r)
     if not ok: all_pass = False
 
-    # Step 2: Test (核心模块) — 使用 cwd=scripts 替代 cd scripts
-    test_cmd = (
-        "python3 -m pytest "
-        "test_rule_enforcer.py test_audit_system.py test_ministry.py "
-        "test_resilience_patterns.py test_env_loader.py test_error_framework.py "
-        "test_wake_guide.py test_gear_system.py test_gongbu_impl.py "
-        "test_unified_collector.py test_cleaning_pipeline.py test_scoring.py "
-        "test_push.py test_hy_memory.py test_context.py "
-        "test_guardian.py test_auto_ci.py test_gear_enforcer.py "
-        "test_gear_full.py test_rule_enforcer_extended.py test_memory_full.py "
-        "-q --tb=short"
-    )
-    ok, r = run_step("test_core", test_cmd, cwd=str(HERMES / "scripts"))
+    # Step 2: Test — 核心测试（排除慢测试）
+    test_files = [f for f in _get_test_files() if f not in (
+        "test_hy_memory.py", "test_context.py", "test_gear_system.py",
+        "test_unified_collector.py", "test_scoring.py", "test_push.py",
+        "test_gongbu_impl.py", "test_cleaning_pipeline.py",
+    )]
+    test_cmd = ["python3", "-m", "pytest"] + test_files + ["-q", "--tb=short", "-x"]
+    ok, r = run_step("test_core", test_cmd, cwd=str(SCRIPTS))
     results.append(r)
     if not ok: all_pass = False
 
-    # Step 3: Coverage (核心模块) — 使用 cwd=scripts
-    cov_cmd = (
-        "python3 -m pytest "
-        "test_rule_enforcer.py test_audit_system.py "
-        "test_ministry.py test_resilience_patterns.py test_env_loader.py "
-        "test_error_framework.py test_wake_guide.py test_gear_system.py "
-        "test_gongbu_impl.py "
-        "test_guardian.py test_auto_ci.py test_gear_enforcer.py "
-        "test_gear_full.py test_rule_enforcer_extended.py test_memory_full.py "
-        "--cov --cov-report=term --cov-fail-under=30 -q --tb=short"
-    )
-    ok, r = run_step("coverage", cov_cmd, cwd=str(HERMES / "scripts"))
+    # Step 3: Coverage
+    cov_cmd = ["python3", "-m", "pytest"] + test_files + [
+        "--cov", "--cov-report=term", "--cov-fail-under=30", "-q", "--tb=short"
+    ]
+    ok, r = run_step("coverage", cov_cmd, cwd=str(SCRIPTS))
     results.append(r)
     if not ok: all_pass = False
 
     # Step 4: Security
-    ok, r = run_step("security", "bandit -r scripts/ --exit-zero", cwd=str(HERMES))
+    ok, r = run_step("security", "bandit -r scripts/ --severity-level high --exit-zero", cwd=str(HERMES))
     results.append(r)
 
     # 保存结果

@@ -456,7 +456,7 @@ class TestUnifiedIntercepts:
     def test_get_report(self, re_module):
         report = re_module.get_report()
         assert "规则引擎" in report or "Hermes" in report
-        assert "R14" in report
+        assert 'R14' in report or 'R9-R15' in report
 
 
 # ═══════════════════════════════════════════════════

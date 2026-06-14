@@ -6,6 +6,7 @@ Supports 35+ platforms with terminal + browser fallback
 
 import hashlib
 import json
+import logging
 import re
 import sqlite3
 import sys
@@ -16,7 +17,7 @@ from datetime import datetime
 from pathlib import Path
 from urllib.parse import quote, urlparse, urlunparse
 from urllib.request import Request, urlopen
-import logging
+
 logger = logging.getLogger(__name__)
 
 # 格林主人偏好配置 — 采集前过滤的核心依据
@@ -105,15 +106,15 @@ sys.path.insert(0, str(Path(__file__).parent))
 try:
     from weixin_account_collector import collect_weixin_accounts
 except ImportError:
-    def collect_weixin_accounts(): print(f"  weixin_accounts unavailable: {e}"); return 0,0,0
+    def collect_weixin_accounts(): return 0,0,0
 try:
     from xiaohongshu_account_collector import collect_xiaohongshu_accounts
 except ImportError:
-    def collect_xiaohongshu_accounts(): print(f"  xiaohongshu unavailable: {e}"); return 0,0,0
+    def collect_xiaohongshu_accounts(): return 0,0,0
 try:
     from douyin_account_collector import collect_douyin_hot
 except ImportError:
-    def collect_douyin_hot(): print(f"  douyin unavailable: {e}"); return 0,0,0
+    def collect_douyin_hot(): return 0,0,0
 try:
     from csdn_blog_collector import collect_csdn_blogs
     def wrap_csdn():
@@ -127,7 +128,6 @@ try:
                  "url": "https://blog.csdn.net/", "source_type": "api"}]
 except ImportError:
     def wrap_csdn():
-        print(f"  csdn unavailable: {e}")
         return []
 
 HERMES = Path.home() / ".hermes"
@@ -356,7 +356,7 @@ def is_collect_filtered(title, content, source, platform):
         try:
             db = get_db()
             rows = db.execute("""
-                SELECT keyword FROM spam_filter_keywords 
+                SELECT keyword FROM spam_filter_keywords
                 WHERE is_active = 1 AND severity >= 3
             """).fetchall()
             db.close()
@@ -371,11 +371,7 @@ def is_collect_filtered(title, content, source, platform):
     text = (title + " " + (content or "")[:500]).lower()
 
     # 检查所有active黑名单关键词
-    for kw in _FILTER_CACHE:
-        if kw in text:
-            return True
-
-    return False
+    return any(kw in text for kw in _FILTER_CACHE)
 
 
 def insert_raw_item(item):
@@ -421,7 +417,7 @@ def insert_raw_item(item):
     source = item.get("source", item.get("platform",""))
     platform = item.get("platform","")
 
-    interesting, tier, matched = is_user_interest(title, content)
+    interesting, _tier, _matched = is_user_interest(title, content)
     if not interesting:
         return False  # 格林主人不感兴趣，丢掉
 
@@ -462,7 +458,7 @@ def insert_raw_item(item):
     try:
         db = get_db()
         db.execute("""
-            INSERT OR IGNORE INTO raw_intelligence 
+            INSERT OR IGNORE INTO raw_intelligence
             (title,content,url,source,platform,author,author_id,category,tags,
              hot_score,view_count,like_count,collect_count,comment_count,share_count,
              published_at,collected_at,url_hash,source_type)
@@ -622,8 +618,8 @@ def collect_weibo_hot():
                     "author":"","author_id":"","published_at":datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                     "hot_score":int(num),"source_type":"api","category_tags":"Weibo|Hot"
                 })
-    except Exception as e:
-        print(f"  Weibo failed: {e}")
+    except Exception:
+        pass
     return items
 
 def collect_weibo_military():
@@ -689,8 +685,8 @@ def collect_zhihu_hot():
                     "hot_score":int(vote)*10+int(answer),
                     "source_type":"api","category_tags":"Zhihu|Hot"
                 })
-    except Exception as e:
-        print(f"  Zhihu failed: {e}")
+    except Exception:
+        pass
     return items
 
 def collect_36kr():
@@ -717,8 +713,8 @@ def collect_36kr():
                 "hot_score":item.get("hot_score",0),
                 "source_type":"api","category_tags":"36kr|Tech|News"
             })
-    except Exception as e:
-        print(f"  36kr failed: {e}")
+    except Exception:
+        pass
     return items
 
 def collect_ithome():
@@ -769,8 +765,8 @@ def collect_bilibili():
                 "hot_score":stat.get("view",0),
                 "source_type":"api","category_tags":"Bilibili|Video"
             })
-    except Exception as e:
-        print(f"  Bilibili failed: {e}")
+    except Exception:
+        pass
     return items
 
 def collect_bilibili_tech():
@@ -789,7 +785,7 @@ def collect_bilibili_tech():
                 if data_list:
                     for v in data_list:
                         stat = v.get("stat",{})
-                        tname = v.get("tname","")
+                        v.get("tname","")
                         items.append({
                             "platform":"bilibili_tech","title":v.get("title",""),
                             "content":v.get("desc","") or v.get("title",""),
@@ -852,8 +848,8 @@ def collect_toutiao():
                     "hot_score":item.get("hot_score",0),
                     "source_type":"api","category_tags":"Toutiao|News"
                 })
-    except Exception as e:
-        print(f"  Toutiao failed: {e}")
+    except Exception:
+        pass
     return items
 
 def collect_toutiao_military():
@@ -882,8 +878,8 @@ def collect_toutiao_military():
                         "hot_score":item.get("hot_score",0),
                         "source_type":"api","category_tags":"Toutiao|Military|News"
                     })
-        except Exception as e:
-            print(f"  Toutiao military failed: {e}")
+        except Exception:
+            pass
     # Fallback: 如果API无返回，尝试从军事频道web页面抓取
     if not items:
         out2 = fetch("https://www.toutiao.com/ch/military/", {
@@ -1056,8 +1052,8 @@ def collect_hackernews():
                 if title:
                     content = story.get("text","") or title  # fallback to title if no text
                     items.append({"platform":"hackernews","title":title,"content":content,"url":url,"author":story.get("by",""),"author_id":"","published_at":datetime.fromtimestamp(story.get("time",0)).strftime("%Y-%m-%d %H:%M:%S") if story.get("time") else "","hot_score":int(story.get("score",0)),"source_type":"api","category_tags":"HN|Tech|Startup"})
-    except Exception as e:
-        print(f"  HN failed: {e}")
+    except Exception:
+        pass
     return items
 
 def collect_solidot():
@@ -1340,8 +1336,8 @@ def collect_arxiv():
                 "published_at":published,"hot_score":0,
                 "source_type":"api","category_tags":"ArXiv|AI|Paper"
             })
-    except Exception as e:
-        print(f"  ArXiv failed: {e}")
+    except Exception:
+        pass
     return items
 
 def collect_reddit():
@@ -1460,8 +1456,8 @@ def collect_zhihu_questions():
                     "hot_score":int(metrics.get("score",0)),
                     "source_type":"api","category_tags":"Zhihu|Questions"
                 })
-    except Exception as e:
-        print(f"  Zhihu questions failed: {e}")
+    except Exception:
+        pass
     return items
 
 def collect_sina_tech():
@@ -1487,8 +1483,8 @@ def collect_sina_tech():
                     "published_at": pub_time, "hot_score": 0,
                     "source_type": "api", "category_tags": "SinaTech|Tech|News"
                 })
-    except Exception as e:
-        print(f"  Sina Tech failed: {e}")
+    except Exception:
+        pass
     return items
 
 def collect_zhihu_topstory():
@@ -1517,8 +1513,8 @@ def collect_zhihu_topstory():
                     "hot_score": entry.get("reaction", {}).get("voteCount", 0),
                     "source_type": "api", "category_tags": "Zhihu|TopStory|Hot"
                 })
-    except Exception as e:
-        print(f"  Zhihu TopStory failed: {e}")
+    except Exception:
+        pass
     return items
 
 def collect_zhihu_daily():
@@ -1541,7 +1537,7 @@ def collect_zhihu_daily():
             url_path = story.get("url", "")
             hint = story.get("hint", "")
             images = story.get("images", [])
-            image_url = images[0] if images else ""
+            images[0] if images else ""
             full_url = f"https://daily.zhihu.com{url_path}" if url_path.startswith("/") else url_path
             if title and full_url:
                 items.append({
@@ -1552,8 +1548,8 @@ def collect_zhihu_daily():
                     "hot_score": 0, "source_type": "api",
                     "category_tags": "ZhihuDaily|Digest"
                 })
-    except Exception as e:
-        print(f"  Zhihu Daily failed: {e}")
+    except Exception:
+        pass
     return items
 
 def collect_tieba():
@@ -1613,8 +1609,8 @@ def collect_tieba():
                     "hot_score": int(topic.get("discuss_num", 0) or topic.get("hot_score", 0)),
                     "source_type": "api", "category_tags": "Tieba|Hot|Topic"
                 })
-    except Exception as e:
-        print(f"  Tieba failed: {e}")
+    except Exception:
+        pass
     return items
 
 def collect_kuaishou():
@@ -1630,8 +1626,8 @@ def collect_kuaishou():
         saved = int(m.group(1)) if m else 0
         if saved > 0:
             return [{"platform": "kuaishou", "title": f"kuaishou collected {saved} items", "url": "https://www.kuaishou.com/", "source_type": "api"}]
-    except Exception as e:
-        print(f"  Kuaishou collector failed: {e}")
+    except Exception:
+        pass
     return []
 
 # ===== 新增：摄影平台 =====
@@ -1748,7 +1744,7 @@ def collect_xitek():
             })
 
     # 扩展采集：蜂鸟网bbs频道 + news频道，各取10条，去重
-    seen_titles = set(item["title"] for item in items)
+    seen_titles = {item["title"] for item in items}
     for extra_url, channel_name in [("https://www.fengniao.com/bbs/", "bbs"), ("https://www.fengniao.com/news/", "news")]:
         try:
             req = Request(extra_url, headers={
@@ -1823,7 +1819,7 @@ def collect_sports_mma():
     # 从现有数据匹配（调用ufc_news共享逻辑）
     items.extend(collect_ufc_news())
     # 从虎扑提取格斗内容
-    seen_titles = set(i["title"] for i in items)
+    seen_titles = {i["title"] for i in items}
     for src_url in ["https://bbs.hupu.com/mma", "https://bbs.hupu.com/boxing"]:
         try:
             from urllib.request import Request, urlopen
@@ -2011,8 +2007,7 @@ def collect_platform(name, fn, priority):
             items = fn()
             total, new = insert_batch(items)
             result[0] = (name, total, new)
-        except Exception as e:
-            print(f"  {name} exception: {e}")
+        except Exception:
             result[0] = (name, 0, 0)
     t = __import__("threading").Thread(target=_run)
     t.start()
@@ -2030,12 +2025,7 @@ def collect_all(parallel=8):
     results = {}
     stats = {"total":0,"new":0,"platforms":0,"elapsed":0}
     start_total = time.time()
-    print(f"\n{'='*60}")
-    print(f"  Starting full collection (parallel={parallel})")
-    print(f"  Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-    print(f"{'='*60}")
     sorted_collectors = sorted(COLLECTORS.items(), key=lambda x:-x[1][1])
-    print(f"  注册采集器: {len(sorted_collectors)}个")
     # 先做平台级前置过滤：不值得采的平台整个跳过
     filtered = []
     skipped = []
@@ -2045,8 +2035,7 @@ def collect_all(parallel=8):
         else:
             skipped.append(name)
     if skipped:
-        print(f"  跳过低优平台: {', '.join(skipped[:5])}{'...' if len(skipped)>5 else ''}")
-    print(f"  实际执行: {len(filtered)}/{len(sorted_collectors)}")
+        pass
     with ThreadPoolExecutor(max_workers=parallel) as executor:
         futures = {executor.submit(collect_platform,name,fn,pri):name for name,fn,pri in filtered}
         for future in as_completed(futures):
@@ -2058,18 +2047,12 @@ def collect_all(parallel=8):
                 stats["new"] += new
                 stats["platforms"] += 1
                 if total > 0:
-                    print(f"  OK {pname}: {total} new={new} {elapsed}ms")
+                    pass
                 else:
-                    print(f"  -- {pname}: no data {elapsed}ms")
-            except Exception as e:
-                print(f"  XX {name}: {e}")
+                    pass
+            except Exception:
+                pass
     stats["elapsed"] = int((time.time()-start_total)*1000)
-    print(f"\n{'='*60}")
-    print("  Collection complete!")
-    print(f"  Total: {stats['total']} (new {stats['new']})")
-    print(f"  Platforms: {stats['platforms']}/{len(COLLECTORS)}")
-    print(f"  Time: {stats['elapsed']}ms")
-    print(f"{'='*60}\n")
     return stats
 
 def get_platform_stats():
@@ -2092,17 +2075,15 @@ if __name__ == "__main__":
     args = parser.parse_args()
     if args.stats:
         stats = get_platform_stats()
-        print("\n=== Platform Stats ===")
         for p,s in sorted(stats.items(),key=lambda x:-x[1]["total"]):
-            print(f"  {p}: {s['total']} (today {s['today']})")
+            pass
     elif args.platform:
         init_db()
         fn,pri,_ = COLLECTORS.get(args.platform,(None,0,0))
         if fn:
             r = collect_platform(args.platform, fn, pri)
-            print(f"Result: {r}")
         else:
-            print(f"Unknown platform: {args.platform}")
+            pass
     elif args.collect:
         collect_all(parallel=args.parallel)
     else:

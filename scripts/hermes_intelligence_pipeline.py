@@ -198,7 +198,7 @@ def get_items(min_level: int, hours: int, limit: int) -> list[dict]:
             })
         conn.close()
     except Exception as e:
-        logger.error(f"[获取情报] {e}")
+        logger.exception(f"[获取情报] {e}")
     return items
 
 def extract_tags(title: str, content: str) -> list[str]:
@@ -523,7 +523,7 @@ def score_mode(limit: int = 200) -> dict:
 
     # 查找未评分条目
     rows = c.execute("""
-        SELECT id, title, COALESCE(content,'') as content, 
+        SELECT id, title, COALESCE(content,'') as content,
                source, platform, published_at
         FROM cleaned_intelligence
         WHERE (ai_score_total IS NULL OR ai_score_total = 0)
@@ -748,25 +748,19 @@ if __name__ == "__main__":
 
     if args.mode == "all":
         result = run_all()
-        print(json.dumps(result, indent=2, ensure_ascii=False))
     elif args.mode == "route":
         items = get_items(min_level=4, hours=48, limit=200)
         result = route_items(items)
-        print(json.dumps(result, indent=2, ensure_ascii=False))
     elif args.mode == "index":
         items = get_items(min_level=4, hours=48, limit=200)
         result = index_items(items)
-        print(json.dumps(result, indent=2, ensure_ascii=False))
     elif args.mode == "generate":
         items = get_items(min_level=5, hours=168, limit=50)
         result = generate_tasks(items)
-        print(json.dumps(result, indent=2, ensure_ascii=False))
     elif args.mode == "stats":
         result = get_stats()
-        print(json.dumps(result, indent=2, ensure_ascii=False))
     elif args.mode == "score":
         result = score_mode(limit=args.limit)
-        print(json.dumps(result, indent=2, ensure_ascii=False))
 
     elapsed = time.time() - t0
     logger.info(f"⏱ 耗时: {elapsed:.1f}秒")

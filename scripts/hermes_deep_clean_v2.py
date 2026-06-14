@@ -28,8 +28,7 @@ def load_keyword_weights():
         # 按权重降序排列,高权重关键词优先匹配
         _keyword_weights_cache = rows
         return rows
-    except Exception as e:
-        print(f"⚠️ 无法加载keyword_weights: {e}")
+    except Exception:
         _keyword_weights_cache = []
         return []
 
@@ -99,14 +98,11 @@ def clean_all():
     rows = backlog_rows + new_rows
 
     if not rows:
-        print("待清洗新数据: 0 条")
         db.close()
         return 0
 
     backlog_count = len(backlog_rows)
-    new_count = len(new_rows)
-    print(f"待清洗新数据: {len(rows)} 条 (积压={backlog_count}, 增量={new_count})")
-    print(f"已清洗最大raw_id: {max_cleaned}")
+    len(new_rows)
 
     # 加载已有标题用于去重
     # 如果是积压模式(batch),加载全部已有标题;否则只加载最近5000条
@@ -136,7 +132,7 @@ def clean_all():
             pre_skip += 1
     rows = pre_filtered_rows
     if pre_skip > 0:
-        print(f"预去重跳过: {pre_skip} 条 (标题已在cleaned中), 剩余 {len(rows)} 条待处理")
+        pass
 
     for row in rows:
         try:
@@ -197,10 +193,10 @@ def clean_all():
                         """, (mk, now_ts))
                     am.commit()
                     am.close()
-                except Exception as e:
-                    print(f"⚠️ preference_feedback回写失败: {e}")
+                except Exception:
+                    pass
 
-            c.execute("""INSERT INTO cleaned_intelligence 
+            c.execute("""INSERT INTO cleaned_intelligence
                 (raw_id,title,content,url,source,platform,author,author_id,
                  category,tags,importance_score,value_level,value_reasons,
                  is_ai_related,language,chinese_ratio,is_processed,
@@ -219,26 +215,16 @@ def clean_all():
             errors += 1
 
     db.commit()
-    elapsed = time.time() - start
+    time.time() - start
 
-    print("\n=== 清洗结果 ===")
-    print(f"处理: {len(rows)} 条")
-    print(f"新增: {cleaned} 条")
-    print(f"重复: {dup} 条")
-    print(f"噪声: {noise} 条")
-    print(f"错误: {errors} 条")
-    print(f"耗时: {elapsed:.1f}s")
 
     c.execute("""SELECT COUNT(*) FROM cleaned_intelligence WHERE DATE(cleaned_at) = DATE('now','localtime')""")
-    today = c.fetchone()[0]
-    print(f"今日cleaned: {today} 条")
+    c.fetchone()[0]
     c.execute("SELECT COUNT(*) FROM cleaned_intelligence")
-    total = c.fetchone()[0]
-    print(f"总计: {total} 条")
+    c.fetchone()[0]
     db.close()
     return cleaned
 
 if __name__ == "__main__":
     start = time.time()
     count = clean_all()
-    print(f"✅ 清洗完成: {count} 条, 总耗时{time.time()-start:.0f}s")
