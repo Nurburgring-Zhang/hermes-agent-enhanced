@@ -1,0 +1,33 @@
+name: lineworks
+kind: platform
+version: 0.5.5
+description: >
+  LINE WORKS gateway adapter for Hermes Agent. Receives LINE WORKS bot webhooks,
+  verifies X-WORKS signatures, downloads inbound images/files for the agent,
+  sends replies through the Works Mobile Bot API, and exposes Calendar/Task/Drive
+  REST tools.
+author: Unayung
+license: MIT
+provides_tools:
+  - lineworks_calendar
+  - lineworks_task
+  - lineworks_drive
+requires_env:
+  - name: LINEWORKS_CLIENT_ID
+    description: LINE WORKS Developer Console app client ID
+    secret: false
+  - name: LINEWORKS_CLIENT_SECRET
+    description: LINE WORKS Developer Console app client secret
+    secret: true
+  - name: LINEWORKS_SERVICE_ACCOUNT
+    description: Service Account email, e.g. uuid.serviceaccount@domain
+    secret: false
+  - name: LINEWORKS_PRIVATE_KEY_FILE
+    description: Path to the Service Account PKCS#8 PEM private key file
+    secret: false
+  - name: LINEWORKS_BOT_ID
+    description: LINE WORKS bot ID
+    secret: false
+  - name: LINEWORKS_BOT_SECRET
+    description: LINE WORKS bot secret used for webhook signature verification
+    secret: true

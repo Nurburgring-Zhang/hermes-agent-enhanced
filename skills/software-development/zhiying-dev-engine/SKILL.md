@@ -293,6 +293,63 @@ fuser 8001/tcp 2>/dev/null || echo "free"
 
 详见`references/inline-html-sink-debugging.md`
 
+## 致命陷阱：Git推送前密钥泄漏（2026-06-15实战·最高安全优先级）
+
+**症状**：推送前未扫描密钥，profile config.yaml中的25个nvapi-真实密钥差点泄漏到公共仓库。
+
+**根因链**：
+1. Agent A超时但完成了部分工作（.gitignore创建），让后续的密钥扫描误判为"已扫描"
+2. Profile目录下的config.yaml未在.gitignore中，包含真实NVIDIA API密钥
+3. 仅检查了主config.yaml（被.gitignore排除），未检查子目录config.yaml
+
+**强制协议**（每次push前必须执行）：
+```bash
+# 1. 扫描所有git跟踪文件中的真实密钥
+git ls-files | xargs grep -l "nvapi-[a-zA-Z0-9]\{20,}\|sk-[a-zA-Z0-9]\{20,}\|ghp_[a-zA-Z0-9]\{20,}\|AIzaSy" 2>/dev/null
+
+# 2. 扫描所有config.yaml文件
+git ls-files | grep "config.yaml$" | while read f; do
+  if grep -q "nvapi-\|sk-[a-zA-Z0-9]\{20,}\|ghp_" "$f" 2>/dev/null; then
+    echo "KEY LEAK: $f"
+  fi
+done
+
+# 3. 如果发现密钥，立即移除追踪+加入.gitignore
+git rm --cached <file>
+echo "path/to/*/config.yaml" >> .gitignore
+git add .gitignore && git commit -m "security: remove API keys before push"
+
+# 4. 最终确认
+git ls-files | xargs grep -l "nvapi-\|sk-[a-zA-Z0-9]\{20,}\|ghp_[a-zA-Z0-9]" | wc -l
+# 必须输出 0
+```
+
+**常见密钥位置**：
+- `profiles/*/config.yaml` — NVIDIA/openai/anthropic API keys
+- `plugins/*/config.yaml` — 插件配置中的密钥
+- `.env` — 所有配置（必须在.gitignore中）
+- `config.yaml` — 主配置（必须在.gitignore中）
+
+**关键教训**：`config.yaml.example`中全部用`""`空值。真实密钥只存在于`~/.hermes/config.yaml`和`~/.hermes/.env`（权限600，已在.gitignore）。
+
+详见 `references/pre-push-security-scan.md`
+
+## 致命陷阱：对话模型在启动时锁定（2026-06-15实战）
+
+**症状**：config.yaml中default已是deepseek-v4-pro，但当前对话仍用deepseek-chat。
+
+**根因**：Hermes对话启动时固定模型，config.yaml改动不影响已运行对话。`hermes model`是交互式TUI，不能通过子进程调用。
+
+**修复**：
+1. 用户手动输入 `/model deepseek-v4-pro`（slack command切换）
+2. 或结束对话用 `hermes chat -m deepseek-v4-pro` 重启
+3. 或 `hermes config set model deepseek-v4-pro && hermes config set provider deepseek` 后重启对话
+
+**子Agent模型指定**：在delegate_task参数中显式指定：
+```python
+delegate_task(goal=..., model={"model":"deepseek-v4-pro","provider":"deepseek"})
+```
+
 ## 主动能力使用规则（2026-06-15实战）
 
 **用户极度愤怒于我有能力但不用：**
@@ -728,9 +785,53 @@ cd web && npm run build 2>&1 | tail -5
 4. 创建可重用的 `scripts/optimize_indexes.py`（支持--analyze/--vacuum/--postgres模式）
 5. 索引数量目标：核心表的关联字段100%覆盖
 
-## 参考文件（2026-06-16 新增4个模式文件）\n- `references/multi-user-auth-pattern.md` — 多用户系统实施(DB持久化/API Key/管理员面板/权限矩阵)\n- `references/production-deployment-pattern.md` — 生产部署模式(uvicorn workers/production_app.py/端口清理/共享状态注意事项)\n- `references/inline-html-sink-debugging.md` — 内联HTML被多子Agent注入破坏的根因链与修复模式\n- `references/nanobot-factory-performance-baseline.md` — 性能基准数据(API 1-10ms/构建19.56s/4 workers)
+## FastAPI子应用挂载sys.path/sys.modules污染修复（2026-06-16实战）
+
+当把IMDF作为子应用挂载到nanobot-factory时：
+```python
+sys.path.insert(0, str(Path(__file__).parent / "imdf"))
+from api.canvas_web import app as imdf_app
+app.mount("/imdf", imdf_app)
+```
+此后所有 `from core.xxx import ...` 都会在 `imdf/core/`（无此文件）而非 `backend/core/`（有此文件）中查找。
+
+**根因**：IMDF的 `canvas_web.py` 在导入时调用 `sys.path.insert(0, ...)` 把IMDF根目录推到sys.path[0]，且 `import core` 已经在 `sys.modules` 中被缓存为IMDF的core。
+
+**修复三步骤**：
+1. 导入后移除IMDF路径：`sys.path.remove(_imdf_root)`
+2. 清除模块缓存：`del sys.modules['core']` + 清除所有 `core.xxx` 子模块
+3. 重新插入backend路径到第一位
+
+详见 `references/multi-project-fastapi-mount-syspath-fix.md`
+
+## 多用户统一认证+预设账号体系（2026-06-16实战）
+
+**需求**：项目部署后需预设多角色账号供不同团队使用。
+
+**账号体系**（11类），每类有不同角色和权限：
+- admin (超级管理员), prod_lead (生产主O/team_lead), qc_lead (质检主O/reviewer)
+- prod_user1-3 (生产人员/annotator)
+- crowd_lead (众包负责人/team_lead), crowd_mgr (众包管理/reviewer), crowd_qc (众包质检/reviewer)
+- crowd_user1 (众包生产/annotator), client1 (需求方/viewer)
+
+**实现**：`backend/scripts/init_accounts.py --reset` 一键创建所有账号。使用 `backend/auth/unified_auth.py` (JWT+argon2+SQLite持久化)。
+
+详见 `references/multi-user-auth-pattern.md`
+
+## 项目代码清理模式（2026-06-16实战）
+
+**清理清单**：
+- 根目录报告文档(audit/delivery/completion reports等) → 删除，保留README+CHANGELOG
+- 冗余启动脚本(.bat/.ps1/.sh) → 删除，保留一个start.sh
+- 空目录(空的data子目录/空的模块目录) → rmdir清理
+- 测试文件(如果会干扰生产运行) → 移到test/目录或删除
+- 旧项目名称引用(minimax→factory) → `sed`批量替换目录名+文件名+文件内容
+
+**验证**：清理后用 `grep -r "旧名称" --include="*.py" | wc -l` 确认残留为0。\n- `references/multi-project-fastapi-mount-syspath-fix.md` — FastAPI子应用挂载时sys.path/sys.modules污染修复(ModuleNotFoundError after mount根因)\n- `references/production-deployment-pattern.md` — 生产部署模式(uvicorn workers/production_app.py/端口清理/共享状态注意事项)\n- `references/inline-html-sink-debugging.md` — 内联HTML被多子Agent注入破坏的根因链与修复模式\n- `references/nanobot-factory-performance-baseline.md` — 性能基准数据(API 1-10ms/构建19.56s/4 workers)
 
 ## 参考文件
+- `references/pre-push-security-scan.md` — **推送前安全扫描**: 密钥检测/git rm --cached/.gitignore协议 (2026-06-15·25个nvapi-差点泄漏)
+- `references/hermes-enhanced-pack-comparison.md` — **本地强化包vs GitHub仓库**: 7,154文件/18大独有系统/迁移优先级 (2026-06-15)
 - `references/deep-code-audit-methodology.md` — 极端深度代码审核方法(7层审核步骤)
 - `references/commercial-grade-sprint-patterns.md` — 商用级工程化Sprint模式
 - `references/nanobot-factory-2026-06-12-phase1-4-pattern.md` — Phase 1-4增量式平台能力构建模式
