@@ -21,13 +21,22 @@ import json
 import logging
 import os
 import re
+import shutil
 import subprocess
+import threading
 from datetime import datetime
 from pathlib import Path
 
+try:
+    import yaml as _yaml
+    _yaml_available = True
+except ImportError:
+    _yaml_available = False
+
 logger = logging.getLogger(__name__)
 
-# ── 审计系统（对标Scale AI Audit Log）─
+# ── 日志 ──
+_log_lock = threading.Lock()
 try:
     from scripts.audit_system import get_audit_logger
     _audit = get_audit_logger()
@@ -60,8 +69,7 @@ HERMES = Path(os.path.expanduser("~/.hermes"))
 BACKUP_DIR = Path("/mnt/d/Hermes/备份")
 LOG_PATH = HERMES / "logs" / "rule_enforcer.log"
 
-# ── 日志 ──
-_log_lock = __import__("threading").Lock()
+
 def _log(msg: str):
     with _log_lock:
         try:
@@ -80,12 +88,17 @@ _enforcement_count = {"pass": 0, "block": 0, "warn": 0}
 # R1: 反幻觉铁律 — 工具调用结果真实性验证
 # ════════════════════════════════════════════════════════════
 class AntiHallucination:
-    """
-    在每次工具调用返回后，验证结果是否包含"未经验证的断言"。
-    检测模式：
-      - "它是..."、"应该是..."、"可能存在..." 等推测性语言
-      - 包含路径/code/版本号但没有说明来源
-      - 输出声称调用了某个函数但没有对应的tool_call记录
+    """R1: 反幻觉铁律 — 工具调用结果真实性验证。
+
+    在每次工具调用返回后验证输出是否包含未经验证的断言。
+    检测推测性语言、无来源声明、空结果等。
+
+    Attributes:
+        HALLUCINATION_PATTERNS: 推测性语言正则模式列表。
+
+    Example:
+        >>> result = AntiHallucination.check_tool_output("read_file", {}, "可能是版本3.2")
+        >>> result['verdict']  # 'warn' or 'pass'
     """
 
     HALLUCINATION_PATTERNS = [
@@ -168,12 +181,16 @@ class AntiHallucination:
 # R2: 前置三查 — 任务执行前自动 session_search + memory + skill
 # ════════════════════════════════════════════════════════════
 class PreCheck:
-    """
-    在每次任务/对话开始前，自动执行：
+    """R2: 前置三查 — 任务执行前自动回顾。
+
+    在每次任务/对话开始前自动执行:
       ① session_search — 历史会话回顾
       ② fact_store — 记忆检索
       ③ skill_view — 相关技能加载
-    结果注入到 system prompt 的上下文。
+
+    Example:
+        >>> result = PreCheck.execute("测试数据库配置修改")
+        >>> result['verdict']  # 'pass' or 'warn'
     """
 
     @staticmethod
@@ -302,7 +319,6 @@ class BackupGuard:
         # 执行备份
         try:
             backup_path.parent.mkdir(parents=True, exist_ok=True)
-            import shutil
             shutil.copy2(target_path, backup_path)
             _log(f"[R3改前备份] ✅ {target_path} → {backup_path}")
             return {"action": "pass", "note": f"自动备份到 {backup_path}"}
@@ -844,24 +860,26 @@ class SkillActiveEnforcer:
 # R14: 三阶段开发铁律 — 商用级强制（不可违反、不可绕过）
 # ════════════════════════════════════════════════════════════
 class ThreePhaseDevEnforcer:
-    """
-    三阶段开发铁律 — 格林主人指定的商用级开发标准流程。
+    """R14: 三阶段开发铁律 — 商用级强制开发流程。
 
-    【强制方式】
-    1. pre_tool_prephase — 在工具调用前检查是否允许执行
-       - 开发任务的第一行有效工具调用前，必须声明处于哪个阶段
-       - 未声明阶段 → 拦截（block）
-       - 声明阶段但上一个阶段未完成 → 拦截（block）
-    2. post_response — 每次响应后检查阶段进展证据
-       - 必须有真实产出文件/实际运行结果/真实代码 作为阶段完成证据
-       - 不允许仅靠关键词匹配就声称阶段完成
+    不可违反、不可绕过的三阶段开发标准:
+      第一阶段: 规划与执行（9步）
+      第二阶段: 全面升级（≥3轮对标迭代）
+      第三阶段: 全功能审核测试（全覆盖测试）
 
-    【三阶段定义】
-    第一阶段：规划与执行（9步：全网检索→全局观念→开发计划→需求文档→开发文档→子Agent拆解→三AI互审→阶段性检查→总体验证）
-    第二阶段：全面升级（至少3轮迭代，每轮必须有针对全网最优对标的具体改进）
-    第三阶段：全功能审核测试（每个可执行操作的完整测试，多轮迭代直到全部最优）
+    强制执行:
+      - pre_tool_block: 工具调用前的阶段阻断
+      - complete_phase1/2/3: 基于真实产出证据的阶段推进
+      - get_status: 查询当前阶段状态
 
-    【存储】阶段状态持久化到 ~/.hermes/scripts/.phase_state.json
+    Attributes:
+        PHASE_1_STEPS: 第一阶段9步定义。
+        PHASE_2_MIN_ROUNDS: 第二阶段最小轮数 (3)。
+        STATE_FILE: 阶段状态持久化文件路径。
+
+    Example:
+        >>> status = ThreePhaseDevEnforcer.get_status()
+        >>> status['current_phase']  # 'none' | 'phase1' | 'phase2' | 'phase3'
     """
 
     # ── 阶段定义 ──
@@ -1241,6 +1259,18 @@ class ThreePhaseDevEnforcer:
 # ════════════════════════════════════════════════════════════
 
 def pre_tool_intercept(tool_name: str, args: dict, task: str = "") -> dict:
+    """工具调用前统一拦截器。
+
+    按顺序执行: R7自主边界 → R14三阶段阻断 → R3改前备份 → R2前置三查。
+
+    Args:
+        tool_name: 被调用的工具名称。
+        args: 工具参数。
+        task: 当前任务描述（可选）。
+
+    Returns:
+        {"action": "pass" | "block" | "warn", "reason": ..., "rule": ...}
+    """
     global _enforcement_count
     if not _enforcer_enabled:
         return {"action": "pass", "reason": "enforcer_disabled"}
@@ -1278,6 +1308,20 @@ def pre_tool_intercept(tool_name: str, args: dict, task: str = "") -> dict:
 
 
 def post_tool_intercept(tool_name: str, args: dict, result: str, task: str = "") -> dict:
+    """工具调用后统一拦截器。
+
+    按顺序执行: R1反幻觉 → R5深度审核 → R3备份验证。
+    包含审计日志记录。
+
+    Args:
+        tool_name: 被调用的工具名称。
+        args: 工具参数。
+        result: 工具调用返回的结果文本。
+        task: 当前任务描述（可选）。
+
+    Returns:
+        {"action": "pass" | "block" | "warn", "rule": ..., "issues": ...}
+    """
     global _enforcement_count
     if not _enforcer_enabled:
         return {"action": "pass", "reason": "enforcer_disabled"}
@@ -1335,6 +1379,19 @@ def post_tool_intercept(tool_name: str, args: dict, result: str, task: str = "")
 
 
 def post_response_intercept(response: str, tool_calls: list, task: str = "") -> dict:
+    """最终响应统一拦截器。
+
+    在LLM返回最终回答后执行全部审查规则:
+    R1反幻觉 → R4交付铁律 → R6沟通风格 → R10真实实现 → R12 SDLC → R9双模型 → R11循环 → R8问责 → R14阶段。
+
+    Args:
+        response: LLM 返回的最终响应文本。
+        tool_calls: 本轮对话中的工具调用记录列表。
+        task: 当前任务描述（可选）。
+
+    Returns:
+        {"action": "pass" | "warn", "rules": [...]}
+    """
     global _enforcement_count
     if not _enforcer_enabled:
         return {"action": "pass"}
@@ -1366,20 +1423,20 @@ def post_response_intercept(response: str, tool_calls: list, task: str = "") -> 
         _enforcement_count["warn"] += 1
 
     # ── R9: 双模型检查 — 从config.yaml读取实际模型配置 ──
-    try:
-        import yaml as _yaml
-        _cfg_path = os.path.expanduser("~/.hermes/config.yaml")
-        if os.path.exists(_cfg_path):
-            with open(_cfg_path) as _f:
-                _cfg = _yaml.safe_load(_f)
-            _exec_model = _cfg.get("model", {}).get("default", "")
-            _provider_count = len(_cfg.get("providers", {}))
-            r9 = DualModelEnforcer.check(_exec_model, f"providers={_provider_count}")
-            if r9["verdict"] != "pass":
-                results.append(r9)
-                _enforcement_count["warn"] += 1
-    except Exception:
-        pass
+    if _yaml_available:
+        try:
+            _cfg_path = os.path.expanduser("~/.hermes/config.yaml")
+            if os.path.exists(_cfg_path):
+                with open(_cfg_path) as _f:
+                    _cfg = _yaml.safe_load(_f)
+                _exec_model = _cfg.get("model", {}).get("default", "")
+                _provider_count = len(_cfg.get("providers", {}))
+                r9 = DualModelEnforcer.check(_exec_model, f"providers={_provider_count}")
+                if r9["verdict"] != "pass":
+                    results.append(r9)
+                    _enforcement_count["warn"] += 1
+        except Exception:
+            pass
 
     # ── R11: 循环检查 — 记录当前response为一次循环 ──
     IterationEnforcer.record_cycle("测试", response[:100])

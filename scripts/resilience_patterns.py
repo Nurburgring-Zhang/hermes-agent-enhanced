@@ -22,7 +22,7 @@ import time
 import uuid
 from collections import deque
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import UTC, datetime
 from enum import Enum
 from typing import Any
 
@@ -49,7 +49,29 @@ class CircuitBreakerConfig:
     error_threshold_percentage: float = 50.0
 
 class CircuitBreaker:
+    """熔断器 — 对标 Hystrix/pybreaker 实现。
+
+    在连续失败超过阈值后自动打开电路，
+    经过冷却期后进入半开状态探测恢复。
+
+    Attributes:
+        name: 熔断器名称，用于日志和指标标识。
+        config: 熔断器配置。
+        state: 当前电路状态 (CLOSED/OPEN/HALF_OPEN)。
+        stats: 调用统计 {'total', 'success', 'failure', 'rejected'}。
+
+    Example:
+        >>> cb = CircuitBreaker("api", CircuitBreakerConfig(fail_max=5))
+        >>> cb.call(lambda: requests.get("http://api/service"))
+    """
+
     def __init__(self, name: str, config: CircuitBreakerConfig | None = None):
+        """初始化熔断器。
+
+        Args:
+            name: 熔断器名称。
+            config: 熔断器配置，默认 CircuitBreakerConfig()。
+        """
         self.name = name
         self.config = config or CircuitBreakerConfig()
         self._state = CircuitState.CLOSED
@@ -84,6 +106,22 @@ class CircuitBreaker:
             except Exception: pass
 
     def call(self, func, *args, **kwargs):
+        """通过熔断器调用目标函数。
+
+        在 CLOSED/HALF_OPEN 状态下正常调用，
+        OPEN 状态下直接抛出 CircuitBreakerOpenError。
+
+        Args:
+            func: 目标可调用对象。
+            *args: 传递给 func 的位置参数。
+            **kwargs: 传递给 func 的关键字参数。
+
+        Returns:
+            func 的返回值。
+
+        Raises:
+            CircuitBreakerOpenError: 熔断器处于 OPEN 状态时拒绝调用。
+        """
         with self._lock:
             self.stats["total"] += 1
             if self._state == CircuitState.OPEN:
@@ -139,6 +177,23 @@ class MaxRetriesExceededError(Exception):
     pass
 
 def retry_with_backoff(func, config=None, *args, **kwargs):
+    """带指数退避的重试机制。
+
+    在遇到异常时自动重试，每次重试的等待时间指数增长。
+
+    Args:
+        func: 目标可调用对象。
+        config: RetryConfig 配置，默认 RetryConfig()。
+        *args: 传递给 func 的位置参数。
+        **kwargs: 传递给 func 的关键字参数。
+
+    Returns:
+        func 成功调用后的返回值。
+
+    Raises:
+        MaxRetriesExceededError: 重试次数耗尽后仍失败。
+        CircuitBreakerOpenError: 熔断器打开，直接传播不重试。
+    """
     cfg = config or RetryConfig()
     last_err = None
     for attempt in range(cfg.max_retries + 1):
@@ -167,7 +222,24 @@ class RateLimiterConfig:
     burst_multiplier: float = 1.5
 
 class SlidingWindowRateLimiter:
+    """滑动窗口限流器 — 对标 AWS WAF。
+
+    基于时间戳滑动窗口实现请求频率控制。
+
+    Attributes:
+        config: 限流配置 (RateLimiterConfig)。
+
+    Example:
+        >>> limiter = SlidingWindowRateLimiter(RateLimiterConfig(max_requests=100))
+        >>> limiter.allow()  # True 或 False
+    """
+
     def __init__(self, config: RateLimiterConfig):
+        """初始化限流器。
+
+        Args:
+            config: RateLimiterConfig 限流配置。
+        """
         self.config = config
         self._lock = threading.RLock()
         self._timestamps = deque()
@@ -194,8 +266,32 @@ class SlidingWindowRateLimiter:
 # ═══════════════════════════════════════════════════════════════
 
 class TimeoutManager:
+    """超时管理器 — 对标 Hystrix Timeout。
+
+    通过线程+事件实现同步函数的超时控制。
+
+    Example:
+        >>> result = TimeoutManager.sync_timeout(slow_function, 5.0, arg1, arg2)
+    """
+
     @staticmethod
     def sync_timeout(func, timeout_seconds, *args, **kwargs):
+        """对同步函数执行超时控制。
+
+        在独立线程中运行 func，若超时则抛出 TimeoutError。
+
+        Args:
+            func: 目标可调用对象。
+            timeout_seconds: 超时时间（秒）。
+            *args: 传递给 func 的位置参数。
+            **kwargs: 传递给 func 的关键字参数。
+
+        Returns:
+            func 的返回值。
+
+        Raises:
+            TimeoutError: func 执行超过 timeout_seconds。
+        """
         result = []; exc = []; evt = threading.Event()
         def worker():
             try: result.append(func(*args, **kwargs))
@@ -340,6 +436,16 @@ class HotReloader:
 # ═══════════════════════════════════════════════════════════════
 
 class DryRunMode:
+    """干跑模式 — 对标 OPA dry-run。
+
+    在不实际执行规则的情况下评估规则匹配情况，
+    记录完整的决策审计日志。
+
+    Attributes:
+        enabled: 是否启用干跑模式。
+        logger: DecisionAuditLogger 实例（可选）。
+    """
+
     def __init__(self, enabled=False, logger=None):
         self.enabled = enabled; self.logger = logger
         self._simulated = []
@@ -351,7 +457,7 @@ class DryRunMode:
             result = None; matched = False; error = str(e)
         duration = (time.time() - start) * 1000
         rec = DecisionRecord(decision_id=uuid.uuid4().hex[:12],
-            timestamp=datetime.utcnow().isoformat(), rule_name=rule_name,
+            timestamp=datetime.now(UTC).isoformat(), rule_name=rule_name,
             input_data=input_data, result=result, matched=matched,
             duration_ms=duration, error=error, dry_run=self.enabled)
         if self.logger: self.logger.log(rec)
@@ -365,7 +471,33 @@ class DryRunMode:
 # ═══════════════════════════════════════════════════════════════
 
 class UnifiedRuleEnforcer:
+    """统一规则执行器 — 主执行管道。
+
+    集成熔断器、限流、重试、降级、审计、指标、干跑等全部弹性组件。
+
+    Attributes:
+        name: 执行器名称。
+        circuit_breaker: 熔断器实例（可选）。
+        rate_limiter_cfg: 限流配置（可选）。
+        retry_config: 重试配置（可选）。
+        fallbacks: FallbackRegistry 降级注册表。
+        audit: DecisionAuditLogger 审计日志。
+        metrics: MetricsCollector 指标收集器。
+        dry_run: DryRunMode 干跑模式。
+
+    Example:
+        >>> engine = UnifiedRuleEnforcer("my_rules")
+        >>> engine.register_rule("allow_admin", lambda d: {"allowed": d.get("role") == "admin"})
+        >>> engine.circuit_breaker = CircuitBreaker("api", CircuitBreakerConfig())
+        >>> result = engine.execute("allow_admin", {"role": "admin"})
+    """
+
     def __init__(self, name="default"):
+        """初始化统一规则执行器。
+
+        Args:
+            name: 执行器名称，用于日志和指标标识。
+        """
         self.name = name
         self.circuit_breaker = None
         self.rate_limiter_cfg = None
@@ -376,9 +508,29 @@ class UnifiedRuleEnforcer:
         self.dry_run = DryRunMode()
         self._rules = {}
     def register_rule(self, name, func):
+        """注册规则函数。
+
+        Args:
+            name: 规则名称，用于 execute() 时引用。
+            func: 规则函数，接受 input_data 参数，返回 Any。
+        """
         self._rules[name] = func
+
     def execute(self, rule_name, input_data):
-        # 限流
+        """执行指定规则，通过弹性管道。
+
+        流程: 限流检查 → 干跑模式(若启用) → 熔断+重试+降级 → 审计记录。
+
+        Args:
+            rule_name: 已注册的规则名称。
+            input_data: 传递给规则函数的输入数据。
+
+        Returns:
+            规则函数的返回值。
+
+        Raises:
+            Exception: 限流触发或规则执行失败（经过降级后仍失败）。
+        """
         if self.rate_limiter_cfg:
             limiter = SlidingWindowRateLimiter(self.rate_limiter_cfg)
             if not limiter.allow():
@@ -405,7 +557,7 @@ class UnifiedRuleEnforcer:
             duration = (time.time() - start) * 1000
             ok = error is None
             self.audit.log(DecisionRecord(decision_id=uuid.uuid4().hex[:12],
-                timestamp=datetime.utcnow().isoformat(), rule_name=rule_name,
+                timestamp=datetime.now(UTC).isoformat(), rule_name=rule_name,
                 input_data=input_data, result=result, matched=bool(result),
                 duration_ms=duration, error=error))
             self.metrics.record(ok, duration)

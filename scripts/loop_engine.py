@@ -17,8 +17,10 @@ Loop Engine — Hermes Loop Engineering 执行引擎
 from __future__ import annotations
 
 import asyncio
+import fnmatch
 import json
 import os
+import shutil
 import sqlite3
 import subprocess
 import tempfile
@@ -380,7 +382,6 @@ class ExecutionSandbox:
         ctx = self._active_contexts.pop(session_id, None)
         if not ctx:
             return
-        import shutil
         try:
             if os.path.exists(ctx.temp_dir):
                 shutil.rmtree(ctx.temp_dir, ignore_errors=True)
@@ -467,7 +468,6 @@ class TriggerWatcher:
 
     def _snapshot_dir(self, directory: str, pattern: str) -> dict:
         """捕获目录快照"""
-        import fnmatch
         snapshot = {}
         try:
             for root, _, files in os.walk(directory):
@@ -565,20 +565,25 @@ class LoopExecutionResult:
 
 
 class LoopEngine:
-    """
-    Loop 执行引擎 — Loop Engineering 核心
+    """Loop 执行引擎 — Loop Engineering 核心。
 
-    管理 Loop 的完整生命周期：
-      wake → plan → execute → verify → record → sleep
+    管理 Loop 的完整生命周期：wake → plan → execute → verify → record → sleep。
 
-    使用方式：
-      engine = LoopEngine()
-      engine.register_loop(my_loop_def)
-      result = await engine.run_loop("my_loop_id")
+    支持回调注册实现可扩展性：
+      - on_node_execute: 节点执行逻辑
+      - on_node_verify: 节点验证逻辑
+      - on_wake/plan/record/sleep/error: 各阶段钩子
 
-    或者注册回调：
-      engine.on_node_execute = my_executor
-      engine.on_node_verify = my_verifier
+    Attributes:
+        registered_loops: 已注册的 Loop 定义字典。
+        trigger_watcher: 触发器监视器。
+        sandbox: 执行沙箱（隔离环境）。
+        DB_PATH: 默认数据库路径。
+
+    Example:
+        >>> engine = LoopEngine()
+        >>> engine.register_loop(loop_def)
+        >>> result = await engine.run_loop("my_loop_id")
     """
 
     DB_PATH = os.path.expanduser("~/.hermes/state/loop_engine.db")
@@ -635,7 +640,17 @@ class LoopEngine:
     # ─── Loop 注册与管理 ──────────────────────────────────
 
     def register_loop(self, loop_def: Union[LoopDefinition, dict]):
-        """注册 Loop 定义"""
+        """注册 Loop 定义并设置触发器。
+
+        Args:
+            loop_def: LoopDefinition 实例或可序列化的字典。
+                - 若为 dict，自动通过 LoopDefinition.from_dict() 转换。
+                - 若缺少 loop_id，自动生成。
+
+        Raises:
+            ValueError: loop_def 转换失败时。
+            # No explicit raises in current implementation.
+        """
         if isinstance(loop_def, dict):
             loop_def = LoopDefinition.from_dict(loop_def)
 
@@ -681,8 +696,23 @@ class LoopEngine:
 
     async def run_loop(self, loop_id: str,
                        trigger_reason: str = "manual") -> LoopExecutionResult:
-        """
-        完整执行一个 Loop — wake → plan → execute → verify → record → sleep
+        """完整执行一个 Loop — wake → plan → execute → verify → record → sleep。
+
+        六阶段生命周期:
+          1. WAKE  — 日志记录、资源准备、回调通知
+          2. PLAN  — 拓扑排序生成执行计划
+          3. EXECUTE — 按序执行节点（带重试、隔离、预算检查）
+          4. VERIFY — 运行验证规则
+          5. RECORD — 持久化执行结果
+          6. SLEEP  — 清理资源
+
+        Args:
+            loop_id: 已注册的 Loop ID。
+            trigger_reason: 触发原因（manual/cron/webhook/file_watch/continuous）。
+
+        Returns:
+            LoopExecutionResult 包含 success, completed_nodes, failed_nodes,
+            total_duration_seconds, token_budget 等字段。
         """
         loop_def = self.registered_loops.get(loop_id)
         if not loop_def:
@@ -1149,8 +1179,23 @@ def create_loop(
     budget_cap: int = 0,
     max_parallel: int = 4,
 ) -> LoopDefinition:
-    """
-    快速创建 Loop 定义
+    """快速创建 Loop 定义的工厂函数。
+
+    自动从 nodes 的 depends_on 推断边，并进行去重。
+
+    Args:
+        name: Loop 名称。
+        trigger_type: 触发类型 (manual/cron/webhook/file_watch/continuous)。
+        cron_expression: Cron 表达式（trigger_type=cron 时有效）。
+        nodes: 任务节点列表，每个为 dict:
+            {"id": str, "name": str, "tool_name": str, "depends_on": [str], ...}
+        edges: 任务边列表（可选，会自动从 depends_on 推断）。
+        verification_rules: 验证规则列表。
+        budget_cap: Token 预算上限（0=无限制）。
+        max_parallel: 最大并行任务数。
+
+    Returns:
+        完整的 LoopDefinition 实例，已包含自动生成的 loop_id。
 
     Example:
         loop = create_loop(
@@ -1162,10 +1207,6 @@ def create_loop(
                  "tool_name": "check_disk"},
                 {"id": "run_backup", "name": "Run Backup",
                  "tool_name": "run_backup", "depends_on": ["check_disk"]},
-            ],
-            verification_rules=[
-                {"id": "v1", "name": "Backup Success Check",
-                 "rule_type": "test_pass"},
             ],
         )
         engine.register_loop(loop)
