@@ -241,3 +241,5 @@ make check
 MIT License — Copyright (c) 2024-2026 Nous Research
 
 本项目基于 [NousResearch Hermes Agent](https://github.com/NousResearch/hermes-agent) v0.16.0 增强开发，所有增强模块以MIT协议开源。
+
+本项目所有引用的代码及原文件的版权、著作权、知识产权 均归属于原作者，本项目只做集成
