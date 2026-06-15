@@ -16,7 +16,7 @@ import sys
 
 import requests
 
-DK = "sk-335f380102da417ab29d13f4e9aab703"
+DK = "sk-REPLACED-PLACEHOLDER"
 DU = "https://api.deepseek.com/chat/completions"
 V7_DIR = "/mnt/d/Hermes/1000000提示词/高质量模板/维度库_api_v7/"
 OUTPUT_DIR = "/mnt/d/Hermes/1000000提示词/试生产/"

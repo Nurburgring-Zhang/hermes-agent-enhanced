@@ -2863,13 +2863,13 @@
     "archived_at": null,
     "created_at": "2026-06-10T16:52:51.664541+00:00",
     "created_by": "agent",
-    "last_patched_at": "2026-06-15T08:22:33.417732+00:00",
-    "last_used_at": "2026-06-15T08:22:07.474691+00:00",
-    "last_viewed_at": "2026-06-15T08:22:07.468522+00:00",
-    "patch_count": 148,
+    "last_patched_at": "2026-06-15T08:43:29.528986+00:00",
+    "last_used_at": "2026-06-15T08:42:50.162905+00:00",
+    "last_viewed_at": "2026-06-15T08:42:50.157493+00:00",
+    "patch_count": 150,
     "pinned": false,
     "state": "active",
-    "use_count": 85,
-    "view_count": 85
+    "use_count": 86,
+    "view_count": 86
   }
 }

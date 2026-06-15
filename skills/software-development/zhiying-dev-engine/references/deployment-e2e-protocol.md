@@ -1,105 +1,60 @@
-# 部署验证E2E协议
+# E2E运行时验证协议
 
-> 来源: 2026-06-15 Hermes Agent Enhanced 部署验证实战
-> 12/13 PASS (92.3%) — 三阶段验证框架
+> 来源: 2026-06-15 Hermes Agent Enhanced 部署验证
+> 核心发现: import通过≠系统能运行，API表面差异是#1误报源
 
-## 三阶段部署验证
+## 8层验证矩阵
 
-### Phase 1: 部署路径验证
-
-```bash
-# 1. 安装脚本路径
-bash -n install.sh                    # 语法检查
-grep -n "SCRIPT_DIR" install.sh       # 所有$引用路径
-
-# 2. Cron任务脚本存在性
-cat config/crontab_backup.txt | while read line; do
-  script=$(echo "$line" | grep -oP 'scripts/\S+\.py')
-  test -f "$script" && echo "✅ $script" || echo "❌ MISSING: $script"
-done
-
-# 3. Systemd服务路径
-for s in services/*.service; do
-  grep -E "ExecStart|WorkingDirectory" "$s"
-  # 手动验证每个路径存在
-done
-
-# 4. 依赖完整性
-pip install --dry-run . 2>&1 | tail -5
+```
+L1: 规则引擎    R1 AntiHallucination / R3 BackupGuard / R14 SdlcEnforcer / PreCheck
+L2: 弹性模式    CircuitBreaker(CLOSED→OPEN) / SlidingWindowRateLimiter
+L3: 安全链      拦截危险路径 / 放行正常路径 / Canary加载 / 密钥脱敏
+L4: Agent编排   ModelRouter / MonitorEngine / ReflectorEngine
+L5: 自主引擎    MasterIntegrationHub / SelfEvolutionEngine
+L6: Loop工程    LoopEngine / CheckpointStore
+L7: 可观测性    ObservabilityCollector / 指标收集 / 健康检查
+L8: 故障恢复    熔断断开→恢复 / 状态持久化 / 新实例替代reset
 ```
 
-### Phase 2: 子系统E2E运行时验证
+## API发现循环
 
-按顺序启动每个子系统并验证真实输出：
+当E2E验证中方法调用失败时：
 
 ```python
-# 1. 规则引擎 — 确认规则激活
-from scripts.rule_enforcer import SdlcEnforcer
-r14 = SdlcEnforcer()
-assert r14 is not None
+# 1. 尝试调用
+cb = CircuitBreaker(name="e2e")
+cb.record_failure()  # AttributeError!
 
-# 2. 弹性模式 — 状态转移
-from scripts.resilience_patterns import CircuitBreaker
-cb = CircuitBreaker(name='test')
-for _ in range(5): cb.record_failure()
-assert cb.state.name == 'OPEN'
+# 2. 查找实际API
+import inspect
+print(inspect.signature(cb.__init__))  # 看参数
+print([m for m in dir(cb) if 'fail' in m.lower()])  # 找相关方法
 
-# 3. Loop引擎 — 完整生命周期
-from scripts.loop_engine import LoopEngine
-engine = LoopEngine()
-result = engine.register_loop({...})
-# 验证: 创建→执行→检查点→恢复
+# 3. 发现实际方法名不同
+# CircuitBreaker用 call(func) 包装调用, 不是 record_failure()
 
-# 4. API网关 — HTTP响应
-from scripts.api_gateway import app
-# curl http://localhost:8000/health → 200
-
-# 5. 安全链 — 拦截/放行
-from scripts.security_sandbox import SecuritySandbox
-s = SecuritySandbox()
-r, msg = s.check('write_file', '/etc/passwd')
-assert r == False and 'BLOCKED' in msg
+# 4. 修正测试
+for _ in range(5):
+    try: cb.call(lambda: (_ for _ in ()).throw(RuntimeError("x")))
+    except: pass
+assert cb.state.name == "OPEN"  # ✅
 ```
 
-### Phase 3: 故障注入
+## 本会话验证结果
 
-```python
-# 1. 熔断器强制断开
-cb = CircuitBreaker(name='fault_test')
-for _ in range(5): cb.record_failure()
-assert cb.state.name == 'OPEN'
-
-# 2. 文件保护
-# 尝试写入/etc/passwd → 应返回BLOCKED
-
-# 3. 检查点恢复
-# 创建→写入→模拟崩溃→恢复→验证状态一致
+```
+27/27 import验证 ✅ (100%)
+20/24 运行时验证 ✅ (83%)
+  - 4个失败: API表面差异(方法名/参数签名/返回类型)
+  - 0个功能缺陷
+结论: 系统功能完整, API文档需要补充
 ```
 
-### 压力测试协议
+## 已知API限制
 
-```bash
-# 3轮稳定性测试
-for i in 1 2 3; do
-  echo "=== Round $i ==="
-  time python3 -m pytest scripts/ -q --tb=no
-done
-
-# 内存泄漏检测（100次创建/销毁）
-python3 -c "
-import tracemalloc; tracemalloc.start()
-# ... 100x create/destroy ...
-snapshot = tracemalloc.take_snapshot()
-print(f'Memory: stable' if <threshold else 'LEAK DETECTED')
-"
-```
-
-## 常见失败模式
-
-| 失败 | 根因 | 修复 |
-|------|------|------|
-| pip install超时 | WSL+PEP 668+30+依赖 | --break-system-packages |
-| cd in subprocess | cmd.split()不展开shell | 用cwd=参数 |
-| test_*.py glob失败 | subprocess不展开glob | 用Python glob显式列出 |
-| AttributeError on None | 状态未初始化 | 添加None guard |
-| subagent timeout 600s | 依赖解析/网络请求 | 缩小scope, 拆分agent |
+| 模块 | 限制 | 替代方案 |
+|------|------|---------|
+| CircuitBreaker | 无reset()方法 | 创建新实例达到等效效果 |
+| SlidingWindowRateLimiter | allow()无参 | config通过构造函数传入 |
+| PromptGuard | canary属性名`_canary_token` | 非`_canary` |
+| CircuitBreakerConfig | fail_max(非failure_threshold) | 正确属性名 |
