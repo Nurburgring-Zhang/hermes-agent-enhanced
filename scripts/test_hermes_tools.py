@@ -2,11 +2,9 @@
 import json
 import os
 import sys
-import tempfile
 import time
 from pathlib import Path
 
-import pytest
 
 SCRIPTS_DIR = Path(__file__).parent
 sys.path.insert(0, str(SCRIPTS_DIR))
@@ -221,7 +219,7 @@ class TestToolWrapper:
 
     def test_tool_unloader_intercept_small(self, tmp_path):
         """Small results are returned as-is."""
-        from tool_unloader import ToolUnloader, REFS_DIR, OFFLOAD_DB
+        from tool_unloader import ToolUnloader
         import tool_unloader as tu
 
         monkeypatch_refs = tmp_path / "refs"
@@ -236,7 +234,7 @@ class TestToolWrapper:
 
     def test_tool_unloader_intercept_large_v1(self, tmp_path):
         """Large results without LLM follow v1 fallback."""
-        from tool_unloader import ToolUnloader, REFS_DIR, OFFLOAD_DB
+        from tool_unloader import ToolUnloader
         import tool_unloader as tu
 
         monkeypatch_refs = tmp_path / "refs"
@@ -254,7 +252,7 @@ class TestToolWrapper:
 
     def test_tool_unloader_make_ref_id(self, tmp_path):
         """_make_ref_id generates unique IDs."""
-        from tool_unloader import ToolUnloader, REFS_DIR, OFFLOAD_DB
+        from tool_unloader import ToolUnloader
         import tool_unloader as tu
 
         monkeypatch_refs = tmp_path / "refs"
@@ -271,7 +269,7 @@ class TestToolWrapper:
 
     def test_tool_unloader_write_ref_file(self, tmp_path):
         """_write_ref_file creates .md ref file."""
-        from tool_unloader import ToolUnloader, REFS_DIR, OFFLOAD_DB
+        from tool_unloader import ToolUnloader
         import tool_unloader as tu
 
         monkeypatch_refs = tmp_path / "refs"
@@ -303,7 +301,7 @@ class TestToolWrapper:
 
     def test_tool_unloader_get_compressed_context_empty(self, tmp_path):
         """get_compressed_context returns empty when no entries."""
-        from tool_unloader import ToolUnloader, OFFLOAD_DB
+        from tool_unloader import ToolUnloader
         import tool_unloader as tu
 
         monkeypatch_offload = tmp_path / "offload_empty.jsonl"
@@ -315,7 +313,7 @@ class TestToolWrapper:
 
     def test_tool_unloader_get_compressed_context(self, tmp_path):
         """get_compressed_context returns recent entries."""
-        from tool_unloader import ToolUnloader, OFFLOAD_DB
+        from tool_unloader import ToolUnloader
         import tool_unloader as tu
 
         monkeypatch_offload = tmp_path / "offload.jsonl"
@@ -335,7 +333,7 @@ class TestToolWrapper:
 
     def test_tool_unloader_cleanup(self, tmp_path):
         """cleanup_expired removes old refs."""
-        from tool_unloader import ToolUnloader, REFS_DIR, OFFLOAD_DB
+        from tool_unloader import ToolUnloader
         import tool_unloader as tu
 
         monkeypatch_refs = tmp_path / "refs"
@@ -369,7 +367,7 @@ class TestToolWrapper:
 
     def test_tool_unloader_cleanup_empty(self, tmp_path):
         """cleanup_expired returns 0 with no refs."""
-        from tool_unloader import ToolUnloader, REFS_DIR, OFFLOAD_DB
+        from tool_unloader import ToolUnloader
         import tool_unloader as tu
 
         monkeypatch_refs = tmp_path / "refs_empty"
@@ -409,7 +407,7 @@ class TestToolWrapper:
 
     def test_t_read_file_small(self, tmp_path):
         """T.read_file returns content for small files."""
-        from tool_wrapper import T, unloader
+        from tool_wrapper import T
         import tool_unloader as tu
 
         # Redirect refs to temp

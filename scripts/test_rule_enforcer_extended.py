@@ -13,8 +13,6 @@ Target: 15+ tests
 """
 
 import json
-import os
-from pathlib import Path
 
 import pytest
 

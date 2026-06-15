@@ -6,6 +6,8 @@ SynapseBus + 三省六部启动/测试脚本
 支持: 启动,测试,状态查看,DAG流程演示
 """
 
+from __future__ import annotations
+
 import logging
 import os
 import sys

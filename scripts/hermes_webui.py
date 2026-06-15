@@ -5,6 +5,8 @@ Hermes Agent Web UI Auto-Start Script
 Starts the Hermes Agent Web UI server on port 9120 (0.0.0.0).
 This script is designed to be called from the gateway startup.
 """
+from pathlib import Path
+
 import os
 import sys
 

@@ -3,6 +3,8 @@
 处理cleaned_intelligence中总分=0的未评分积压数据。
 使用score_backlog_200_v2.py的相同规则引擎评分，扩展处理零分条目。
 """
+from pathlib import Path
+
 import json
 import re
 import sqlite3

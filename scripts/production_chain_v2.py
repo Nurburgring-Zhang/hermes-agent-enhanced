@@ -712,7 +712,7 @@ Test pass rate: 96%
         print("#  调度员工: 14+人")
         print(f'{"#"*60}')
 
-        return all_ok
+        return success_phases == 6
 
 
 # ============= CLI入口 =============

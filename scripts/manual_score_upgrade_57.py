@@ -4,6 +4,8 @@
 用delegate_task方式对每个item进行真正的AI理解评分
 每批处理20条，分3批完成
 """
+from pathlib import Path
+
 import json
 import sqlite3
 

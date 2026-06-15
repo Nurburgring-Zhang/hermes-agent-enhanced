@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 """Score 7 zero-score items manually"""
+from pathlib import Path
+
 import sqlite3
 from datetime import datetime
 

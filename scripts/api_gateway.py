@@ -17,7 +17,6 @@ Usage:
   uvicorn scripts.api_gateway:app --host 0.0.0.0 --port 8000
 """
 
-import hashlib
 import json
 import logging
 import os
@@ -25,7 +24,6 @@ import secrets
 import threading
 import time
 from datetime import UTC, datetime, timedelta
-from functools import wraps
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional
 

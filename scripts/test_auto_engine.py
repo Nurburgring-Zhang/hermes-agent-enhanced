@@ -4,9 +4,7 @@ Integration tests for auto_engine/ subsystem
 Tests: MasterIntegrationHub, MultiAgentOrchestrator, SelfEvolutionEngine, CapabilityRegistry
 """
 
-import os
 import sys
-import tempfile
 from pathlib import Path
 
 import pytest

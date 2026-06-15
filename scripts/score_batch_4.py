@@ -4,6 +4,8 @@ score_batch_4.py — AI六维评分 for batch 4 (25 items)
 读取 /tmp/score_batch_4.json，对每条进行六维评分后插入数据库
 """
 
+from pathlib import Path
+
 import hashlib
 import json
 import re

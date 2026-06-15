@@ -1,11 +1,8 @@
 """Tests for engine_core.py — 任务引擎核心"""
 import json
-import os
 import sys
-import tempfile
 from pathlib import Path
 
-import pytest
 
 # Ensure scripts dir is in path
 SCRIPTS_DIR = Path(__file__).parent
@@ -17,7 +14,6 @@ from engine_core import (
     ForcedWeaponProtocol,
     WeaponCallValidator,
     EngineCore,
-    HERMES,
 )
 
 

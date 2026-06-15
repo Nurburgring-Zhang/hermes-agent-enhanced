@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 """Extended tests for cleaning pipeline — hermes_deep_clean_v2 + unified_cleaning_pipeline."""
-import sqlite3
 from unittest.mock import MagicMock, patch
 
 import pytest

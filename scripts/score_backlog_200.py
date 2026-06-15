@@ -3,6 +3,8 @@
 批量处理cleaned_intelligence中未评分的积压数据。
 基于batch2_ai_scorer.py的核心规则引擎，一次处理200条。
 """
+from pathlib import Path
+
 import json
 import re
 import sqlite3

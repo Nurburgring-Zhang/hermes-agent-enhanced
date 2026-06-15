@@ -674,7 +674,7 @@ def _generate_stage_summary(dept_id: str, dept_result: dict) -> str:
             if isinstance(parsed, dict):
                 # 提取关键字段预览
                 keys = list(parsed.keys())
-                counts = [f"{k}:{len(v) if isinstance(v, list) else '?'}" for k in keys if k in parsed]
+                counts = [f"{k}:{len(parsed[k]) if isinstance(parsed[k], list) else '?'}" for k in keys if k in parsed]
                 result_preview = f" [{', '.join(counts[:3])}]"
             elif isinstance(parsed, list):
                 result_preview = f" [{len(parsed)} items]"

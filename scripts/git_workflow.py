@@ -261,14 +261,14 @@ class GitWorkflow:
         )
 
         summary_lines = [
-            f"Change Summary:",
+            "Change Summary:",
             f"  Files changed: {len(parsed)}",
             f"  Total additions: +{total_additions}",
             f"  Total deletions: -{total_deletions}",
             f"  Categories: {', '.join(sorted(categories))}",
             f"  Risk level: {risk.upper()}",
-            f"",
-            f"Files:",
+            "",
+            "Files:",
             file_list,
         ]
 
@@ -481,8 +481,8 @@ class GitWorkflow:
             f"## PR Review: {head_branch} → {base_branch}",
             "",
             "### Summary",
-            f"| Metric | Value |",
-            f"|--------|-------|",
+            "| Metric | Value |",
+            "|--------|-------|",
             f"| Files changed | {len(parsed)} |",
             f"| Additions | +{total_add} |",
             f"| Deletions | -{total_del} |",

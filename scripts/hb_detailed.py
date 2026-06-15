@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+from pathlib import Path
+
 import sqlite3
 
 conn = sqlite3.connect(str(Path.home() / ".hermes" / "intelligence.db"))

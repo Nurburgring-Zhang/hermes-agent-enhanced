@@ -1,9 +1,7 @@
 """Tests for pipeline system: pipeline_orchestrator.py + production_chain.py + full_auto_pipeline.py"""
 import json
-import os
 import sqlite3
 import sys
-import tempfile
 from pathlib import Path
 
 import pytest

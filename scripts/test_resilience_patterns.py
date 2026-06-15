@@ -5,7 +5,6 @@ test_resilience_patterns.py — 完整测试套件
       DryRunMode, MetricsCollector, UnifiedRuleEnforcer
 """
 import logging
-import os
 import sys
 import time
 from pathlib import Path

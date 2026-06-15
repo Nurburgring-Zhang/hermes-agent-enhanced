@@ -5,6 +5,8 @@ Reads from /tmp/score_batch_7.json, inserts into raw_intelligence + cleaned_inte
 computes 6-dimension scores, and updates the database.
 """
 
+from pathlib import Path
+
 import hashlib
 import json
 import sqlite3

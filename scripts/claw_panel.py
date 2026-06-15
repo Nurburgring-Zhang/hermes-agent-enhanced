@@ -16,6 +16,7 @@ ClawPanel — Hermes 三省六部 CLI 控制面板
 """
 
 import logging
+logger = logging.getLogger(__name__)
 import os
 import sys
 import time

@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 """Comprehensive tests for AI scoring — ai_sixdim_scorer.py full coverage."""
-import json
-from datetime import datetime
 from unittest.mock import MagicMock, patch
 
 import pytest

@@ -21,6 +21,7 @@ Cron调度:
 
 import json
 import logging
+logger = logging.getLogger(__name__)
 import os
 import sqlite3
 import subprocess

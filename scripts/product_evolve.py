@@ -91,6 +91,7 @@ def run_evolve_cycle():
     for item in items[:2]:
         title = item.get("title","")[:60]
         score = item.get("ai_score_total", 0)
+        platform = item.get("platform", "")
 
         # 检查该产品是否已有迭代记录
         product_key = f"prod_{item.get('id')}"

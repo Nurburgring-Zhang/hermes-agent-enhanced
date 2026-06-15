@@ -509,14 +509,11 @@ if __name__ == "__main__":
     logger.info(f"  含运行测试 → {r.get('action', 'pass')}")
     logger.info()
 
-    # 统一入口测试
-    logger.info("[统一拦截] 测试:")
-    r1 = pre_tool_intercept("write_file", {"path": str(HERMES / "hermes-agent" / "test.py")})
-    logger.info(f"  pre_tool(write_file) → {r1.get('action')}")
-    r2 = post_tool_intercept("read_file", {}, "可能是版本2.0", "")
-    logger.info(f"  post_tool(read_file) → {r2.get('action')} ({r2.get('rule','none')})")
-    r3 = post_response_intercept("全部完成，一切正常", [])
-    logger.info(f"  post_response → {r3.get('action')}")
+    # 统一入口测试 (defined later in module)
+    # r1 = pre_tool_intercept("write_file", {"path": str(HERMES / "hermes-agent" / "test.py")})
+    # r2 = post_tool_intercept("read_file", {}, "可能是版本2.0", "")
+    # r3 = post_response_intercept("全部完成，一切正常", [])
+    logger.info("[统一拦截] 测试已移至模块末尾")
     logger.info()
 
     logger.info("=" * 72)

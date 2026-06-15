@@ -12,6 +12,8 @@ ClawHub 排行榜真实数据采集器
     - 保存 JSON 快照到 ~/.hermes/rankings/
 """
 
+from pathlib import Path
+
 import json
 import os
 import sqlite3

@@ -2,6 +2,8 @@
 """
 Layer2 语义提炼 - 从最近交互中提炼新的事实,更新语义记忆层
 """
+from pathlib import Path
+
 import json
 import os
 from datetime import datetime, timedelta, timezone

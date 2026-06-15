@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 """Generate final report for AI scoring task."""
+from pathlib import Path
+
 import sqlite3
 from datetime import datetime
 

@@ -4,6 +4,8 @@
 从HTML中提取: "title":"xxx" + group_id URL模式
 """
 
+from pathlib import Path
+
 import asyncio
 import hashlib
 import random

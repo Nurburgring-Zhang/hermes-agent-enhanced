@@ -3,6 +3,8 @@
 Score batch 7 — Update existing cleaned_intelligence items with fresh 6-dimension scoring.
 Items already exist in cleaned_intelligence — update their AI scores.
 """
+from pathlib import Path
+
 import json
 import sqlite3
 from datetime import datetime

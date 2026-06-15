@@ -5,6 +5,8 @@ The items already exist in cleaned_intelligence with different raw_ids.
 We need to find them by title and UPDATE the scores.
 """
 
+from pathlib import Path
+
 import json
 import re
 import sqlite3

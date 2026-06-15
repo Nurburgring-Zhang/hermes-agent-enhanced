@@ -141,11 +141,6 @@ def load_user_keywords():
     except Exception:
         return []
 
-    ts = datetime.now().strftime("%H:%M:%S")
-    line = f"[{ts}] {msg}"
-    with open(PUSH_LOG, "a", encoding="utf-8") as f:
-        f.write(line + "\n")
-    return None
 
 def get_platform_icon(platform):
     return PLATFORM_ICONS.get(platform, "🌐")

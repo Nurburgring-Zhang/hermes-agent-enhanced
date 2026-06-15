@@ -1,8 +1,6 @@
 """Tests for compression system: compression_engine.py + context_packer.py + lossless_claw.py"""
 import json
-import os
 import sys
-import tempfile
 from pathlib import Path
 
 import pytest
@@ -18,12 +16,8 @@ from compression_engine import (
     compress_soul,
     compress_for_context,
     compress,
-    run_fidelity_validation,
-    archive_old_intelligence,
     _load_fidelity_stats,
     _check_byte_fidelity,
-    HERMES,
-    TZ,
 )
 
 from context_packer import (
@@ -37,7 +31,6 @@ from context_packer import (
 from lossless_claw import LosslessClawCompressor as LCC_forwarder
 
 # Dummy sqlite3 connection for test
-import sqlite3
 
 
 @pytest.fixture

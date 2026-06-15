@@ -14,6 +14,7 @@ Hermes 老旧数据压缩归档
 
 import json
 import logging
+logger = logging.getLogger(__name__)
 import sqlite3
 import sys
 from datetime import date, datetime, timedelta

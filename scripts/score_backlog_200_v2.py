@@ -3,6 +3,8 @@
 批量升级cleaned_intelligence中只有简略评分（如{"summary": "AI内容评分:35分"}）的积压数据。
 使用score_backlog_200.py的规则引擎，一次处理200条，升级为完整的六维评分。
 """
+from pathlib import Path
+
 import json
 import re
 import sqlite3

@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 """诊断清洗积压问题"""
+from pathlib import Path
+
 import sqlite3
 from datetime import datetime, timedelta
 

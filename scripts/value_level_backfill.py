@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 """批量修复cleaned_intelligence的value_level映射——基于ai_score_total"""
+from pathlib import Path
+
 import json
 import sqlite3
 from datetime import datetime

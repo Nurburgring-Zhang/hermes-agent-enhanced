@@ -25,7 +25,6 @@ Hermes Secret Manager v1.0
   # → "export KEY=sk-abc123..."
 """
 
-import base64
 import hashlib
 import json
 import logging
@@ -34,7 +33,7 @@ import re
 import threading
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -448,7 +447,7 @@ if __name__ == "__main__":
     sm.set("TEST_KEY", "secret-value-12345")
     value = sm.get("TEST_KEY")
     assert value == "secret-value-12345", f"Expected 'secret-value-12345', got {value}"
-    print(f"[1] ✅ 密钥存储/获取成功")
+    print("[1] ✅ 密钥存储/获取成功")
 
     # 2. 占位符解析
     text = "export API_KEY={{SECRET:TEST_KEY}} and use {{SECRET:TEST_KEY}} again"
@@ -467,7 +466,7 @@ if __name__ == "__main__":
     # 4. 占位符存在检查
     assert sm.has_placeholders("use {{SECRET:TEST_KEY}} here")
     assert not sm.has_placeholders("no secrets here")
-    print(f"[4] ✅ 占位符检测")
+    print("[4] ✅ 占位符检测")
 
     # 5. 列出占位符
     placeholders = sm.list_placeholders("{{SECRET:A}} and {{SECRET:B}}")
@@ -489,26 +488,26 @@ if __name__ == "__main__":
     assert "DB_PASSWORD" in meta
     assert "description" in meta["DB_PASSWORD"]
     assert "db-secret-999" not in str(meta["DB_PASSWORD"]), "Metadata should not contain the secret value"
-    print(f"[8] ✅ 元数据不含密钥值")
+    print("[8] ✅ 元数据不含密钥值")
 
     # 8. 不存在的占位符 (保留原样)
     result = sm.resolve_placeholders("{{SECRET:NONEXISTENT}}")
     assert "{{SECRET:NONEXISTENT}}" in result
-    print(f"[9] ✅ 不存在密钥保留占位符")
+    print("[9] ✅ 不存在密钥保留占位符")
 
     # 9. 密钥删除
     sm.set("TEMP_KEY", "temp-value")
     assert sm.get("TEMP_KEY") == "temp-value"
     sm.delete("TEMP_KEY")
     assert sm.get("TEMP_KEY") is None
-    print(f"[10] ✅ 密钥删除成功")
+    print("[10] ✅ 密钥删除成功")
 
     # 10. 持久化验证
     sm.flush()  # 确保写入磁盘
     sm2 = SecretManager()  # 新实例从磁盘加载
     value2 = sm2.get("TEST_KEY")
     assert value2 == "secret-value-12345", f"Persisted value mismatch: {value2}"
-    print(f"[11] ✅ 持久化恢复成功")
+    print("[11] ✅ 持久化恢复成功")
 
     # 清理
     sm.delete("TEST_KEY")

@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 """Reflex Fabric 心跳维护脚本 — 直接连接 state.db,绕过 agents_company import 链"""
+from pathlib import Path
+
 import sqlite3
 from datetime import datetime
 

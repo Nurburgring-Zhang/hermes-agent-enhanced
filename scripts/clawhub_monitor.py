@@ -5,6 +5,8 @@ ClawHub 淘金小镇排行榜监控系统
 监控 clawhub.ai 上的热门技能/插件排行榜变化
 """
 
+from pathlib import Path
+
 import json
 import sqlite3
 import sys

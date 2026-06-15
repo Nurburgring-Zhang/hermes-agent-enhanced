@@ -479,7 +479,25 @@ delegate_task(goal=..., model={"model":"deepseek-v4-pro","provider":"deepseek"})
 - 监督AI-C 用 toolsets=["terminal","file"] 做真实度验证
 - 3报告交叉验证，不一致处标记"需人工决策"
 
-### 致命陷阱：write_file 覆盖整个文件（2026-06-15实战）
+### 致命陷阱：patch replace_all 破坏 HTML 文件 (2026-06-16 实战)
+
+**绝对不要对 HTML 文件使用 `replace_all=true`。** 
+
+**症状**：想给 index.html 添加一个新的 `<script src="...">` 标签，用了 `patch(old_string="<script src=\"/js/app.js\"></script>", new_string="...", replace_all=true)`。结果文件中有6处 `</body>` 关闭标签前的这个模式，全部被替换，导致40+行 script 标签被多次重复插入、截断和损坏。
+
+**正确的 HTML 修改方式**：
+1. **导航项添加** — 用带 `data-page` 属性的唯一上下文做精确匹配
+2. **script 添加** — 找唯一的相邻 script 标签作为上下文
+3. **多个匹配时** — 用 Python 脚本处理而非 `replace_all=true`
+
+**损坏后修复**：
+```python
+# 用文件查找marker+拼接的方式重建
+marker = '<!-- 登录状态检查' 
+auth_idx = content.find(marker)
+new_content = content[:split_idx] + correct_scripts + content[auth_idx:]
+```
+
 
 **write_file 是全文替换，不是插入。** 如果用 write_file 写23行到945行文件 = 922行丢失。
 
@@ -818,16 +836,37 @@ app.mount("/imdf", imdf_app)
 
 详见 `references/multi-user-auth-pattern.md`
 
-## 项目代码清理模式（2026-06-16实战）
+## 项目清理协议 (2026-06-16实战)
 
-**清理清单**：
-- 根目录报告文档(audit/delivery/completion reports等) → 删除，保留README+CHANGELOG
-- 冗余启动脚本(.bat/.ps1/.sh) → 删除，保留一个start.sh
-- 空目录(空的data子目录/空的模块目录) → rmdir清理
-- 测试文件(如果会干扰生产运行) → 移到test/目录或删除
-- 旧项目名称引用(minimax→factory) → `sed`批量替换目录名+文件名+文件内容
+完整清理清单（删除报告/冗余脚本/测试目录/空目录/旧名称重命名）。
+详见 `references/project-cleanup-protocol.md`
 
-**验证**：清理后用 `grep -r "旧名称" --include="*.py" | wc -l` 确认残留为0。\n- `references/multi-project-fastapi-mount-syspath-fix.md` — FastAPI子应用挂载时sys.path/sys.modules污染修复(ModuleNotFoundError after mount根因)\n- `references/production-deployment-pattern.md` — 生产部署模式(uvicorn workers/production_app.py/端口清理/共享状态注意事项)\n- `references/inline-html-sink-debugging.md` — 内联HTML被多子Agent注入破坏的根因链与修复模式\n- `references/nanobot-factory-performance-baseline.md` — 性能基准数据(API 1-10ms/构建19.56s/4 workers)
+## 多项目融合: 独立服务+nginx架构 (2026-06-16实战)
+
+IMDF+nanobot-factory+智影三项目融合的正确方案。
+详见 `references/multi-project-independent-services-architecture.md`
+
+## 前端独立文件实现模式 (2026-06-16实战)
+
+从内联HTML_TEMPLATE迁移到frontend/index.html独立文件。
+详见 `references/standalone-frontend-implementation.md`
+
+### 方案v3批量补齐模式 (2026-06-16实战)
+
+**场景**：有产品设计文档（36卷方案v3），需要对照当前项目找出缺失功能并分批补齐。
+
+**流程**：
+1. **研读方案** — 快速浏览总索引+产品愿景+功能清单PRD+路线图
+2. **差距对比** — 按M0-M6六阶段逐一标 ✅/⚠️/❌
+3. **三Agent分析** — Agent A(架构可行性) + Agent B(优先级排序) + Agent C(代码量估算)
+4. **分批实施** — Batch1(5项/2周/3350行) → Batch2(5项/2周/5300行) → Batch3(5项/2周/4400行)
+5. **每批验证** — 全部API端点实测+前端JS文件可访问性+边缘情况测试
+
+**实施注意**：
+- 每批5项，用 `delegate_task` 的 `tasks` 数组并行（最多3个）
+- 每批完成后做一次全链路验证
+- 新增文件必须注册到 app.js PAGE_RENDERERS + index.html 导航 + canvas_web.py 路由
+- 使用 Python 脚本批量修改文件避免 `patch replace_all` 陷阱
 
 ## 参考文件
 - `references/three-project-merge-architecture.md` — **三项目融合架构**: FastAPI sub-app mount失败/独立服务+nginx方案/11类预设账号/25项商用验证清单 (2026-06-16)

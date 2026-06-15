@@ -15,6 +15,7 @@ Hermes AI评分守护进程 (定时任务版)
 
 import json
 import logging
+logger = logging.getLogger(__name__)
 import os
 import re
 import sqlite3

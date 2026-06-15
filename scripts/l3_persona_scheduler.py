@@ -28,6 +28,7 @@ l3_persona_scheduler.py — L3 画像自动生成调度器 (LLM驱动)
 """
 
 import json
+import re
 import sqlite3
 import sys
 import time
@@ -209,7 +210,8 @@ class L3PersonaScheduler:
 - 让Agent能真正理解用户的思维模式
 
 ## 输出JSON格式
-{{"archetype": "核心原型一句话", "basic_info": {{"role": "角色", "domain": "领域", "mode": "工作模式"}}, "interests": ["兴趣1", "兴趣2"], "protocol": {{"comm_style": "沟通风格", "quality_standard": "质量标准", "workflow_pref": "工作流偏好"}}, "core": {{"decision_logic": "决策逻辑", "driving_force": "驱动力", "values": ["价值1", "价值2"]}}, "summary": "综合画像描述（100字内）"}}"""
+{{"archetype": "核心原型一句话", "basic_info": {{"role": "角色", "domain": "领域", "mode": "工作模式"}}, "interests": ["兴趣1", "兴趣2"], "protocol": {{"comm_style": "沟通风格", "quality_standard": "质量标准", "workflow_pref": "工作流偏好"}, "core": {"decision_logic": "决策逻辑", "driving_force": "驱动力", "values": ["价值1", "价值2"]}, "summary": "综合画像描述（100字内）"}}"""
+
 
     def consume_llm_result(self, llm_result: str) -> dict | None:
         """解析LLM输出的画像"""

@@ -164,7 +164,7 @@ def run_phase(dept_id: str):
 
     print(f"\n## 任务: {dept_name}")
     print("\n### 你的身份")
-    print(f"你是 Hermes Agent Company 的{Orim}调度器。你的任务是唤醒{dept_name}的{len(agents)}名员工。")
+    print(f"你是 Hermes Agent Company 的{dept_name}调度器。你的任务是唤醒{dept_name}的{len(agents)}名员工。")
     print("\n### 员工列表")
     for a in agents:
         print(f"- {a['id']}: {a['name']}({a['role']}) — {a['personality']}")

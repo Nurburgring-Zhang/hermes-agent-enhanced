@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 """生成推送候选集(每平台前10条保底)"""
+from pathlib import Path
+
 import json
 import sqlite3
 from collections import defaultdict

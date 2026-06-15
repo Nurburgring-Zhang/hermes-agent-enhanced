@@ -14,8 +14,7 @@ Target: 15+ tests
 import json
 import sqlite3
 import sys
-import time
-from datetime import datetime, timedelta, timezone
+from datetime import timedelta, timezone
 from pathlib import Path
 
 import pytest

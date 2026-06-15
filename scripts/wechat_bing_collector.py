@@ -10,6 +10,8 @@
 4. 120+关键词覆盖全方向
 """
 
+from pathlib import Path
+
 import asyncio
 import hashlib
 import random

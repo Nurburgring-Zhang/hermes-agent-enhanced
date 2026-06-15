@@ -18,13 +18,11 @@ from __future__ import annotations
 import hashlib
 import json
 import os
-import shutil
 import sqlite3
 import time
 from dataclasses import asdict, dataclass, field, fields
 from datetime import datetime, timedelta
-from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import List, Optional, Tuple
 
 
 # ─── 检查点数据模型 ────────────────────────────────────────────
@@ -162,7 +160,7 @@ class ProgressReport:
         """生成人类可读的文本报告"""
         lines = [
             "=" * 60,
-            f"Loop Progress Report",
+            "Loop Progress Report",
             "=" * 60,
             f"Loop:       {self.loop_name} ({self.loop_id})",
             f"Session:    {self.session_id}",

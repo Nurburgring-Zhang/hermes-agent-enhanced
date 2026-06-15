@@ -2,6 +2,8 @@
 """
 手动AI评分升级 — 第二批：第21-40条（共57条）
 """
+from pathlib import Path
+
 import json
 import sqlite3
 

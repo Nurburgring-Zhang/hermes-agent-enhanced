@@ -3,6 +3,8 @@
 Batch 2 True AI Six-Dimensional Scorer
 Reads _batch2_ai_score_input.json, does real AI scoring, writes to DB.
 """
+from pathlib import Path
+
 import json
 import sqlite3
 from datetime import datetime

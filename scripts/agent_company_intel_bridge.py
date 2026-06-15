@@ -3,6 +3,8 @@
 agent_company_intel_bridge.py - 情报桥接: 将最新的高价值情报投递到Agent Company
 每天8:30/20:30自动执行,由cron触发
 """
+from pathlib import Path
+
 import json
 import os
 import sqlite3

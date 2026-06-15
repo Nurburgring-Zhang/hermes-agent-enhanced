@@ -4,9 +4,7 @@ Cross-system integration tests
 Tests: agent + auto_engine, production_loop + evolution_v3, full system flows
 """
 
-import os
 import sys
-import tempfile
 from pathlib import Path
 
 import pytest
@@ -223,8 +221,7 @@ class TestProductionLoopWithEvolutionV3:
     def test_loop_state_serialization(self):
         """LoopState 序列化/反序列化"""
         from production_loop.loop_state import (
-            LoopState, VerificationRecord, ReflectionRecord,
-            GlobalProgress, GlobalConstraints
+            LoopState, VerificationRecord, ReflectionRecord
         )
 
         state = LoopState()
@@ -270,7 +267,6 @@ class TestProductionLoopWithEvolutionV3:
     def test_simple_loop_executor(self):
         """SimpleLoopExecutor 基本功能"""
         from production_loop.main_loop import SimpleLoopExecutor
-        from production_loop.loop_state import LoopStateStore
 
         dag = {
             "nodes": [
@@ -646,6 +642,7 @@ class TestFullSystemExecute:
         reflector = ReflectorEngine()
 
         # Simulate multiple rounds
+        detail = {}
         for turn in range(1, 21):
             errors = []
             if turn % 5 == 0:
@@ -691,7 +688,7 @@ class TestFullSystemExecute:
     def test_resume_interrupted_task_flow(self):
         """中断任务恢复流程"""
         from production_loop.main_loop import SimpleLoopExecutor
-        from production_loop.loop_state import LoopStateStore, LoopState, FileBasedStateStore
+        from production_loop.loop_state import LoopState, FileBasedStateStore
 
         # Setup: Create an interrupted task
         file_store = FileBasedStateStore()
@@ -759,9 +756,6 @@ class TestFullSystemStop:
     def test_clean_shutdown_no_crashes(self):
         """干净关闭不崩溃"""
         # Just verify that creating and discarding all components doesn't crash
-        from agent.model_router import ModelRouter
-        from agent.monitor import MonitorEngine
-        from agent.reflector import ReflectorEngine
         from auto_engine.master_integration_hub import get_hub
         from auto_engine.multi_agent_orchestrator import get_orchestrator
         from auto_engine.self_evolution_engine import get_engine

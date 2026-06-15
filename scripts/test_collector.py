@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 """Extended tests for unified_collector_v5.py — edge cases and deeper coverage."""
-import hashlib
-import os
 from unittest.mock import MagicMock, patch
 
 import pytest

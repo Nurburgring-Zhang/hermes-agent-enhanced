@@ -302,6 +302,7 @@ def token_compress() -> dict[str, Any]:
 
     # 3.1.7 标记15天前且无摘要的旧会话,为其生成摘要
     cutoff_15 = (datetime.now() - timedelta(days=15)).isoformat()
+    cutoff_30 = (datetime.now() - timedelta(days=30)).isoformat()
 
     # 3.2 删除完全空会话(无消息)
     empty = db.execute("""

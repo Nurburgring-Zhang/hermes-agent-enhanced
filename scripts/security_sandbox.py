@@ -33,7 +33,7 @@ import time
 import uuid
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 import yaml
 
@@ -341,7 +341,7 @@ class SecuritySandbox:
             for prefix in self._allowed_prefixes:
                 if command.strip().startswith(prefix):
                     return True, "ok"
-            return False, f"BLOCKED: command prefix not in allowlist"
+            return False, "BLOCKED: command prefix not in allowlist"
 
         return True, "ok"
 
@@ -617,11 +617,11 @@ if __name__ == "__main__":
     # 2. 正常写入允许
     ok, reason = sandbox.check("write_file", target="/tmp/hermes_test/test.py")
     assert ok, f"Expected ok, got {reason}"
-    print(f"[4] ✅ /tmp/ 正常写入通过")
+    print("[4] ✅ /tmp/ 正常写入通过")
 
     ok, reason = sandbox.check("write_file", target="/home/user/.hermes/config/test.yaml")
     assert ok
-    print(f"[5] ✅ ~/.hermes/ 正常写入通过")
+    print("[5] ✅ ~/.hermes/ 正常写入通过")
 
     # 3. 命令拦截
     ok, reason = sandbox.check("terminal", command="rm -rf /")
@@ -630,7 +630,7 @@ if __name__ == "__main__":
 
     ok, reason = sandbox.check("terminal", command="python test.py")
     assert ok, f"Expected ok, got {reason}"
-    print(f"[7] ✅ python 正常命令通过")
+    print("[7] ✅ python 正常命令通过")
 
     # 4. 审计日志
     event_id = sandbox.log("write_file", "blocked", target="/etc/hosts", reason="protected path")

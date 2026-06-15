@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 """视频引擎健康检查日志"""
+from pathlib import Path
+
 import sys
 
 sys.path.insert(0, str(Path.home() / ".hermes" / "scripts"))

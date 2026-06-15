@@ -420,7 +420,7 @@ class GuardedApplier:
             current = skill_path.read_text(encoding="utf-8")
 
             # 3. 结构检查：YAML frontmatter完整性
-            new_text = current + "\n\n" + self._format_evidence_block(content)
+            new_text = current + "\n\n" + GuardedApplier._format_evidence_block(content)
 
             # 4. 写入
             skill_path.write_text(new_text, encoding="utf-8")

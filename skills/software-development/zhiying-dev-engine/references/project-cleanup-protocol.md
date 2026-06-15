@@ -1,40 +1,50 @@
-# 项目代码清理协议
+# 项目代码清理完整协议 (2026-06-16 实战)
 
-## 触发信号
-用户要求"把无用的都删掉"——删除冗余报告/测试文件/启动脚本/空目录。
+## 触发条件
+用户说"清理无用文件/报告/启动脚本/测试"时执行。
 
-## 清理清单
+## 清理范围
 
-### 1. 根目录报告文档
-删除所有审计/交付/完成/计划报告，保留README.md和CHANGELOG.md。
+### 1. 报告文档
+删除根目录下所有审计/交付/完成/分析报告（audit/completion/delivery/review等）：
+```bash
+# 保留README.md和CHANGELOG.md
+for f in *.md; do
+  case "$f" in README.md|CHANGELOG.md) echo "保留: $f" ;; *) rm -f "$f" ;; esac
+done
+```
 
 ### 2. 冗余启动脚本
-保留1个start.sh，删除所有.bat/.ps1/重复的.sh。
-
-### 3. 空目录
 ```bash
-find . -type d -empty -not -path '*node_modules*' -not -path '*.git*' | xargs rmdir
+rm -f *.bat *.ps1 start_linux.sh run*.bat run*.ps1 *.patch
+# 只保留 start.sh
 ```
 
-### 4. 测试文件
-移到test/目录或删除（视项目需求）。
-
-### 5. 旧名称全局替换
+### 3. 测试目录
 ```bash
-# 重命名目录
+rm -rf backend/*/tests backend/*/tests-unit
+```
+
+### 4. 空目录
+```bash
+find . -type d -empty -not -path '*node_modules*' -not -path '*.git*' -exec rmdir {} \;
+```
+
+### 5. 旧项目名称重命名
+```bash
+# 目录: .minimax → .factory
 mv .minimax .factory
-mv minimax-docx factory-docx
-# 重命名文件
-find . -name "*minimax*" | while read f; do mv "$f" "$(echo $f | sed 's/minimax/factory/g')"; done
-# 替换内容
-find . -type f -not -path "*/node_modules/*" | xargs sed -i 's/minimax/factory/g; s/MiniMax/Factory/g'
-# 验证
-grep -r "minimax\|MiniMax" --include="*.py" --include="*.js" -l | wc -l  # 应为0
+# 子目录: minimax-docx → factory-docx
+# 子目录: minimax-pdf → factory-pdf
+# DotNet项目: MiniMaxAIDocx → FactoryAIDocx
+# 文件内容: sed 's/minimax/factory/g; s/MiniMax/Factory/g; s/MINIMAX/FACTORY/g'
 ```
 
-## 验证命令
+### 验证
 ```bash
-echo "报告文档: $(ls *.md 2>/dev/null | grep -v README | grep -v CHANGELOG | wc -l)个(应为0)"
-echo "启动脚本: $(ls *.bat *.ps1 2>/dev/null | wc -l)个(应为0)"
-echo "空目录: $(find . -type d -empty | wc -l)个"
+grep -r "minimax\|MiniMax\|MINIMAX" --include="*.py" --include="*.md" --include="*.json" -l . | wc -l
+# 必须输出 0
 ```
+
+## 清理后项目文件数
+典型结果：从~3592文件减到~3459文件
