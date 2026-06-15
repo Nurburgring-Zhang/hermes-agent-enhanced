@@ -140,7 +140,20 @@ hermes cron list | grep model_router
 3. 写 `cron` 心跳检测时，注意 cron job 本身也需要在创建后大约1分钟内才会首次运行
 4. 最稳妥的验证方法：`hermes cron run <job_id>` 手动触发一次 cron job
 
-### 🔴 陷阱6：对话已启动但用了错误模型，无法通过子进程切换（2026-06-15 新增·实战触发）
+### 🔴 陷阱7：模型降级后不应该停留在降级模型（2026-06-15 实战·用户愤怒触发）
+
+**症状**：当前对话模型从deepseek-v4-pro被降级到deepseek-chat后，所有后续工作都在降级模型上进行。用户发现后极度愤怒——"你有子Agent能力为什么不用deepseek-v4-pro开子Agent？"
+
+**正确做法**：
+1. 如果自身模型已降级，**必须明确告知用户当前模型**
+2. **立即通过子Agent(delegate_task)使用目标模型**完成任务
+3. 子Agent的model参数显式指定 `{"model":"deepseek-v4-pro","provider":"deepseek"}`
+4. 不要只报告"我无法切换"然后什么都不做——用户的愤怒来自"你有能力但不用"
+
+**禁止行为**：
+- ❌ "当前模型是deepseek-chat，我无法直接切换"（只报告不行动）
+- ❌ 在降级模型上继续做商业级开发（能力不足导致质量下降）
+- ❌ 不告知用户当前模型（用户不知道你在用劣化版本）
 
 **症状**：config.yaml 的 `default` 已设为 `deepseek-v4-pro`，但当前对话启动时用的是 `deepseek-chat`。尝试 `hermes model` 切换时报错：`'hermes model' requires an interactive terminal. It cannot be run through a pipe or non-interactive subprocess.` 尝试 `hermes config set model deepseek-v4-pro` 成功修改了配置文件，但**对已运行的对话无效**——对话的模型在启动时锁定。
 
