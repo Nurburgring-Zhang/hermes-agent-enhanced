@@ -269,3 +269,4 @@ vault/
 profiles/*/.env
 profiles/*/config.yaml
 plugins/*/config.yaml
+*_cache.json
