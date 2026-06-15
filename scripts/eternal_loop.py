@@ -22,6 +22,16 @@ from pathlib import Path
 import logging
 logger = logging.getLogger(__name__)
 
+# ─── Loop Engineering 集成 ────────────────────────────────
+try:
+    from loop_bootstrap import check_loops_sync, bootstrap_force_run, get_bootstrap
+    _LOOP_BOOTSTRAP_AVAILABLE = True
+except ImportError:
+    _LOOP_BOOTSTRAP_AVAILABLE = False
+    def check_loops_sync(): return {"error": "unavailable"}
+    def bootstrap_force_run(): return []
+    def get_bootstrap(): return None
+
 
 HERMES = Path.home() / ".hermes"
 HEARTBEAT = HERMES / "cron/eternal_heartbeat.txt"
@@ -102,6 +112,10 @@ def eternal_loop():
                     log("🧠 全量记忆集成开始...")
                     run("cd ~/.hermes && timeout 300 python3 scripts/memory_integration.py full", timeout=310, label="memory-full")
                     log("✅ 全量记忆集成完成")
+                    # V3进化守护进程 (每小时, 与全量记忆同频)
+                    log("🔮 V3进化守护开始...")
+                    run("cd ~/.hermes && timeout 180 python3 scripts/evo_daemon_launcher.py --quiet", timeout=190, label="evo-daemon")
+                    log("✅ V3进化守护完成")
                 elif cycle_count % 6 == 0:
                     # 每30分钟标准记忆集成(active_memory + memory_evolution + quick orchestration)
                     log("🧠 标准记忆集成开始...")
@@ -118,6 +132,11 @@ def eternal_loop():
                     run("cd ~/.hermes && timeout 30 python3 scripts/active_memory.py", timeout=40, label="active-memory")
                     log("✅ 主动记忆更新完成")
                 log(f"✅ 第{cycle_count}次自检完成")
+                # Production Loop验证 (每2小时, cycle_count % 24 == 0)
+                if cycle_count % 24 == 0:
+                    log("🏭 Production Loop验证开始...")
+                    run("cd ~/.hermes && timeout 120 python3 scripts/prod_loop_launcher.py --mode full --quiet", timeout=130, label="prod-loop")
+                    log("✅ Production Loop验证完成")
                 time.sleep(30)  # 避免同一分钟重复触发
 
             # 每30分钟 cycle 采集清洗
@@ -137,6 +156,19 @@ def eternal_loop():
                 run("cd ~/.hermes && python3 scripts/guardian.py push", timeout=60, label=f"push-{hour}")
                 log("✅ 推送完成")
 
+            # ── Loop Engineering 检查 (每轮循环) ──
+            # 调用 loop_bootstrap 检查3个核心loop是否需要执行
+            # guardian_loop(15min) / health_check_loop(30min) / evolution_loop(60min)
+            if _LOOP_BOOTSTRAP_AVAILABLE and int(now) % 5 == 0:
+                try:
+                    loop_result = check_loops_sync()
+                    executed = loop_result.get("loops_executed", 0)
+                    if executed > 0:
+                        log(f"🔁 Loop Engineering: {executed}个loop已执行")
+                except Exception as e:
+                    if cycle_count % 12 == 0:
+                        log(f"⚠️ Loop检查异常: {e}")
+
             time.sleep(1)
 
         except KeyboardInterrupt:
@@ -154,6 +186,16 @@ def eternal_loop():
 if __name__ == "__main__":
     # 先写启动标记
     (HERMES / "cron/eternal_started.txt").write_text(datetime.now().isoformat())
+
+    # ── Loop Engineering 首次强制执行 ──
+    if _LOOP_BOOTSTRAP_AVAILABLE:
+        try:
+            print("🔁 首次Loop Engineering引导执行...")
+            results = bootstrap_force_run()
+            ok_count = sum(1 for r in results if r.get("success"))
+            print(f"   完成: {ok_count}/{len(results)} loop通过")
+        except Exception as e:
+            print(f"   ⚠️ Loop引导异常: {e}")
 
     try:
         eternal_loop()

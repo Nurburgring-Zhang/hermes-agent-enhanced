@@ -208,8 +208,15 @@ class TriggerConfig:
 
     @classmethod
     def from_dict(cls, data: dict) -> "TriggerConfig":
-        return cls(**{k: v for k, v in data.items()
-                      if k in {f.name for f in fields(cls)}})
+        d = {k: v for k, v in data.items()
+             if k in {f.name for f in fields(cls)}}
+        # Convert trigger_type string to enum if needed
+        if "trigger_type" in d and isinstance(d["trigger_type"], str):
+            try:
+                d["trigger_type"] = TriggerType(d["trigger_type"])
+            except ValueError:
+                d["trigger_type"] = TriggerType.MANUAL
+        return cls(**d)
 
 
 @dataclass
