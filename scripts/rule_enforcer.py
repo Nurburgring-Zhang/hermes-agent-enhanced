@@ -478,7 +478,7 @@ if __name__ == "__main__":
     logger.info("=" * 72)
     logger.info("Hermes 规则强制执行引擎 v1.0 — 自检")
     logger.info("=" * 72)
-    logger.info()
+    logger.info("")
 
     # R1 测试
     logger.info("[R1] 反幻觉测试:")
@@ -488,14 +488,14 @@ if __name__ == "__main__":
     logger.info(f"  无来源声明 → {r['verdict']}")
     r = AntiHallucination.check_response("我已完成了所有采集工作，获取了约50条数据", [{"name": "chat", "args": {}}])
     logger.info(f"  声称无证据 → {r['verdict']}")
-    logger.info()
+    logger.info("")
 
     # R2 测试
     logger.info("[R2] 前置三查测试:")
     r = PreCheck.execute("测试数据库配置修改")
     logger.info(f"  session_search: {'✅' if r['checks']['session_search'] else '❌'} | memory: {'✅' if r['checks']['fact_store'] else '❌'} | skill: {'✅' if r['checks']['skill_load'] else '❌'}")
     logger.info(f"  摘要: {r['summary']}")
-    logger.info()
+    logger.info("")
 
     # R3 测试
     logger.info("[R3] 改前备份测试:")
@@ -507,7 +507,7 @@ if __name__ == "__main__":
     # 不在保护目录中，预期pass
     r = BackupGuard.pre_tool("write_file", {"path": "/tmp/test.py"})
     logger.info(f"  /tmp路径 → {r['action']} (预期pass)")
-    logger.info()
+    logger.info("")
 
     # R4 测试
     logger.info("[R4] 交付铁律测试:")
@@ -515,7 +515,7 @@ if __name__ == "__main__":
     logger.info(f"  无证据声明 → {r['verdict']}")
     r = DeliveryEnforcer.check_output("接口返回HTTP 200，数据验证通过，返回了137条记录", [{"name": "curl", "args": {"url": "http://test"}}])
     logger.info(f"  有证据声明 → {r['verdict']}")
-    logger.info()
+    logger.info("")
 
     # R5 测试
     logger.info("[R5] 深度审核测试:")
@@ -523,17 +523,17 @@ if __name__ == "__main__":
     logger.info(f"  仅有代码审查 → {r.get('action', 'pass')}")
     r = DeepAuditEnforcer.check_audit_output("audit", {"file": "test.py"}, "运行pytest后发现了3个失败...")
     logger.info(f"  含运行测试 → {r.get('action', 'pass')}")
-    logger.info()
+    logger.info("")
 
     # 统一入口测试 (defined later in module)
     # r1 = pre_tool_intercept("write_file", {"path": str(HERMES / "hermes-agent" / "test.py")})
     # r2 = post_tool_intercept("read_file", {}, "可能是版本2.0", "")
     # r3 = post_response_intercept("全部完成，一切正常", [])
     logger.info("[统一拦截] 测试已移至模块末尾")
-    logger.info()
+    logger.info("")
 
     logger.info("=" * 72)
-    logger.info(get_report())
+    logger.info("规则引擎自检完成")
     logger.info("=" * 72)
 
 

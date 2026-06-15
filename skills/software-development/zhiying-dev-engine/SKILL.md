@@ -980,6 +980,8 @@ git push origin main         # 推送成功
 
 ## 参考文件
 - `references/plan-driven-batch-completion.md` — **方案v3批量补齐模式**: 研读产品方案→差距对比→三Agent分析→分批实施(5项/批)→多轮打磨 (2026-06-16实战)
+- `references/unified-platform-server-pattern.md` — **统一平台server_unified.py架构**: 不要修改10,700行server.py/独立服务+共享数据/IMDF作为主应用/sys.path/sys.modules污染修复 (2026-06-17实战)
+- `references/commercial-grade-reliability-checklist.md` — **商用级深度打磨+高可用方案**: 3层×3轮打磨框架/Phase1-3高可用/运维脚本套件/验证矩阵/常见遗漏模式 (2026-06-17实战)
 - `references/three-project-merge-architecture.md` — **三项目融合架构**: FastAPI sub-app mount失败/独立服务+nginx方案/11类预设账号/25项商用验证清单 (2026-06-16)
 - `references/pre-push-security-scan.md` — **推送前安全扫描**: 密钥检测/git rm --cached/.gitignore协议 (2026-06-15·25个nvapi-差点泄漏)
 - `references/hermes-enhanced-pack-comparison.md` — **本地强化包vs GitHub仓库**: 7,154文件/18大独有系统/迁移优先级 (2026-06-15)
