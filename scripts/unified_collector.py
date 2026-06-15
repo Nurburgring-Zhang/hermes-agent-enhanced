@@ -4,13 +4,16 @@ Hermes Unified Collector v5 - All Platforms
 Supports 35+ platforms with terminal + browser fallback
 """
 
-import sqlite3, json, re, hashlib, time, sys
+import sqlite3, json, re, hashlib, time, sys, logging
 import xml.etree.ElementTree as ET
 from datetime import datetime
 from urllib.request import Request, urlopen
+from urllib.error import URLError, HTTPError
 from urllib.parse import quote, urlparse, urlunparse
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
+
+logger = logging.getLogger(__name__)
 
 # 自采集器导入
 sys.path.insert(0, str(Path(__file__).parent))
@@ -262,7 +265,8 @@ def is_collect_filtered(title, content, source, platform):
             """).fetchall()
             db.close()
             _FILTER_CACHE = [r[0].lower() for r in rows]
-        except:
+        except sqlite3.Error as e:
+            logger.warning(f"Spam filter load failed, using empty cache: {e}")
             _FILTER_CACHE = []
     
     if not title and not content:
@@ -398,7 +402,8 @@ def fetch(url, headers=None, timeout=15, post_data=None):
             if 'charset=' in ct:
                 charset = ct.split('charset=')[-1].split(';')[0].strip()
             return resp.read().decode(charset, errors='replace')
-    except:
+    except (URLError, HTTPError, OSError, ValueError) as e:
+        logger.warning(f"HTTP fetch failed: {e}")
         return ""
 
 def parse_rss(xml_text):
@@ -518,7 +523,8 @@ def collect_weibo_military():
                     'hot_score':0, 'source_type':'search', 'category_tags':'Weibo|Military|News'
                 })
             time.sleep(0.5)
-        except:
+        except (json.JSONDecodeError, KeyError, IndexError, ValueError) as e:
+            logger.warning(f"Weibo search parse error: {e}")
             continue
     return items
 
@@ -661,7 +667,8 @@ def collect_bilibili_tech():
                         })
                     if items:
                         break
-        except:
+        except (json.JSONDecodeError, URLError, KeyError, IndexError, ValueError) as e:
+            logger.warning(f"Bilibili API parse error: {e}")
             continue
     # 备用方案: 如果API无结果，爬取科技区页面
     if not items:
@@ -682,7 +689,8 @@ def collect_bilibili_tech():
                         'published_at':'','hot_score':0,
                         'source_type':'html','category_tags':'Bilibili|Tech|Science'
                     })
-        except:
+        except (json.JSONDecodeError, KeyError, IndexError, ValueError) as e:
+            logger.warning(f"Bilibili HTML parse error: {e}")
             pass
     return items
 
@@ -804,7 +812,8 @@ def collect_sogou_wechat():
                     'category_tags':extract_tags(title)
                 })
             time.sleep(0.3)
-        except:
+        except (json.JSONDecodeError, URLError, KeyError, IndexError, ValueError) as e:
+            logger.warning(f"Search parse error: {e}")
             continue
     return items
 
@@ -900,7 +909,9 @@ def collect_hackernews():
             r = fetch(f"https://hacker-news.firebaseio.com/v0/item/{sid}.json", timeout=5)
             if r:
                 try: return json.loads(r)
-                except: pass
+                except (json.JSONDecodeError, TypeError) as e:
+                    logger.warning(f"HackerNews item parse error: {e}")
+                    pass
             return None
         with ThreadPoolExecutor(max_workers=5) as ex:
             futures = [ex.submit(fetch_item, sid) for sid in ids]
@@ -968,7 +979,8 @@ def collect_juejin():
                 'hot_score':item.get("digg_count",0),
                 'source_type':'api','category_tags':'Juejin|Dev|Tech'
             })
-    except:
+    except (json.JSONDecodeError, URLError, KeyError, IndexError, ValueError) as e:
+        logger.warning(f"Juejin fetch error: {e}")
         pass
     return items
 
@@ -1107,7 +1119,8 @@ def collect_huggingface():
                     'hot_score':model.get('likes',0),
                     'source_type':'api','category_tags':'HuggingFace|AI|Model'
                 })
-    except:
+    except (json.JSONDecodeError, URLError, KeyError, IndexError) as e:
+        logger.warning(f"API fetch parse error: {e}")
         pass
     return items
 
@@ -1170,7 +1183,8 @@ def collect_reddit():
                     'hot_score':pdata.get("score",0),
                     'source_type':'api','category_tags':f'Reddit|{sr}'
                 })
-        except:
+        except (json.JSONDecodeError, URLError, KeyError, IndexError) as e:
+            logger.warning(f"Reddit parse error: {e}")
             continue
     return items
 
@@ -1194,7 +1208,8 @@ def collect_devto():
                     'hot_score':a.get("positive_reactions_count",0),
                     'source_type':'api','category_tags':'DevTo|Dev|Article'
                 })
-    except:
+    except (json.JSONDecodeError, URLError, KeyError, IndexError) as e:
+        logger.warning(f"API fetch parse error: {e}")
         pass
     return items
 
@@ -1230,7 +1245,8 @@ def collect_baidu_weibo_search():
                     'hot_score':0,'source_type':'search','category_tags':extract_tags(title)
                 })
             time.sleep(0.5)
-        except:
+        except (json.JSONDecodeError, URLError, KeyError, IndexError) as e:
+            logger.warning(f"Baidu/Weibo search parse error: {e}")
             continue
     return items
 

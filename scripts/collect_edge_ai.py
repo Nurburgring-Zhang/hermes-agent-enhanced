@@ -178,7 +178,8 @@ def main():
     log(f"✅ 完成, 耗时: {elapsed:.1f}s")
     if "--push" in sys.argv:
         log("📤 触发推送...")
-        os.system("cd ~/.hermes && python3 scripts/guardian.py push")
+        import subprocess as _sp
+        _sp.run([sys.executable, str(Path.home() / ".hermes" / "scripts" / "guardian.py"), "push"], check=False)
     return 0
 
 if __name__ == "__main__":
