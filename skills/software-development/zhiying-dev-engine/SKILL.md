@@ -868,6 +868,54 @@ IMDF+nanobot-factory+智影三项目融合的正确方案。
 - 新增文件必须注册到 app.js PAGE_RENDERERS + index.html 导航 + canvas_web.py 路由
 - 使用 Python 脚本批量修改文件避免 `patch replace_all` 陷阱
 
+### 子Agent超时恢复模式（2026-06-15实战固化）
+
+**症状**：`delegate_task` 报 `timeout after 600.0s with N API call(s) completed`。
+
+**根因**：子Agent被卡在慢API调用或依赖解析上（如pip install解析30+依赖），但在此之前可能已经完成了部分工作（文件创建、修复应用等）。
+
+**恢复协议**：
+1. **不直接重试** — 先检查子Agent是否产生了部分成果
+2. `ls -la <target_dir>/` — 检查文件是否已创建
+3. `python3 -c "from scripts.<module> import *"` — 验证import是否成功
+4. 如果部分工作已完成 → 手动验证并接续剩余工作
+5. 如果完全没有产出 → 缩小scope重试（如拆分为2个更小的子Agent）
+
+**常见超时原因**：
+- pip install解析大量依赖 → 去掉不必要的依赖
+- 大目录递归搜索 → 用`find -maxdepth`限制深度
+- 网络请求挂起 → 加timeout参数
+
+### 跨目录大迁移模式（2026-06-15实战固化）
+
+**场景**：将项目A的子系统迁移到项目B，两个项目目录结构不同。
+
+**协议**：
+1. **先对比后迁移** — `find + diff` 找出独有文件
+2. **分子系统迁移** — 每个子系统一个子Agent（agent/ auto_engine/ evolution_v3/ production_loop/）
+3. **import路径修复** — `grep -rn "from core\." target/` → 全部替换
+4. **内部引用检查** — 跨模块import必须在目标目录存在
+5. **逐个验证** — `python3 -c "from scripts.<each_module> import *; print('OK')"` 对每个模块
+6. **配置和服务同时迁移** — config.yaml/systemd/crontab不要遗漏
+
+**冲突避让**：
+- 每个子Agent负责不同的子目录，避免同时修改同一文件
+- 子Agent只做复制+import修复，不做功能修改
+
+### git pull冲突解决三连（2026-06-15实战固化）
+
+当 `git push` 被rejected（remote有更新）且本地有未跟踪文件时：
+
+```bash
+git stash                    # 暂存本地修改
+git pull --rebase origin main  # rebase到最新
+git stash pop                # 恢复本地修改
+git add -A && git commit -m "..."  # 提交合并结果
+git push origin main         # 推送成功
+```
+
+**死锁情况**: stash pop后出现冲突 → `git checkout --theirs <file>` 接受远端版本 → `git add <file>` → `git stash drop`
+
 ## 参考文件
 - `references/three-project-merge-architecture.md` — **三项目融合架构**: FastAPI sub-app mount失败/独立服务+nginx方案/11类预设账号/25项商用验证清单 (2026-06-16)
 - `references/pre-push-security-scan.md` — **推送前安全扫描**: 密钥检测/git rm --cached/.gitignore协议 (2026-06-15·25个nvapi-差点泄漏)
