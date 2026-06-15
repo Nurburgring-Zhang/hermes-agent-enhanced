@@ -270,3 +270,5 @@ profiles/*/.env
 profiles/*/config.yaml
 plugins/*/config.yaml
 *_cache.json
+gateway.pid
+.skills_prompt_snapshot.json
