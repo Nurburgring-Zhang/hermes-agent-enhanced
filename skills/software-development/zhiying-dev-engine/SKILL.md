@@ -830,6 +830,7 @@ app.mount("/imdf", imdf_app)
 **验证**：清理后用 `grep -r "旧名称" --include="*.py" | wc -l` 确认残留为0。\n- `references/multi-project-fastapi-mount-syspath-fix.md` — FastAPI子应用挂载时sys.path/sys.modules污染修复(ModuleNotFoundError after mount根因)\n- `references/production-deployment-pattern.md` — 生产部署模式(uvicorn workers/production_app.py/端口清理/共享状态注意事项)\n- `references/inline-html-sink-debugging.md` — 内联HTML被多子Agent注入破坏的根因链与修复模式\n- `references/nanobot-factory-performance-baseline.md` — 性能基准数据(API 1-10ms/构建19.56s/4 workers)
 
 ## 参考文件
+- `references/three-project-merge-architecture.md` — **三项目融合架构**: FastAPI sub-app mount失败/独立服务+nginx方案/11类预设账号/25项商用验证清单 (2026-06-16)
 - `references/pre-push-security-scan.md` — **推送前安全扫描**: 密钥检测/git rm --cached/.gitignore协议 (2026-06-15·25个nvapi-差点泄漏)
 - `references/hermes-enhanced-pack-comparison.md` — **本地强化包vs GitHub仓库**: 7,154文件/18大独有系统/迁移优先级 (2026-06-15)
 - `references/deep-code-audit-methodology.md` — 极端深度代码审核方法(7层审核步骤)
