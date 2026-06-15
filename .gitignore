@@ -266,3 +266,6 @@ scripts/collectors/wechat-mp-mcp/
 scripts/collectors/xiaohongshu-skill/
 .encryption_key
 vault/
+profiles/*/.env
+profiles/*/config.yaml
+plugins/*/config.yaml
